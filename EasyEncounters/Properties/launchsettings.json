@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "EasyEncounters (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "EasyEncounters (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="EasyEncounters.Views.CampaignCRUDPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EasyEncounters.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <controls:DataGrid ItemsSource="{x:Bind ViewModel.Campaigns}"
+                           CanUserReorderColumns="False"
+                           CanUserResizeColumns="False"
+                           GridLinesVisibility="Horizontal"
+                           Margin="0,10,0,0"
+                           SelectionMode="Single"
+                           AutoGenerateColumns="False"
+                           >
+            <controls:DataGrid.Columns>
+                <controls:DataGridTextColumn
+                    Header="Campaign"
+                    Tag="CampaignName"
+                    Binding="{Binding Name}"/>
+                <controls:DataGridTextColumn
+                    Header="Description"
+                    Tag="CampaignDescription"
+                    Binding="{Binding Description}"/>
+            </controls:DataGrid.Columns>
+
+        </controls:DataGrid>
+        <Button Command="{x:Bind ViewModel.AddNewCampaignCommand}" 
+                VerticalAlignment="Bottom" 
+                Margin="5,5,5,5"
+                KeyboardAcceleratorPlacementMode="Auto"
+                ToolTipService.ToolTip="Add a new campaign">
+            <Button.KeyboardAccelerators>
+                <KeyboardAccelerator Modifiers="Control" Key="N"/>
+            </Button.KeyboardAccelerators>
+            <FontIcon Glyph="&#xF8AA;"></FontIcon>
+        </Button>
+    </Grid>
+</Page>
