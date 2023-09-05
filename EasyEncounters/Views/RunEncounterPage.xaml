@@ -5,16 +5,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:EasyEncounters.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"   
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters" 
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
-    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
         <ResourceDictionary>
             <converters:BoolToVisibilityConverter x:Key="InitRolledConverter"/>
-            <converters:BoolNegationConverter x:Key="NegatedBoolConverter"/>
         </ResourceDictionary>
     </Page.Resources>
     <Grid>
@@ -25,23 +24,18 @@
                               Margin="5,5,5,5"
                               ItemsSource="{x:Bind ViewModel.Creatures, Mode=OneWay}"
                           SelectionMode="Extended"
-                          HorizontalContentAlignment="Stretch"     
-                          VerticalContentAlignment="Stretch">
+                          HorizontalContentAlignment="Stretch">
                     <ListView.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
+                        <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
                             <Setter Property="VerticalContentAlignment" Value="Stretch"/>
                         </Style>
                     </ListView.ItemContainerStyle>
                     <Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="SelectionChanged">
-                            <!--<Core:InvokeCommandAction Command="{x:Bind ViewModel.DealDamageCommand}" CommandParameter="{x:Bind activeEncounterCreaturesListView.SelectedItem, Mode=OneWay}"/>-->
-                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.SelectionChangedCommand}"/> <!--CommandParameter="{x:Bind activeEncounterCreaturesListView.SelectedItems, Mode=OneWay}"-->
+
+                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.SelectionChangedCommand}"/>
                         </Core:EventTriggerBehavior>
-                        <!--<Core:EventTriggerBehavior EventName="DoubleTapped">
-                            --><!--<Core:InvokeCommandAction Command="{x:Bind ViewModel.DealDamageCommand}" CommandParameter="{x:Bind activeEncounterCreaturesListView.SelectedItem, Mode=OneWay}"/>--><!--
-                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.DealDamageCommand}" CommandParameter="{x:Bind activeEncounterCreaturesListView.SelectedItems, Mode=OneWay}"/>
-                        </Core:EventTriggerBehavior>-->
                     </Interactivity:Interaction.Behaviors>
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -51,14 +45,12 @@
                                     <MenuFlyout>
                                         <MenuFlyoutItem Text="Deal Damage to Selected Targets"
                                                             Command="{Binding DamageRequestedCommand}"/>
-                                        <!--<MenuFlyoutItem Text="Delete" Tapped="Delete_Tapped"/>-->
                                     </MenuFlyout>
                                 </Grid.ContextFlyout>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="1"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="3*"/>
-                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="*" MaxWidth="50"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="4*"/>
@@ -68,7 +60,7 @@
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
                                 <TextBox Header="Initiative"
-                                                     Grid.Column="1"
+                                                     Grid.Column="0"
                                                      Grid.Row="0"
                                                      Grid.RowSpan="2"
                                                      InputScope="Number"
@@ -82,59 +74,58 @@
                                                          Margin="2,2,2,2"
                                                          Grid.Row="0"
                                                          Grid.RowSpan="2"
-                                                         Grid.Column="2"
+                                                         Grid.Column="1"
                                                          VerticalAlignment="Center">
 
                                 </HyperlinkButton>
                                 <TextBlock 
-                                                       Grid.Column="3"
+                                                       Grid.Column="2"
                                                        Grid.Row="0"
                                                        Grid.RowSpan="1"
                                                         HorizontalAlignment="Stretch"
                                                         FontSize="8"
                                                         Text="Reaction?"/>
                                 <CheckBox 
-                                                      Grid.Column="3"
+                                                      Grid.Column="2"
                                                      Grid.Row="1"
                                                      Grid.RowSpan="1"
                                                      IsChecked="{Binding Reaction, Mode=TwoWay}"
                                                      Margin="2,2,2,2"/>
                                 <TextBlock 
-                                                   Grid.Column="4"
+                                                   Grid.Column="3"
                                                      Grid.Row="0"
                                                      Grid.RowSpan="1"
                                                        HorizontalAlignment="Stretch"
                                                        FontSize="8"
                                                        Text="Current HP"/>
                                 <TextBlock Text="{Binding Creature.CurrentHP, Mode=OneWay}"
-                                                        Grid.Column="4"
+                                                        Grid.Column="3"
                                                         Grid.Row="1"
                                                         Grid.RowSpan="1"
                                                        Margin="2,2,2,2"
                                                         HorizontalAlignment="Stretch"/>
 
                                 <TextBlock 
-                                                        Grid.Column="5"
+                                                        Grid.Column="4"
                                                         Grid.Row="0"
                                                         Grid.RowSpan="1"
                                                        HorizontalAlignment="Stretch"
                                                        FontSize="8"
                                                        Text="Dead?"/>
                                 <CheckBox 
-                                                    Grid.Column="5"
+                                                    Grid.Column="4"
                                                     Grid.Row="1"
                                                     Grid.RowSpan="1"
                                                     
                                                       IsChecked="{Binding Dead, Mode=TwoWay}"
                                                       Margin="2,2,2,2"/>
                                 <ScrollViewer
-                                                     Grid.Column="6"
+                                                     Grid.Column="5"
                                                      Grid.Row="0"
                                                      Grid.RowSpan="2">
-                                    <TextBox Text="{Binding Notes, Mode=TwoWay}"
+                                        <TextBox Text="{Binding Notes, Mode=TwoWay}"
                                                          Margin="2,2,2,2"
-                                                         Header="Notes"
-                                                         />
+                                                         Header="Notes"/>
                                 </ScrollViewer>
                             </Grid>
                         </DataTemplate>

@@ -42,7 +42,8 @@ namespace EasyEncounters.ViewModels
             Targets.Clear();
             foreach(var target in targets)
             {
-                Targets.Add(target);
+                if(target.ActiveEncounterCreatureViewModel != null)
+                    Targets.Add(new DamageCreatureViewModel(target.ActiveEncounterCreatureViewModel));
             }
             SelectedDamageType = DamageType.None;
         }

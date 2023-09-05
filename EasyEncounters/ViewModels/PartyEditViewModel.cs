@@ -52,7 +52,6 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
         if (parameter != null && parameter is Creature)
         {
             var creature = (Creature)parameter;
-
             PartyMembers.Add(new CreatureViewModel(creature));
             Party.Members.Add(creature);
 

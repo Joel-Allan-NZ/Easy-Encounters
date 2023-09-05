@@ -121,6 +121,7 @@ public class ActiveEncounterService : IActiveEncounterService
             }
         }
         OrderInitiative(activeEncounter);
+        activeEncounter.ActiveTurn = activeEncounter.CreatureTurns.Peek();
 
         await _dataService.SaveAddAsync(activeEncounter);
     }
@@ -137,7 +138,7 @@ public class ActiveEncounterService : IActiveEncounterService
         {
             activeEncounter.CreatureTurns.Enqueue(creature);
         }
-        activeEncounter.ActiveTurn = activeEncounter.CreatureTurns.Peek();
+        
     }
 
     public DamageVolume GetDamageVolumeSuggestion(ActiveEncounterCreature target, DamageType damageType)

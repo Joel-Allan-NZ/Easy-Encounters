@@ -57,8 +57,8 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
         if (parameter != null)
         {
 
-            await _activeEncounterService.CreateActiveEncounterAsync(parameter.Encounter, parameter.Party);
-            _navigationService.NavigateTo(typeof(RunEncounterViewModel).FullName!, parameter);
+            var active = await _activeEncounterService.CreateActiveEncounterAsync(parameter.Encounter, parameter.Party);
+            _navigationService.NavigateTo(typeof(RunEncounterViewModel).FullName!, active);
         }
         //}
     }
@@ -84,6 +84,12 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
         {
             EncounterData.Add(encounter);
         }
+    }
+
+    [RelayCommand]
+    private void AddEncounter()
+    {
+        _navigationService.NavigateTo(typeof(EncounterEditViewModel).FullName!, null);
     }
 
 

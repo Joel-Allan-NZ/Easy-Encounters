@@ -71,6 +71,7 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
         var creature = new Creature();
         Creatures.Add(new CreatureViewModel(creature));
         await _dataService.SaveAddAsync(creature);
+        _navigationService.NavigateTo(typeof(CreatureEditViewModel).FullName!, creature);
     }
 
     [RelayCommand]

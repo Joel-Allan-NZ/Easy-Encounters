@@ -141,10 +141,15 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
             EncounterCreatures.Clear();
             foreach (var creature in Encounter.Creatures)
                 EncounterCreatures.Add(new CreatureViewModel(creature));
-
-            Creatures.Clear();
-            foreach (var creature in await _dataService.GetAllCreaturesAsync())
-                Creatures.Add(new CreatureViewModel(creature));
         }
+        else
+        {
+            Encounter = new Encounter(); //create a new encounter if you aren't editing an existing one.
+
+        }
+
+        Creatures.Clear();
+        foreach (var creature in await _dataService.GetAllCreaturesAsync())
+            Creatures.Add(new CreatureViewModel(creature));
     }
 }

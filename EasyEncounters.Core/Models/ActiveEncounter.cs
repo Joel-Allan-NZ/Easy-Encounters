@@ -52,6 +52,19 @@ public class ActiveEncounter : Encounter
 
     }
 
+    private void AddCreature(ActiveEncounterCreature creature, Dictionary<string, int> collisions)
+    {
+        if (collisions.ContainsKey(creature.EncounterName))
+        {
+            creature.EncounterName = creature.Name + " " + collisions[creature.Name];
+            collisions[creature.Name]++;
+        }
+        else
+            collisions[creature.Name] = 1;
+
+        ActiveCreatures.Add(creature);
+    }
+
     public ActiveEncounter(Encounter encounter, Party party)
     {
         this.ActiveCreatures = new List<ActiveEncounterCreature>();
@@ -66,42 +79,13 @@ public class ActiveEncounter : Encounter
         {
             foreach (var creature in encounter.Creatures)
             {
-                var tempCreature = new ActiveEncounterCreature(creature);
-
-                tempCreature.Name ??= "Unnamed";
-
-                if (nameCollisions.ContainsKey(tempCreature.Name))
-                {
-                    tempCreature.EncounterName = tempCreature.Name + " " + nameCollisions[tempCreature.Name];
-                    nameCollisions[tempCreature.Name]++;
-                }
-                else
-                    nameCollisions[tempCreature.Name] = 1;
-
-                ActiveCreatures.Add(tempCreature);
+                AddCreature(new ActiveEncounterCreature(creature), nameCollisions);
             }
             foreach (var member in party.Members)
             {
-                var tempCreature = new ActiveEncounterCreature(member);
-
-                tempCreature.Name ??= "Unnamed";
-                if (nameCollisions.ContainsKey(tempCreature.Name))
-                {
-                    tempCreature.EncounterName = tempCreature.Name + " " + nameCollisions[tempCreature.Name];
-                    nameCollisions[tempCreature.Name]++;
-                }
-                else
-                    nameCollisions[tempCreature.Name] = 1;
-
-                ActiveCreatures.Add(tempCreature);
+                AddCreature(new ActiveEncounterCreature(member), nameCollisions);
             }
-
-            //roll initiative for NPCS? probably more sensible to kick that off at the saame time we establish initiative order. Let players roll first, then
-            //hit the "get shit going" button.
-
-
         }
-        //this.ActiveTurn = ActiveCreatures.First();//TODO: retool placeholder/default value? Current imp probably bad practice, but worry about this later. 
     }
 
 }

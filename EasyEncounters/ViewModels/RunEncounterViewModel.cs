@@ -21,7 +21,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
     private readonly INavigationService _navigationService;
     private readonly IDataService _dataService;
     private readonly IActiveEncounterService _activeEncounterService;
-    private ActiveEncounter _activeEncounter;
+    private ActiveEncounter? _activeEncounter;
     private List<ActiveEncounterCreatureViewModel> _targeted;
 
     [ObservableProperty]
@@ -134,9 +134,18 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
 
     public async void OnNavigatedTo(object parameter)
     {
+        if (parameter is ActiveEncounter && parameter != null)
+        {
+            _activeEncounter = (ActiveEncounter)parameter;
+        }
+        else
+        {
+            _activeEncounter = await _dataService.GetActiveEncounterAsync();
+        }
+
         Creatures.Clear();
 
-        _activeEncounter = await _dataService.GetActiveEncounterAsync();
+        
         foreach(var p in _activeEncounter.CreatureTurns)
         {
             Creatures.Add(new ActiveEncounterCreatureViewModel(p));
@@ -144,6 +153,20 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
 
         foreach (var s in _activeEncounter.Log.Reverse<string>())
             Log.Add(s); 
-        //}
+        
+        if(_activeEncounter.ActiveTurn != null)
+        {
+            InitNotRolled = false;
+            InitRolled = true;
+
+            var correctTurn = _activeEncounter.ActiveTurn;
+            while (_activeEncounter.CreatureTurns.Peek() != correctTurn)
+                NextTurn();
+
+            //encounter in progress
+            while (_activeEncounter.ActiveTurn.Dead)
+                NextTurn();
+            
+        }
     }
 }

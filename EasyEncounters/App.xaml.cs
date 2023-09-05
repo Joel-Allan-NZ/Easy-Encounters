@@ -77,6 +77,7 @@ public partial class App : Application
             services.AddSingleton<IActiveEncounterService, ActiveEncounterService>();
             services.AddSingleton<IPartyXPService, PartyXPService>();
             services.AddSingleton<IDiceService, DiceService>();
+            services.AddSingleton<ILogService, LogService>();
 
             // Views and ViewModels
             services.AddTransient<SettingsViewModel>();
@@ -124,8 +125,20 @@ public partial class App : Application
 
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
+        var a = App.GetService<ILogService>();
+        var exception = e.Exception;
+        a.Log(exception.Source + exception.Message + exception.StackTrace + exception.InnerException?.Message);
         // TODO: Log and handle exceptions as appropriate.
         // https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
+        //if (!hasHandledUnhandledException)
+        //{
+        //    e.Handled = true;
+        //    var exception = e.Exception;
+        //    _logger.Error("Unhandled exception - {0}", exception);
+        //    await CrashHandler.ReportExceptionAsync(exception.Message, exception.StackTrace);
+        //    hasHandledUnhandledException = true;
+        //    throw e.Exception;
+        //}
     }
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)

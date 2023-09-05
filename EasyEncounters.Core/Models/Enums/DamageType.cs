@@ -25,6 +25,7 @@ public enum DamageType
     NonSilveredPhysical = 1 << 13, //some creatures have resistance or immunity against physical damage from non-silvered, non-magical weapons
     NonMagicalPhysical = 1 << 14, //some creatures have resistance or immunity against physical damage from non-magical sources.
     Healing = 1 << 15,
+    Untyped = 1 <<  16, //generic type, for quick gogo.
 
 
 }
