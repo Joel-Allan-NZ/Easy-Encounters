@@ -72,7 +72,7 @@ namespace EasyEncounters.ViewModels
             foreach(var instance in instances)
                 _activeEncounterService.DealDamage(_activeEncounter, instance);
 
-            _navigationService.NavigateTo(typeof(RunEncounterViewModel).FullName!);
+            _navigationService.NavigateTo(typeof(RunEncounterViewModel).FullName!, ignoreNavigation: true);
         }
 
         private List<DamageInstance> GetInstancesOfDamage()

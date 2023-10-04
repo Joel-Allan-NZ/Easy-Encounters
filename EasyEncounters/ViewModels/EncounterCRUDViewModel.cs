@@ -68,6 +68,8 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
         var encounter = new Encounter();
         Encounters.Add(new EncounterViewModel(encounter));
         await _dataService.SaveAddAsync(encounter);
+
+        EditEncounter(encounter);
     }
 
     [RelayCommand]
@@ -93,7 +95,7 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
             List<EncounterViewModel> noMatch = new();
 
 
-            for (int i = Encounters.Count - 1; i >= 0; i--)
+            for (var i = Encounters.Count - 1; i >= 0; i--)
             {
                 var item = Encounters[i];
                 if (!matched.Contains(item))
@@ -137,6 +139,7 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
     public void OnNavigatedFrom()
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);
+        _filterTimer.Stop();
     }
     public async void OnNavigatedTo(object parameter)
     {

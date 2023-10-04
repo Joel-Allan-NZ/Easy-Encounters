@@ -15,18 +15,26 @@
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Views\AbilityCRUDPage.xaml" />
+    <None Remove="Views\AbilityEditPage.xaml" />
+    <None Remove="Views\ActiveEncounterPage.xaml" />
     <None Remove="Views\CampaignCRUDPage.xaml" />
     <None Remove="Views\CampaignSplashPage.xaml" />
+    <None Remove="Views\CreatureAbilityPage.xaml" />
     <None Remove="Views\CreatureCRUDPage.xaml" />
+    <None Remove="Views\CreatureDisplayTabPage.xaml" />
     <None Remove="Views\CreatureEditPage.xaml" />
     <None Remove="Views\DealDamagePage.xaml" />
     <None Remove="Views\EncounterCRUDPage.xaml" />
+    <None Remove="Views\EncounterDamageTabPage.xaml" />
     <None Remove="Views\EncounterEditPage.xaml" />
+    <None Remove="Views\EncounterTabPage.xaml" />
     <None Remove="Views\PartyCRUDPage.xaml" />
     <None Remove="Views\PartyEditPage.xaml" />
     <None Remove="Views\PartySelectPage.xaml" />
     <None Remove="Views\RunEncounterPage.xaml" />
     <None Remove="Views\RunSessionPage.xaml" />
+    <None Remove="Views\TargetedDamagePage.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,6 +58,30 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\EncounterDamageTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\CreatureDisplayTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\CreatureAbilityPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\AbilityCRUDPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\AbilityEditPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\EncounterTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\ActiveEncounterPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\TargetedDamagePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\EncounterEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -95,4 +127,5 @@
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
+
 </Project>

@@ -31,12 +31,22 @@ public class Encounter : Persistable
         get; set;
     }
 
-    public Encounter(string name = "default", List<Creature>? creatures = null, string description = "")
+    /// <summary>
+    /// The effective total monster XP from the encounter, following DMG rules. Useful for measuring the difficulty
+    /// of the encounter
+    /// </summary>
+    public double AdjustedEncounterXP
+    {
+        get; set;
+    }
+
+    public Encounter(string name = "default", List<Creature>? creatures = null, string description = "", double adjustedEncounterXP = -1)
     {
         Creatures = creatures ?? new List<Creature>();
         Name = name;
         Id = Guid.NewGuid();
         Description = description ?? "";
+        AdjustedEncounterXP = adjustedEncounterXP;
     }
 
     public override bool Equals(object? obj)

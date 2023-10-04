@@ -46,7 +46,8 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
         {
             CreatureViewModel creature = (CreatureViewModel)obj;
             EncounterCreatures.Add(new CreatureViewModel(creature.Creature));
-            Encounter.Creatures.Add(creature.Creature);
+           //Encounter.Creatures.Add(creature.Creature);
+            _encounterService.AddCreature(Encounter, creature.Creature);
         }
     }
 
@@ -57,7 +58,8 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
         {
             CreatureViewModel toRemove = (CreatureViewModel)obj;
             EncounterCreatures.Remove(EncounterCreatures.First(x => x.Creature == toRemove.Creature));
-            Encounter.Creatures.Remove(toRemove.Creature);
+            _encounterService.RemoveCreature(Encounter, toRemove.Creature);
+            //Encounter.Creatures.Remove(toRemove.Creature);
         }
     }
 
@@ -103,12 +105,14 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
 
     private readonly INavigationService _navigationService;
     private readonly IDataService _dataService;
+    private readonly IEncounterService _encounterService;
     private readonly DispatcherQueueTimer _filterTimer;
 
-    public EncounterEditViewModel(INavigationService navigationService, IDataService dataService)
+    public EncounterEditViewModel(INavigationService navigationService, IDataService dataService, IEncounterService encounterService)
     {
         _navigationService = navigationService;
         _dataService = dataService;
+        _encounterService = encounterService;
 
         var dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
         _filterTimer = dispatcherQueue.CreateTimer();

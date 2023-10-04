@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.OleDb;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,12 +58,11 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
     {
         //var targets = ;
 
-        _navigationService.NavigateTo(typeof(DealDamageViewModel).FullName!, new DealDamageTargetting(_activeEncounter, sourceCreature, _targeted));
+        //old:
+        //_navigationService.NavigateTo(typeof(DealDamageViewModel).FullName!, new DealDamageTargetting(_activeEncounter, sourceCreature, _targeted), clearNavigation:true);
 
-        //todo:
-
-        //navigate to the damage dealing view
-        //_activeEncounterService.DealDamage(_activeEncounter, sourceCreature, )
+        //test:
+        _navigationService.NavigateTo(typeof(TargetedDamageViewModel).FullName!, new DealDamageTargetting(_activeEncounter, sourceCreature, Creatures), clearNavigation: true);
     }
 
     [RelayCommand]
@@ -70,7 +70,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
     {
         if (InitNotRolled)
         {
-            await _activeEncounterService.StartEncounterAsync(_activeEncounter);
+            await _activeEncounterService.UpdateInitiativeOrder(_activeEncounter);
         }
         InitNotRolled = false;
         InitRolled = true;
@@ -123,7 +123,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
         if (_navigationService.CanGoBack)
             _navigationService.GoBack();
         else //if we didn't come from encounter selection, then go all the way back to campaign select (default main page)
-            _navigationService.NavigateTo(typeof(CampaignSplashViewModel).FullName!);
+            _navigationService.NavigateTo(typeof(CampaignSplashViewModel).FullName!, clearNavigation:true);
     }
 
 

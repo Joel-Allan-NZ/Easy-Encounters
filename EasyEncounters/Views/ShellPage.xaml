@@ -48,12 +48,12 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Uid="Shell_WebView" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.WebViewViewModel">
+                <NavigationViewItem x:Uid="Shell_WebView" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.EncounterTabViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe774;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Uid="Shell_ListDetails" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.ListDetailsViewModel">
+                <NavigationViewItem x:Uid="Shell_ListDetails" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.AbilityCRUDViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea37;"/>
                     </NavigationViewItem.Icon>

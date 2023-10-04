@@ -9,6 +9,8 @@
     xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters" 
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
+    xmlns:behaviors="using:EasyEncounters.Behaviors"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
@@ -23,7 +25,7 @@
                 <ListView x:Name="activeEncounterCreaturesListView"
                               Margin="5,5,5,5"
                               ItemsSource="{x:Bind ViewModel.Creatures, Mode=OneWay}"
-                          SelectionMode="Extended"
+                          SelectionMode="Single"
                           HorizontalContentAlignment="Stretch">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
@@ -146,10 +148,12 @@
                         Margin="2,2,2,2"
                         Visibility="{x:Bind ViewModel.InitRolled, Mode=OneWay, Converter={StaticResource InitRolledConverter}}"/>
             </StackPanel>
-            <ScrollViewer>
+            <ScrollViewer VerticalScrollMode="Enabled">
                 <ListView ItemsSource="{x:Bind ViewModel.Log, Mode=OneWay}"
                           MaxHeight="200"
-                          SelectionMode="None">
+                          SelectionMode="None"
+                          VerticalAlignment="Stretch"
+                          ScrollViewer.VerticalScrollMode="Enabled">
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <TextBlock FontSize="9" Text="{Binding}"/>

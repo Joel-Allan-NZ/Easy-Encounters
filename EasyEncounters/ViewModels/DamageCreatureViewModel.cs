@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using EasyEncounters.Core.Models.Enums;
+using EasyEncounters.Messages;
 
 namespace EasyEncounters.ViewModels
 {
@@ -21,7 +24,7 @@ namespace EasyEncounters.ViewModels
         private DamageVolume _selectedDamageVolume;
 
         [ObservableProperty]
-        private ActiveEncounterCreatureViewModel? _activeEncounterCreatureViewModel;
+        private ActiveEncounterCreatureViewModel _activeEncounterCreatureViewModel;
 
 
         public DamageCreatureViewModel(ActiveEncounterCreatureViewModel creatureVM)
@@ -29,6 +32,12 @@ namespace EasyEncounters.ViewModels
             SelectedDamageVolume = DamageVolume.Normal;
             ActiveEncounterCreatureViewModel = creatureVM;
 
+        }
+
+        [RelayCommand]
+        private void RemoveTargetRequested()
+        {
+            WeakReferenceMessenger.Default.Send(new RemoveTargetCreatureRequestMessage(this));
         }
     }
 }

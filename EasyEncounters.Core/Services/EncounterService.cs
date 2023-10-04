@@ -11,46 +11,76 @@ public class EncounterService : IEncounterService
 {
     readonly IPartyXPService _partyXPService;
     readonly IDiceService _diceService;
-    public EncounterService(IPartyXPService partyXPService, IDiceService diceService)
+    readonly ICreatureService _creatureService;
+    readonly IAbilityService _abilityService;
+    public EncounterService(IPartyXPService partyXPService, IDiceService diceService, IAbilityService abilityService, ICreatureService creatureService)
     {
         _diceService = diceService;
         _partyXPService = partyXPService;
+        _abilityService = abilityService;
+        _creatureService = creatureService;
+
+    }
+
+    public void AddCreature(Encounter encounter, Creature creature)
+    {
+        encounter.Creatures.Add(creature);
+        encounter.AdjustedEncounterXP = CalculateEncounterXP(encounter);
+    }
+
+    public void RemoveCreature(Encounter encounter, Creature creature)
+    {
+        encounter.Creatures.Remove(creature);
+        encounter.AdjustedEncounterXP = CalculateEncounterXP(encounter);
+    }
+
+
+    public int[] GetPartyXPThreshold(Party party) => _partyXPService.FindPartyXPThreshold(party);
+
+    public string DetermineDifficultyForParty(Encounter encounter, int[] partyXPThreshold)
+    {
+        if (encounter.Creatures == null || encounter.Creatures.Count == 0)
+            return "N/A";
+
+        if (encounter.AdjustedEncounterXP == -1)
+            encounter.AdjustedEncounterXP = CalculateEncounterXP(encounter);
+
+
+        if (encounter.AdjustedEncounterXP < partyXPThreshold[0])
+            return "Trivial";
+
+        if (encounter.AdjustedEncounterXP < partyXPThreshold[1])
+            return "Easy";
+
+        if (encounter.AdjustedEncounterXP < partyXPThreshold[2])
+            return "Medium";
+
+        if (encounter.AdjustedEncounterXP < partyXPThreshold[3])
+            return "Hard";
+
+        if (encounter.AdjustedEncounterXP < partyXPThreshold[3] * 1.5)
+            return "Deadly";
+
+        return "Very Deadly";
+    }
+
+    public double CalculateEncounterXP(Encounter encounter)
+    {
+        if (encounter.Creatures.Count == 0)
+            return -1;
+
+        var monsterXPTotal = 0;
+        foreach (var creature in encounter.Creatures)
+        {
+            monsterXPTotal += MonsterXPFromCR(creature.LevelOrCR);
+        }
+        return monsterXPTotal * EncounterSizeMulitiplier(EffectiveMonsterCount(encounter));
 
     }
 
     public string DetermineDifficultyForParty(Encounter encounter, Party party)
     {
-        if (encounter.Creatures == null || encounter.Creatures.Count == 0)
-        {
-            return "N/A";
-        }
-        else
-        {
-            var partyXPThreshold = _partyXPService.FindPartyXPThreshold(party);
-            var monsterXPTotal = 0;
-            foreach (var creature in encounter.Creatures)
-            {
-                monsterXPTotal += MonsterXPFromCR(creature.LevelOrCR);
-            }
-            double adjustedMonsterXP = monsterXPTotal * EncounterSizeMulitiplier(EffectiveMonsterCount(encounter));
-
-            if (adjustedMonsterXP < partyXPThreshold[0])
-                return "Trivial";
-
-            if (adjustedMonsterXP < partyXPThreshold[1])
-                return "Easy";
-
-            if (adjustedMonsterXP < partyXPThreshold[2])
-                return "Medium";
-
-            if (adjustedMonsterXP < partyXPThreshold[3])
-                return "Hard";
-
-            if (adjustedMonsterXP < partyXPThreshold[3] * 1.5)
-                return "Deadly";
-
-            return "Very Deadly";
-        }
+        return DetermineDifficultyForParty(encounter, GetPartyXPThreshold(party));
     }
 
     private int MonsterXPFromCR(double CR)
@@ -178,12 +208,30 @@ public class EncounterService : IEncounterService
 
     public ActiveEncounterCreature CreateActiveEncounterCreature(Creature creature, bool maxHPRoll)
     {
-        ActiveEncounterCreature result = new ActiveEncounterCreature(creature);
-        if (maxHPRoll)
+        ActiveEncounterCreature result = new ActiveEncounterCreature(creature);// new ActiveEncounterCreature(creature);
+        _creatureService.CopyTo(result, creature);
+        if (maxHPRoll && creature.DMControl)
         {
             result.EncounterMaxHP = _diceService.Roll(creature.MaxHPString);
             result.CurrentHP = result.EncounterMaxHP;
         }
+        else
+        {
+            result.EncounterMaxHP = result.MaxHP;
+            result.CurrentHP = result.MaxHP; //todo: long term we need to improve this for parties specifically - should be able to track friendly NPC health between
+            //encounters. Gets messy with rests, but that's a future issue
+        }
+
+        foreach (var ability in creature.Abilities)
+        {
+            if(ability.SpellLevel != Models.Enums.SpellLevel.NotASpell)
+            {
+                result.ActiveAbilities.Add(_abilityService.CreateActiveAbility(result, ability, _creatureService.GetAttributeTypeValue(result, creature.SpellStat)));
+            }
+            else
+                result.ActiveAbilities.Add(_abilityService.CreateActiveAbility(result, ability, _creatureService.GetAttributeTypeValue(result, ability.ResolutionStat)));
+        }
+
         return result;
     }
 }

@@ -58,7 +58,9 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
         {
 
             var active = await _activeEncounterService.CreateActiveEncounterAsync(parameter.Encounter, parameter.Party);
-            _navigationService.NavigateTo(typeof(RunEncounterViewModel).FullName!, active);
+            //_navigationService.NavigateTo(typeof(RunEncounterViewModel).FullName!, active);
+            //_navigationService.NavigateTo(typeof(ActiveEncounterViewModel).FullName!, active);
+            _navigationService.NavigateTo(typeof(EncounterTabViewModel).FullName!, active);
         }
         //}
     }

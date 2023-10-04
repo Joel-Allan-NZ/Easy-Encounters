@@ -148,5 +148,6 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
         Creatures.Clear();
         foreach (var creature in await _dataService.GetAllCreaturesAsync())
             Creatures.Add(new CreatureViewModel(creature));
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,10 +19,15 @@ public class DataService : IDataService
     private static readonly string jsonFile = @"TextJson.txt";
     private static readonly string logFile = @"LogTextJson.txt";
 
-    public DataService(IFileService fileService, IEncounterService encounterService)
+    private readonly IAbilityService _abilityService;
+    private readonly ICreatureService _creatureService;
+
+    public DataService(IFileService fileService, IEncounterService encounterService, IAbilityService abiltyService, ICreatureService creatureService)
     {
         _encounterService = encounterService;
         _fileService = fileService;
+        _creatureService = creatureService;
+        _abilityService = abiltyService;
         _cached = _fileService.Read<Data>(folderPath, jsonFile);
     }
 
@@ -63,6 +69,12 @@ public class DataService : IDataService
 
         return _cached?.Parties;
     }
+    public async Task<IEnumerable<Ability>> GetAllSpellsAsync()
+    {
+        await RefreshCacheAsync();
+
+        return _cached?.Abilities.Where(x => x.SpellLevel != Models.Enums.SpellLevel.NotASpell);
+    }
     public async Task WriteLog(IEnumerable<string> log)
     {
         await _fileService.AppendAsync(folderPath, logFile, log);
@@ -82,25 +94,35 @@ public class DataService : IDataService
     public async Task<IEnumerable<EncounterData>> GetAllEncounterDataAsync(Party party)
     {
         List<EncounterData> data = new();
+        var partyXPThreshold = _encounterService.GetPartyXPThreshold(party);
+
         await RefreshCacheAsync();
         foreach(var encounter in await GetAllEncountersAsync())
         {
-            data.Add(new EncounterData(encounter, party, _encounterService));
+            data.Add(new EncounterData(encounter, party, _encounterService.DetermineDifficultyForParty(encounter, partyXPThreshold)));
         }
         return data;
 
-        //todo: fix this mess. 
     }
 
     private void SaveAddCreature(Creature creature)
     {
-        if (_cached.Creatures.Contains(creature))
+        var cachedCreature = _cached.Creatures.FirstOrDefault(x => x.Equals(creature));
+        if(cachedCreature != null)
         {
-            var cachedCreature = _cached.Creatures.First(x => x.Equals(creature));
-            cachedCreature.CopyFrom(creature);
+            _creatureService.CopyTo(cachedCreature, creature);
         }
         else
             _cached.Creatures.Add(creature);
+
+        //if (_cached.Creatures.Contains(creature))
+        //{
+        //    var cachedCreature = _cached.Creatures.First(x => x.Equals(creature));
+        //    _creatureService.CopyTo(cachedCreature, creature);
+        //    //cachedCreature.CopyFrom(creature);
+        //}
+        //else
+        //    _cached.Creatures.Add(creature);
     }
 
     private void SaveAddEncounter(Encounter encounter)
@@ -144,6 +166,18 @@ public class DataService : IDataService
         _cached.ActiveEncounter = activeEncounter;
     }
 
+    private void SaveAddAbility(Ability ability)
+    {
+        if (_cached.Abilities.Contains(ability))
+        {
+            var cachedAbility = _cached.Abilities.First(x => x.Equals(ability));
+
+            _abilityService.CopyTo(cachedAbility, ability);
+        }
+        else if (ability.SpellLevel != Models.Enums.SpellLevel.NotASpell)
+            _cached.Abilities.Add(ability);
+    }
+
     private void SaveAddCampaign(Campaign campaign)
     {
         if (_cached.Campaigns.Contains(campaign))
@@ -155,7 +189,7 @@ public class DataService : IDataService
         else
             _cached.Campaigns.Add(campaign);
     }
-
+    //TODO: investigate if this is entirely pointless - is there any place where we're dealing with a cloned entity rather than a straight reference?
     //todo: make some kind of persistable base type etc
     public async Task SaveAddAsync<T>(T entity) where T:IPersistable
     {
@@ -182,6 +216,10 @@ public class DataService : IDataService
         {
             SaveAddCampaign(entity as Campaign);
         }
+        else if (entity is Ability)
+        {
+            SaveAddAbility(entity as Ability);
+        }
         else
         {
             return;
@@ -204,14 +242,16 @@ public class DataService : IDataService
 
         if (entity is ActiveEncounter)
             DeleteActiveEncounter(entity as ActiveEncounter);
-        else if(entity is Encounter)
+        else if (entity is Encounter)
             DeleteEncounter(entity as Encounter);
-        else if(entity is Party)
+        else if (entity is Party)
             DeleteParty(entity as Party);
-        else if(entity is Campaign)
+        else if (entity is Campaign)
             DeleteCampaign(entity as Campaign);
-        else if(entity is Creature)
+        else if (entity is Creature)
             DeleteCreature(entity as Creature);
+        else if (entity is Ability)
+            DeleteSpell(entity as Ability);
 
         await _fileService.SaveAsync(folderPath, jsonFile, _cached);
     }
@@ -230,6 +270,8 @@ public class DataService : IDataService
             result = (T)CopyCampaign(entity as Campaign);
         else if (entity is Party)
             result = (T)CopyParty(entity as Party);
+        else if (entity is Ability)
+            result = (T)CopySpell(entity as Ability);
         else
             throw new ArgumentException("Type of T must be an IPersistable"); //should never happen as ActiveEncounters are Encounters too.
 
@@ -246,9 +288,9 @@ public class DataService : IDataService
 
     private IPersistable CopyCreature(Creature creature)
     {
-        var res = new Creature(creature.Name, creature.InitiativeBonus, creature.InitiativeAdvantage,
-            creature.DMControl, creature.DexBonus, creature.Resistance, creature.Immunity, creature.Vulnerability, creature.Description, creature.LevelOrCR,
-            creature.Hyperlink, creature.MaxHP, creature.MaxHPString);
+        //todo: all copy functions with a proper factory set up
+        var res = new Creature();
+        _creatureService.CopyTo(res, creature);
         _cached.Creatures.Add(res);
         return res;
     }
@@ -264,6 +306,13 @@ public class DataService : IDataService
     {
         var res = new Party(party.Campaign, party.Name, new List<Creature>(party.Members));
         _cached.Parties.Add(res);
+        return res;
+    }
+
+    private IPersistable CopySpell(Ability ability)
+    {
+        var res = new Ability();
+        _abilityService.CopyTo(res, ability);
         return res;
     }
 
@@ -290,6 +339,11 @@ public class DataService : IDataService
         //long term solution is to prompt user with a "do you want to delete this campaign being used in x locations" dialog, but out of scope for now.
         _cached.Campaigns.Remove(campaign);
 
+    }
+
+    private void DeleteSpell(Ability ability)
+    {
+        _cached.Abilities.Remove(ability);
     }
 
 

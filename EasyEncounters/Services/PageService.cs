@@ -30,6 +30,15 @@ public class PageService : IPageService
         Configure<CampaignCRUDViewModel, CampaignCRUDPage>();
         Configure<EncounterCRUDViewModel, EncounterCRUDPage>();
         Configure<EncounterEditViewModel, EncounterEditPage>();
+        Configure<TargetedDamageViewModel, TargetedDamagePage>();
+        Configure<ActiveEncounterViewModel, ActiveEncounterPage>();
+        Configure<EncounterTabViewModel, EncounterTabPage>();
+        Configure<AbilityCRUDViewModel, AbilityCRUDPage>();
+        Configure<AbilityEditViewModel, AbilityEditPage>();
+        //Configure<CreatureAbilityViewModel, CreatureAbilityPage>();
+        Configure<CreatureDisplayTabViewModel, CreatureDisplayTabPage>();
+        Configure<EncounterDamageTabViewModel, EncounterDamageTabPage>();
+
     }
 
     public Type GetPageType(string key)

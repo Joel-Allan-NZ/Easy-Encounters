@@ -17,6 +17,7 @@ public class NavigationService : INavigationService
     private object? _lastParameterUsed;
     private Frame? _frame;
 
+
     public event NavigatedEventHandler? Navigated;
 
     public Frame? Frame
@@ -81,7 +82,7 @@ public class NavigationService : INavigationService
         return false;
     }
 
-    public bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false)
+    public bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false, bool ignoreNavigation = false)
     {
         var pageType = _pageService.GetPageType(pageKey);
 
@@ -92,6 +93,8 @@ public class NavigationService : INavigationService
             var navigated = _frame.Navigate(pageType, parameter);
             if (navigated)
             {
+                if(ignoreNavigation)
+                    _frame.BackStack.RemoveAt(_frame.BackStack.Count - 1);
                 _lastParameterUsed = parameter;
                 if (vmBeforeNavigation is INavigationAware navigationAware)
                 {

@@ -16,6 +16,8 @@ public interface IDataService
 
     Task<IEnumerable<Encounter>> GetAllEncountersAsync();
 
+    Task<IEnumerable<Ability>> GetAllSpellsAsync();
+
     Task<bool> ActiveEncounterExistsAsync();
 
     Task<ActiveEncounter> GetActiveEncounterAsync();

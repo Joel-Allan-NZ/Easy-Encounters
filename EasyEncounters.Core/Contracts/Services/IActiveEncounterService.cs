@@ -9,15 +9,29 @@ using EasyEncounters.Core.Models.Enums;
 namespace EasyEncounters.Core.Contracts.Services;
 public interface IActiveEncounterService
 {
-    void DealDamage(ActiveEncounter activeEncounter, ActiveEncounterCreature sourceCreature, ActiveEncounterCreature targetCreature, DamageType damageType, int damageValue);
+    /// <summary>
+    /// Whether or not creatures should have their Max HP rolled rather than using the standard value.
+    /// </summary>
+    public bool RollHP
+    {
+        get; set;
+    }
 
-    void DealDamage(ActiveEncounter activeEncounter, DamageInstance damageInstance);
+    string DealDamage(ActiveEncounter activeEncounter, ActiveEncounterCreature sourceCreature, ActiveEncounterCreature targetCreature, DamageType damageType, int damageValue);
+
+    string DealDamage(ActiveEncounter activeEncounter, DamageInstance damageInstance);
 
     DamageVolume GetDamageVolumeSuggestion(ActiveEncounterCreature target, DamageType damageType);
 
+
     Task EndEncounterAsync(ActiveEncounter activeEncounter);
 
-    Task StartEncounterAsync(ActiveEncounter activeEncounter);
+    /// <summary>
+    /// Updates the initiative order, automatically rolling initiative for any DM controlled creatures without a current initiative roll.
+    /// </summary>
+    /// <param name="activeEncounter"></param>
+    /// <returns>The ActiveEncounterCreatures in the ActiveEncounter, returned in initiative order</returns>
+    Task<IEnumerable<ActiveEncounterCreature>> UpdateInitiativeOrder(ActiveEncounter activeEncounter);
 
     Task EndCurrentTurnAsync(ActiveEncounter activeEncounter);
 

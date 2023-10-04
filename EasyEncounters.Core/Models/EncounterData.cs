@@ -23,10 +23,10 @@ public class EncounterData
         get; set;
     }
 
-    public EncounterData(Encounter encounter, Party party, IEncounterService encounterService)
+    public EncounterData(Encounter encounter, Party party, string difficultyDescription)
     {
         Party = party;
         Encounter = encounter;
-        DifficultyDescription = encounterService.DetermineDifficultyForParty(encounter, party);
+        DifficultyDescription = difficultyDescription;//encounterService.DetermineDifficultyForParty(encounter, party);
     }
 }

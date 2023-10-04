@@ -1,7 +1,9 @@
-﻿using EasyEncounters.Contracts.Services;
+﻿using System.Reflection;
+using EasyEncounters.Contracts.Services;
 using EasyEncounters.ViewModels;
 
 using Microsoft.UI.Xaml;
+using Microsoft.Windows.AppLifecycle;
 
 namespace EasyEncounters.Activation;
 
@@ -22,8 +24,45 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
 
     protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
     {
-        _navigationService.NavigateTo(typeof(MainViewModel).FullName!, args.Arguments);
+        if (RequireRedirect())
+        {
 
-        await Task.CompletedTask;
+            _navigationService.NavigateTo(typeof(MainViewModel).FullName!, args.Arguments);
+
+            await Task.CompletedTask;
+        }
     }
+
+    private bool RequireRedirect()
+    {
+        AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
+        bool isRedirect = false;
+        //get version info to use as appinstance registery key
+        Version version = Assembly.GetExecutingAssembly().GetName().Version!;
+        //Discover if already running
+        AppInstance keyInstance = AppInstance.FindOrRegisterForKey($"EasyEncounters{version.Major}.{version.Minor}.{version.Build}.{version.Revision}");
+
+        if (keyInstance.IsCurrent)
+        {
+            //TODO: create a reactivation event to handle being reactivated by a redirect.
+            keyInstance.Activated += OnActivated;
+        }
+        else
+        {
+            isRedirect = true;
+
+            keyInstance.RedirectActivationToAsync(args);
+
+            App.Current.Exit();
+        }
+
+
+        return isRedirect;
+    }
+
+    private void OnActivated(object? sender, AppActivationArguments e)
+    {
+        App.MainWindow.BringToFront();
+    }
+
 }

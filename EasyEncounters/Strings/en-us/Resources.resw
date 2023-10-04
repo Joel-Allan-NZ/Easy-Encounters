@@ -199,18 +199,333 @@
     <value>Run a Campaign Session</value>
   </data>
   <data name="Shell_PartySelect.Content" xml:space="preserve">
-    <value>Select the party to run a campaign session for</value>
+    <value>Select a Party to run the session for</value>
   </data>
   <data name="Shell_CreatureCRUD.Content" xml:space="preserve">
-    <value>Create, Edit, or Delete Creatures</value>
+    <value>Manage Creatures</value>
   </data>
   <data name="Shell_CampaignCRUD.Content" xml:space="preserve">
-    <value>Create, Edit, or Delete Campaigns</value>
+    <value>Manage Campaigns</value>
   </data>
   <data name="Shell_EncounterCRUD.Content" xml:space="preserve">
-    <value>Create, Edit, or Delete Encounters</value>
+    <value>Manage Encounters</value>
   </data>
   <data name="Shell_PartyCRUD.Content" xml:space="preserve">
-    <value>Create, Edit, or Delete Parties</value>
+    <value>Manage Parties</value>
+  </data>
+  <data name="Settings_MaxHPPersonalization.Text" xml:space="preserve">
+    <value>Control whether creatures should roll for HP</value>
+  </data>
+  <data name="ActionRangeType_Feet" xml:space="preserve">
+    <value>Feet</value>
+  </data>
+  <data name="ActionRangeType_Mile" xml:space="preserve">
+    <value>Miles</value>
+  </data>
+  <data name="ActionRangeType_Self" xml:space="preserve">
+    <value>Self</value>
+  </data>
+  <data name="ActionRangeType_Sight" xml:space="preserve">
+    <value>Sight</value>
+  </data>
+  <data name="ActionRangeType_Touch" xml:space="preserve">
+    <value>Touch</value>
+  </data>
+  <data name="ActionRangeType_Unlimited" xml:space="preserve">
+    <value>Unlimited</value>
+  </data>
+  <data name="ActionSpeed_Action" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="ActionSpeed_BonusAction" xml:space="preserve">
+    <value>Bonus Action</value>
+  </data>
+  <data name="ActionSpeed_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ActionSpeed_Reaction" xml:space="preserve">
+    <value>Reaction</value>
+  </data>
+  <data name="Condition_All" xml:space="preserve">
+    <value>All Conditions</value>
+  </data>
+  <data name="Condition_Blind" xml:space="preserve">
+    <value>Blinded</value>
+  </data>
+  <data name="Condition_Charmed" xml:space="preserve">
+    <value>Charmed</value>
+  </data>
+  <data name="Condition_Deafened" xml:space="preserve">
+    <value>Deafened</value>
+  </data>
+  <data name="Condition_Exhausted" xml:space="preserve">
+    <value>Exhaustion</value>
+  </data>
+  <data name="Condition_Exhaustion2" xml:space="preserve">
+    <value>Exhaustion (Level 2)</value>
+  </data>
+  <data name="Condition_Exhaustion3" xml:space="preserve">
+    <value>Exhaustion (Level 3)</value>
+  </data>
+  <data name="Condition_Exhaustion4" xml:space="preserve">
+    <value>Exhaustion (Level 4)</value>
+  </data>
+  <data name="Condition_Exhaustion5" xml:space="preserve">
+    <value>Exhaustion (Level 5)</value>
+  </data>
+  <data name="Condition_Exhaustion6" xml:space="preserve">
+    <value>Exhaustion (Level 6)</value>
+  </data>
+  <data name="Condition_Frightened" xml:space="preserve">
+    <value>Frightened</value>
+  </data>
+  <data name="Condition_Grappled" xml:space="preserve">
+    <value>Grappled</value>
+  </data>
+  <data name="Condition_Invisible" xml:space="preserve">
+    <value>Invisible</value>
+  </data>
+  <data name="Condition_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Condition_Paralyzed" xml:space="preserve">
+    <value>Paralyzed</value>
+  </data>
+  <data name="Condition_Petrified" xml:space="preserve">
+    <value>Petrified</value>
+  </data>
+  <data name="Condition_Poisoned" xml:space="preserve">
+    <value>Poisoned</value>
+  </data>
+  <data name="Condition_Prone" xml:space="preserve">
+    <value>Prone</value>
+  </data>
+  <data name="Condition_Restrained" xml:space="preserve">
+    <value>Restrained</value>
+  </data>
+  <data name="Condition_Stunned" xml:space="preserve">
+    <value>Stunned</value>
+  </data>
+  <data name="Condition_Unconscious" xml:space="preserve">
+    <value>Unconscious</value>
+  </data>
+  <data name="CreatureAttributeType_Charisma" xml:space="preserve">
+    <value>Charisma</value>
+  </data>
+  <data name="CreatureAttributeType_Constitution" xml:space="preserve">
+    <value>Constitution</value>
+  </data>
+  <data name="CreatureAttributeType_Dexterity" xml:space="preserve">
+    <value>Dexterity</value>
+  </data>
+  <data name="CreatureAttributeType_Intelligence" xml:space="preserve">
+    <value>Intelligence</value>
+  </data>
+  <data name="CreatureAttributeType_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="CreatureAttributeType_Strength" xml:space="preserve">
+    <value>Strength</value>
+  </data>
+  <data name="CreatureAttributeType_Wisdom" xml:space="preserve">
+    <value>Wisdom</value>
+  </data>
+  <data name="DamageType_Acid" xml:space="preserve">
+    <value>Acid</value>
+  </data>
+  <data name="DamageType_Bludgeoning" xml:space="preserve">
+    <value>Bludgeoning</value>
+  </data>
+  <data name="DamageType_Cold" xml:space="preserve">
+    <value>Cold</value>
+  </data>
+  <data name="DamageType_Fire" xml:space="preserve">
+    <value>Fire</value>
+  </data>
+  <data name="DamageType_Force" xml:space="preserve">
+    <value>Force</value>
+  </data>
+  <data name="DamageType_Healing" xml:space="preserve">
+    <value>Healing</value>
+  </data>
+  <data name="DamageType_Lightning" xml:space="preserve">
+    <value>Lightning</value>
+  </data>
+  <data name="DamageType_Necrotic" xml:space="preserve">
+    <value>Necrotic</value>
+  </data>
+  <data name="DamageType_None" xml:space="preserve">
+    <value>No Damage</value>
+  </data>
+  <data name="DamageType_NonMagicalPhysical" xml:space="preserve">
+    <value>Bludgeoning, Piercing, or Slashing from Nonmagical attacks</value>
+  </data>
+  <data name="DamageType_NonSilveredPhysical" xml:space="preserve">
+    <value>Bludgeoning, Piercing, or Slashing from Nonmagical attacks that aren't Silvered</value>
+  </data>
+  <data name="DamageType_Piercing" xml:space="preserve">
+    <value>Piercing</value>
+  </data>
+  <data name="DamageType_Poison" xml:space="preserve">
+    <value>Poison</value>
+  </data>
+  <data name="DamageType_Psychic" xml:space="preserve">
+    <value>Psychic</value>
+  </data>
+  <data name="DamageType_Radiant" xml:space="preserve">
+    <value>Radiant</value>
+  </data>
+  <data name="DamageType_Slashing" xml:space="preserve">
+    <value>Slashing</value>
+  </data>
+  <data name="DamageType_Thunder" xml:space="preserve">
+    <value>Thunder</value>
+  </data>
+  <data name="DamageType_Untyped" xml:space="preserve">
+    <value>Generic</value>
+  </data>
+  <data name="DamageVolume_Double" xml:space="preserve">
+    <value>Vulnerable</value>
+  </data>
+  <data name="DamageVolume_Half" xml:space="preserve">
+    <value>Resist or Save.</value>
+  </data>
+  <data name="DamageVolume_None" xml:space="preserve">
+    <value>Immune</value>
+  </data>
+  <data name="DamageVolume_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="DamageVolume_Quarter" xml:space="preserve">
+    <value>Resist (and Save for half)</value>
+  </data>
+  <data name="MagicSchool_Abjuration" xml:space="preserve">
+    <value>Abjuration</value>
+  </data>
+  <data name="MagicSchool_Conjuration" xml:space="preserve">
+    <value>Conjuration</value>
+  </data>
+  <data name="MagicSchool_Divination" xml:space="preserve">
+    <value>Divination</value>
+  </data>
+  <data name="MagicSchool_Enchantment" xml:space="preserve">
+    <value>Enchantment</value>
+  </data>
+  <data name="MagicSchool_Evocation" xml:space="preserve">
+    <value>Evocation</value>
+  </data>
+  <data name="MagicSchool_Illusion" xml:space="preserve">
+    <value>Illusion</value>
+  </data>
+  <data name="MagicSchool_Necromancy" xml:space="preserve">
+    <value>Necromancy</value>
+  </data>
+  <data name="MagicSchool_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="MagicSchool_Transmutation" xml:space="preserve">
+    <value>Transmutation</value>
+  </data>
+  <data name="ResolutionType_Attack" xml:space="preserve">
+    <value>Attack</value>
+  </data>
+  <data name="ResolutionType_SavingThrow" xml:space="preserve">
+    <value>Saving Throw</value>
+  </data>
+  <data name="ResolutionType_Undefined" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="ResolutionType_WillingTarget" xml:space="preserve">
+    <value>Willing Target/s</value>
+  </data>
+  <data name="SpellCastComponent_Material" xml:space="preserve">
+    <value>Material</value>
+  </data>
+  <data name="SpellCastComponent_None" xml:space="preserve">
+    <value>No Casting Components</value>
+  </data>
+  <data name="SpellCastComponent_Somatic" xml:space="preserve">
+    <value>Somatic</value>
+  </data>
+  <data name="SpellCastComponent_Verbal" xml:space="preserve">
+    <value>Verbal</value>
+  </data>
+  <data name="SpellLevel_Cantrip" xml:space="preserve">
+    <value>Cantrip</value>
+  </data>
+  <data name="SpellLevel_LevelEight" xml:space="preserve">
+    <value>8th Level</value>
+  </data>
+  <data name="SpellLevel_LevelFive" xml:space="preserve">
+    <value>5th Level</value>
+  </data>
+  <data name="SpellLevel_LevelFour" xml:space="preserve">
+    <value>4th Level</value>
+  </data>
+  <data name="SpellLevel_LevelNine" xml:space="preserve">
+    <value>9th Level</value>
+  </data>
+  <data name="SpellLevel_LevelOne" xml:space="preserve">
+    <value>1st Level</value>
+  </data>
+  <data name="SpellLevel_LevelSeven" xml:space="preserve">
+    <value>7th Level</value>
+  </data>
+  <data name="SpellLevel_LevelSix" xml:space="preserve">
+    <value>6th Level</value>
+  </data>
+  <data name="SpellLevel_LevelThree" xml:space="preserve">
+    <value>3rd Level</value>
+  </data>
+  <data name="SpellLevel_LevelTwo" xml:space="preserve">
+    <value>2nd Level</value>
+  </data>
+  <data name="SpellLevel_NotASpell" xml:space="preserve">
+    <value>Not A Spell</value>
+  </data>
+  <data name="TargetAreaType_Cone" xml:space="preserve">
+    <value>Cone</value>
+  </data>
+  <data name="TargetAreaType_Creatures" xml:space="preserve">
+    <value>Target Creature</value>
+  </data>
+  <data name="TargetAreaType_Cube" xml:space="preserve">
+    <value>Cube</value>
+  </data>
+  <data name="TargetAreaType_Line" xml:space="preserve">
+    <value>Line</value>
+  </data>
+  <data name="TargetAreaType_None" xml:space="preserve">
+    <value>No targeting type</value>
+  </data>
+  <data name="TargetAreaType_Sphere" xml:space="preserve">
+    <value>Sphere</value>
+  </data>
+  <data name="TimeDuration_Days" xml:space="preserve">
+    <value>Days</value>
+  </data>
+  <data name="TimeDuration_Hours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="TimeDuration_Instantaneous" xml:space="preserve">
+    <value>Instantaneous</value>
+  </data>
+  <data name="TimeDuration_Minutes" xml:space="preserve">
+    <value>Minutes</value>
+  </data>
+  <data name="TimeDuration_Permanent" xml:space="preserve">
+    <value>Permanent</value>
+  </data>
+  <data name="TimeDuration_Rounds" xml:space="preserve">
+    <value>Rounds</value>
+  </data>
+  <data name="TimeDuration_Years" xml:space="preserve">
+    <value>Years</value>
+  </data>
+  <data name="ActionSpeed_Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="ResolutionType_SpellAttack" xml:space="preserve">
+    <value>Spell Attack</value>
   </data>
 </root>

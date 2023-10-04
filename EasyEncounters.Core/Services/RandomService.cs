@@ -11,7 +11,7 @@ public class RandomService : IRandomService
     private readonly Random _random;
     public int RandomInteger(int minValue, int maxValue)
     {
-        return _random.Next(_random.Next(minValue, maxValue+1));
+        return _random.Next(minValue, maxValue+1);
     }
 
     public RandomService()

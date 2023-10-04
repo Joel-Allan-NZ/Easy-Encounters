@@ -32,6 +32,11 @@ internal class Data
         get; set;
     }
 
+    public List<Ability> Abilities
+    {
+        get; set;
+    }
+
     public Dictionary<Creature, List<int>> DamageInstancesDone
     {
         get; set;
@@ -45,6 +50,7 @@ internal class Data
         Creatures = new List<Creature>();
         Encounters = new List<Encounter>();
         Campaigns = new List<Campaign>();
+        Abilities = new List<Ability>();
         DamageInstancesDone = new Dictionary<Creature, List<int>>();
     }
 }

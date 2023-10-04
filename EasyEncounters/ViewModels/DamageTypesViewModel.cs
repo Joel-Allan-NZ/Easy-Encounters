@@ -10,6 +10,9 @@ using EasyEncounters.Core.Models.Enums;
 namespace EasyEncounters.ViewModels;
 public partial class DamageTypesViewModel: ObservableRecipient
 {
+    [ObservableProperty]
+    private string _enumString;
+
     public DamageType DamageTypes
     {
         get; set;
@@ -109,6 +112,7 @@ public partial class DamageTypesViewModel: ObservableRecipient
     public DamageTypesViewModel(DamageType damageTypes)
     {
         DamageTypes = damageTypes;
+        EnumString = DamageTypes.ToString();
     }
 
     private void HandleFlag(bool value, [CallerMemberName] string name = null)
@@ -121,6 +125,7 @@ public partial class DamageTypesViewModel: ObservableRecipient
             else
                 AddFlag(name);
         }
+        EnumString = DamageTypes.ToString();
     }
     private bool Flagged([CallerMemberName] string name = null)
     {

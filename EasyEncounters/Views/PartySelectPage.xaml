@@ -9,6 +9,8 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     mc:Ignorable="d"
+    xmlns:behaviors="using:EasyEncounters.Behaviors"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>

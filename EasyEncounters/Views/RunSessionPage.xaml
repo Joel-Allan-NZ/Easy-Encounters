@@ -9,6 +9,8 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls" 
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:behaviors="using:EasyEncounters.Behaviors"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 

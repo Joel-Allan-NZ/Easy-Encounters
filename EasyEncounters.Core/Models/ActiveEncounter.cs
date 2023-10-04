@@ -88,4 +88,19 @@ public class ActiveEncounter : Encounter
         }
     }
 
+    public ActiveEncounter(Encounter encounter, IEnumerable<ActiveEncounterCreature> creatures)
+    {
+        this.ActiveCreatures = new List<ActiveEncounterCreature>();
+        this.Name = encounter.Name;
+        this.CreatureTurns = new Queue<ActiveEncounterCreature>();
+        Log = new List<string>();
+
+        Dictionary<string, int> nameCollisions = new();
+
+        foreach(var creature in creatures)
+        {
+            AddCreature(creature, nameCollisions);
+        }
+    }
+
 }

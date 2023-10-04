@@ -5,8 +5,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using EasyEncounters.Contracts.Services;
+using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Helpers;
-
 using Microsoft.UI.Xaml;
 
 using Windows.ApplicationModel;
@@ -16,6 +16,7 @@ namespace EasyEncounters.ViewModels;
 public partial class SettingsViewModel : ObservableRecipient
 {
     private readonly IThemeSelectorService _themeSelectorService;
+    private readonly IModelOptionsService _modelOptionsService;
 
     [ObservableProperty]
     private ElementTheme _elementTheme;
@@ -23,16 +24,41 @@ public partial class SettingsViewModel : ObservableRecipient
     [ObservableProperty]
     private string _versionDescription;
 
+    [ObservableProperty]
+    private bool _rollMaxHP;
+
+    async partial void OnRollMaxHPChanged(bool value)
+    {
+        await _modelOptionsService.SaveActiveEncounterOptionAsync(value);
+    }
+
+    //public ICommand SwitchRollMaxCommand
+    //{
+    //    get;
+    //}
+
     public ICommand SwitchThemeCommand
     {
         get;
     }
 
-    public SettingsViewModel(IThemeSelectorService themeSelectorService)
+    public SettingsViewModel(IThemeSelectorService themeSelectorService, IModelOptionsService modelOptionsService)
     {
         _themeSelectorService = themeSelectorService;
         _elementTheme = _themeSelectorService.Theme;
-        _versionDescription = GetVersionDescription();
+        _versionDescription = GetVersionDescription();      
+        _modelOptionsService = modelOptionsService;
+        _rollMaxHP = _modelOptionsService.RollHP;
+
+        //SwitchRollMaxCommand = new RelayCommand<bool>(
+        //    async (param) =>
+        //    {
+        //        if(RollMaxHP != param)
+        //        {
+        //            RollMaxHP = param;
+        //            await _modelOptionsService.SaveActiveEncounterOptionAsync(param);
+        //        }
+        //    });
 
         SwitchThemeCommand = new RelayCommand<ElementTheme>(
             async (param) =>

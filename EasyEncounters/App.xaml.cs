@@ -8,6 +8,8 @@ using EasyEncounters.Services;
 using EasyEncounters.ViewModels;
 using EasyEncounters.Views;
 
+
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
@@ -65,6 +67,12 @@ public partial class App : Application
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<IModelOptionsService, ModelOptionsService>();
+            services.AddSingleton<ITabService, TabService>();
+            services.AddSingleton<ICreatureService, CreatureService>();
+            services.AddSingleton<IAbilityService, AbilityService>();
+            services.AddSingleton<IConditionService, ConditionService>();
+
            
             
 
@@ -114,6 +122,22 @@ public partial class App : Application
             services.AddTransient<EncounterEditPage>();
             services.AddTransient<EncounterCRUDViewModel>();
             services.AddTransient<EncounterCRUDPage>();
+            services.AddTransient<TargetedDamagePage>();
+            services.AddTransient<TargetedDamageViewModel>();
+            services.AddTransient<ActiveEncounterViewModel>();
+            services.AddTransient<ActiveEncounterPage>();
+            services.AddTransient<EncounterTabPage>();
+            services.AddTransient<EncounterTabViewModel>();
+            //services.AddTransient<CreatureAbilityViewModel>();
+            //services.AddTransient<CreatureAbilityPage>();
+            services.AddTransient<AbilityEditPage>();
+            services.AddTransient<AbilityEditViewModel>();
+            services.AddTransient<AbilityCRUDPage>();
+            services.AddTransient<AbilityCRUDViewModel>();
+            services.AddTransient<EncounterDamageTabPage>();
+            services.AddTransient<EncounterDamageTabViewModel>();
+            services.AddTransient<CreatureDisplayTabPage>();
+            services.AddTransient<CreatureDisplayTabViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

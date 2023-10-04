@@ -50,6 +50,11 @@
                     </RadioButton>
                 </StackPanel>
             </StackPanel>
+            <StackPanel Margin="{StaticResource XSmallTopMargin}">
+                <TextBlock x:Uid="Settings_MaxHPPersonalization" />
+                <CheckBox Content="Roll HP for every creature?" IsChecked="{x:Bind ViewModel.RollMaxHP,  Mode=TwoWay}"
+                          />
+            </StackPanel>
 
             <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
 
