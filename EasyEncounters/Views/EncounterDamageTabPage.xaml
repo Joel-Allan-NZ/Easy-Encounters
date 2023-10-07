@@ -6,9 +6,15 @@
     xmlns:local="using:EasyEncounters.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core" xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:helpers="using:EasyEncounters.Helpers"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <helpers:EnumToStringConverter x:Key="EnumToStringConverter"/>
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -20,14 +26,76 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <!--Source Creature Info-->
-        <StackPanel Orientation="Horizontal"
+        <StackPanel Orientation="Vertical"
                     Grid.Row="0"
                     Grid.Column="0">
             <TextBlock Margin="2"
                        Text="{x:Bind ViewModel.SourceCreature.Creature.EncounterName, Mode=OneWay}"/>
+            <!--Source ability:-->
+            <Expander HorizontalAlignment="Stretch"
+                      Visibility="{x:Bind ViewModel.HasSelectedAbility, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <Expander.Header>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{x:Bind ViewModel.SelectedAbility.Name}"
+                                                   FontWeight="Medium"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.ActionSpeed, Converter={StaticResource EnumToStringConverter}}"
+                                                   FontSize="10"
+                                                   Margin="0,0,0,0"/>
+                            <TextBlock Text="Concentration"
+                                                       FontSize="10"
+                                                       Margin="10,0,0,0"
+                                                       Visibility="{x:Bind ViewModel.SelectedAbility.Concentration, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.SpellLevel, Converter={StaticResource EnumToStringConverter}}"
+                                                       Margin="10,0,0,0"
+                                                       FontSize="10"
+                                                       Visibility="{x:Bind ViewModel.SelectedAbility.IsSpell, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.Resolution, Converter={StaticResource EnumToStringConverter}}"
+                                                       Margin="10,0,0,0"
+                                                       FontSize="10"/>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.SaveType}"
+                                                                              Margin="5,0,0,0"
+                                       FontSize="10"/>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.ResolutionValue}"
+                                       Margin="5,0,0,0"
+                                       FontSize="10"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="2"
+                                       Text="{x:Bind ViewModel.SelectedAbility.SpellCastComponents}"
+                                                       FontStyle="Italic"
+                                                       FontSize="10"
+                                       Visibility="{x:Bind ViewModel.SelectedAbility.IsSpell, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.TargetDistance}"
+                                                       Visibility="{x:Bind ViewModel.SelectedAbility.NeedsRangeValue, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                       FontSize="10"
+                                                       Margin="2"/>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.TargetDistanceType, Converter={StaticResource EnumToStringConverter}}"
+                                                       FontSize="10"
+                                                       Margin="2"/>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.TargetSize}"
+                                                       FontSize="10"
+                                                       Margin="2"
+                                                       Visibility="{x:Bind ViewModel.SelectedAbility.NeedsArea, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.TargetAreaType}"
+                                                       FontSize="10"
+                                                       Margin="2"
+                                                       Visibility="{x:Bind ViewModel.SelectedAbility.NeedsArea, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Expander.Header>
+                <Expander.Content>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Margin="2"
+                                       Text="{x:Bind ViewModel.SelectedAbility.EffectDescription}"
+                                       TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Expander.Content>
+            </Expander>
             <!--todo: reaction etc info?-->
         </StackPanel>
-        <ListView Grid.Row="1"
+        <StackPanel Grid.Row="1">
+        <ListView 
                   x:Name="SelectableTargets"
                   Grid.Column="0"
                   ItemsSource="{x:Bind ViewModel.SelectableCreatures}"
@@ -56,6 +124,11 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+            <Button Grid.Column="1"
+                Grid.Row="0"
+                Command="{x:Bind ViewModel.DealDamageCommand}"
+                Content="Deal Damage"/>
+        </StackPanel>
         <!--Damage Type and Volume Selection-->
         <StackPanel Orientation="Vertical" Grid.Column="1">
             <NumberBox Text="{x:Bind ViewModel.Damage, Mode=TwoWay}"
@@ -203,7 +276,6 @@
                 </ListView.ItemTemplate>
             </ListView>
         </ScrollViewer>
-        <Button Command="{x:Bind ViewModel.DealDamageCommand}"
-                Content="Deal Damage"/>
+
     </Grid>
 </Page>

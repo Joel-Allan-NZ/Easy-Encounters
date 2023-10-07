@@ -367,9 +367,11 @@
                                    Value="{x:Bind ViewModel.CreatureVM.SpellSlots.NinthLevel, Mode=TwoWay}"/>
             </StackPanel>
             <Button Command="{x:Bind ViewModel.RequestDamageCommand}"
+                    Margin="5"
                     Content="Other Damage"/>
             <TextBlock Margin="2"
-                       Text="{x:Bind ViewModel.Creature.AttackDescription}"/>
+                       Text="{x:Bind ViewModel.Creature.AttackDescription}"
+                       TextWrapping="Wrap"/>
             <ScrollViewer VerticalScrollMode="Enabled"
                           MaxHeight="800">
                 <ListView Margin="2"

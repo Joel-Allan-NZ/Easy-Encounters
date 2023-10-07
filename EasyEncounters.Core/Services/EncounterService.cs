@@ -226,10 +226,10 @@ public class EncounterService : IEncounterService
         {
             if(ability.SpellLevel != Models.Enums.SpellLevel.NotASpell)
             {
-                result.ActiveAbilities.Add(_abilityService.CreateActiveAbility(result, ability, _creatureService.GetAttributeTypeValue(result, creature.SpellStat)));
+                result.ActiveAbilities.Add(_abilityService.CreateActiveAbility(result, ability, _creatureService.GetAttributeBonusValue(result, creature.SpellStat)));
             }
             else
-                result.ActiveAbilities.Add(_abilityService.CreateActiveAbility(result, ability, _creatureService.GetAttributeTypeValue(result, ability.ResolutionStat)));
+                result.ActiveAbilities.Add(_abilityService.CreateActiveAbility(result, ability, _creatureService.GetAttributeBonusValue(result, ability.ResolutionStat)));
         }
 
         return result;

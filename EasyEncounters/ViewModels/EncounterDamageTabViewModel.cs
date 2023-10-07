@@ -15,6 +15,7 @@ using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Messages;
 using EasyEncounters.Models;
 using Microsoft.AppCenter.Channel;
+using Newtonsoft.Json.Linq;
 using Windows.ApplicationModel.Contacts;
 using Windows.UI.Notifications;
 
@@ -29,6 +30,9 @@ public partial class EncounterDamageTabViewModel : ObservableRecipientTab //Obse
 
     [ObservableProperty]
     private int _damage;
+
+    [ObservableProperty]
+    private bool _hasSelectedAbility;
 
     public ObservableCollection<ActiveEncounterCreatureViewModel> SelectableCreatures
     {
@@ -100,29 +104,11 @@ public partial class EncounterDamageTabViewModel : ObservableRecipientTab //Obse
             if(data.Ability != null)
             {
                 SelectedAbility = data.Ability;
+                HasSelectedAbility = true;
                 SelectedDamageType = SelectedAbility.DamageType;
             }
-            //should be active encounter (for creature list), source creature, and ability (if any).
-            //var tup = (Tuple<ActiveEncounter, ActiveEncounterCreatureViewModel, IList<ActiveEncounterCreatureViewModel>, ObservableActiveAbility>)parameter;
-            //SelectableCreatures.Clear();
-            //Encounter = tup.Item1;
-            //SourceCreature = tup.Item2;
-            //SelectedAbility = tup.Item3;
-            //SelectedDamageType = SelectedAbility.DamageType;
-
-            //foreach (var creature in Encounter.CreatureTurns)
-            //    SelectableCreatures.Add(new ActiveEncounterCreatureViewModel(creature));
+            
         }
-        //else if(parameter != null && parameter is Tuple<ActiveEncounter, ActiveEncounterCreatureViewModel, IList<ActiveEncounterCreatureViewModel>>)
-        //{
-        //    var tup = (Tuple<ActiveEncounter, ActiveEncounterCreatureViewModel>)(parameter);
-        //    Encounter = tup.Item1;
-        //    SourceCreature = tup.Item2;
-        //    SelectableCreatures.Clear();
-        //    foreach (var creature in Encounter.CreatureTurns)
-        //        SelectableCreatures.Add(new ActiveEncounterCreatureViewModel(creature));
-        //}
-        //else if (parameter != null && parameter)
     }
 
     private void RemoveTarget(DamageCreatureViewModel target)
@@ -177,6 +163,10 @@ public partial class EncounterDamageTabViewModel : ObservableRecipientTab //Obse
         {
             Targets.Remove(existingTarget);
         }
+        foreach (var target in Targets)
+        {
+            target.SelectedDamageVolume = _activeEncounterService.GetDamageVolumeSuggestion(target.ActiveEncounterCreatureViewModel!.Creature, SelectedDamageType);
+        }
     }
 
     [RelayCommand]
@@ -185,7 +175,9 @@ public partial class EncounterDamageTabViewModel : ObservableRecipientTab //Obse
         var msg = new List<string>();
         foreach(var target in Targets)
         {
-            msg.Add(_activeEncounterService.DealDamage(Encounter, SourceCreature.Creature, target.ActiveEncounterCreatureViewModel.Creature, SelectedDamageType, Damage));
+            msg.Add(_activeEncounterService.DealDamage(Encounter, new DamageInstance(target.ActiveEncounterCreatureViewModel.Creature, SourceCreature.Creature, SelectedDamageType,
+                target.SelectedDamageVolume, Damage)));
+            //msg.Add(_activeEncounterService.DealDamage(Encounter, SourceCreature.Creature, target.ActiveEncounterCreatureViewModel.Creature, SelectedDamageType, Damage));
             target.ActiveEncounterCreatureViewModel.CurrentHP = target.ActiveEncounterCreatureViewModel.Creature.CurrentHP; //hax. TODO: better.
             
         }

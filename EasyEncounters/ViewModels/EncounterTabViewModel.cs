@@ -174,14 +174,21 @@ namespace EasyEncounters.ViewModels
                 else
                     openTab = _tabService.OpenTab(typeof(EncounterDamageTabViewModel).FullName!,
                         new EncounterDamageTabData(_activeEncounter, source, Creatures, null), $"Damage from {source.Creature.EncounterName}");
-                        //Tuple.Create(_activeEncounter, source), $"Damage from {source.Creature.EncounterName}");
+                //Tuple.Create(_activeEncounter, source), $"Damage from {source.Creature.EncounterName}");
 
                 Tabs.Add(openTab);
             }
             else
             {
-                ((EncounterDamageTabViewModel)openTab).SelectedAbility = abilityVM;
-                ((EncounterDamageTabViewModel)openTab).SelectedDamageType = abilityVM.DamageType;
+                if (abilityVM != null)
+                {
+                    ((EncounterDamageTabViewModel)openTab).SelectedAbility = abilityVM;
+                    ((EncounterDamageTabViewModel)openTab).HasSelectedAbility = true;
+                    ((EncounterDamageTabViewModel)openTab).SelectedDamageType = abilityVM.DamageType;
+                }
+                else
+                ((EncounterDamageTabViewModel)openTab).HasSelectedAbility = false;
+
             }
             SelectedTab = openTab;
 
