@@ -36,6 +36,12 @@ public partial class ActiveEncounterCreatureViewModel : ObservableRecipient //to
     [ObservableProperty]
     private ConditionTypesViewModel _conditions;
 
+    public int Initiative
+    {
+        get => Creature.Initiative;
+        set => SetProperty(Creature.Initiative, value, Creature, (m, v) => m.Initiative = v);
+    }
+
     public bool HasResists => this.Creature.Resistance > Core.Models.Enums.DamageType.None;
 
     public bool HasImmunities => this.Creature.Immunity > Core.Models.Enums.DamageType.None;
@@ -136,7 +142,9 @@ public partial class ActiveEncounterCreatureViewModel : ObservableRecipient //to
     /// <returns></returns>
     public bool IsWrapperFor(ActiveEncounterCreature creature)
     {
+        
         return (this.Creature.Equals(creature));
+        
     }
 
 

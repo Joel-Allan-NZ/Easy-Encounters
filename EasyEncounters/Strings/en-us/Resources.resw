@@ -528,4 +528,7 @@
   <data name="ResolutionType_SpellAttack" xml:space="preserve">
     <value>Spell Attack</value>
   </data>
+  <data name="Shell_SpellsCRUD.Content" xml:space="preserve">
+    <value>Manage Spells</value>
+  </data>
 </root>

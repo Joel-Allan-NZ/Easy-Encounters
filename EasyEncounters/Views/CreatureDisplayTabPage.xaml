@@ -14,6 +14,13 @@
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
         <helpers:EnumToStringConverter x:Key="EnumToStringConverter"/>
     </Page.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
     <StackPanel Orientation="Horizontal">
         <ScrollViewer VerticalScrollMode="Enabled"
                       MaxHeight="850">
@@ -33,7 +40,7 @@
                           Margin="2"
                           IsChecked="{x:Bind ViewModel.CreatureVM.Concentrating, Mode=TwoWay}"/>
             </StackPanel>
-                <Expander>
+                <Expander HorizontalAlignment="Stretch">
                     <Expander.Header>
                         <StackPanel>
                         <TextBlock Text="Active Conditions:"
@@ -372,8 +379,7 @@
             <TextBlock Margin="2"
                        Text="{x:Bind ViewModel.Creature.AttackDescription}"
                        TextWrapping="Wrap"/>
-            <ScrollViewer VerticalScrollMode="Enabled"
-                          MaxHeight="800">
+            <ScrollViewer VerticalScrollMode="Enabled">
                 <ListView Margin="2"
                          
                       ItemsSource="{x:Bind ViewModel.Abilities, Mode=OneWay}">
@@ -434,19 +440,6 @@
 
 
                                     <StackPanel Orientation="Vertical">
-                                        <!--<StackPanel.ContextFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Text="Use" Command="{Binding UseAbilityRequestedCommand}"/>
-                                    </MenuFlyout>
-                                </StackPanel.ContextFlyout>-->
-                                        <!--<TextBlock Text="{Binding Name}"
-                                       FontWeight="Medium"
-                                       FontStyle="Italic"
-                                       Margin="2"/>-->
-
-                                        <!--<TextBlock Margin="2"
-                                       Text="{Binding InfoString}"
-                                       TextWrapping="Wrap"/>-->
                                         <TextBlock Margin="2"
                                        Text="{Binding EffectDescription}"
                                        TextWrapping="Wrap"/>
@@ -460,4 +453,5 @@
             </ScrollViewer>
         </StackPanel>
     </StackPanel>
+    </Grid>
 </Page>

@@ -60,16 +60,20 @@ namespace EasyEncounters.ViewModels
                 {
                     if (creature.IsWrapperFor(orderedCreature))
                     {
-                        var ph = creature.Creature.Initiative;
-                        creature.Creature.Initiative = -5;
-                        creature.Creature.Initiative = ph; //todo: improve this hacky fix
+                        //todo: improve this hacky fix
+                        //creature.Initiative = orderedCreature.Initiative;
                         Creatures.Add(creature);
+                        var ph = creature.Initiative;
+                        creature.Initiative = 1;
+                        creature.Initiative = ph;
 
                         break;
                     }
                 }
             }
-
+            Creatures.First().Targeted = true;
+            ShowCreatureDisplayTab(Creatures.First());
+           
             await _dataService.SaveAddAsync(_activeEncounter);
         }
 
@@ -157,8 +161,15 @@ namespace EasyEncounters.ViewModels
                 {
                     openTab = _tabService.OpenTab(typeof(CreatureDisplayTabViewModel).FullName!,obj, obj.Creature.EncounterName);
                     Tabs.Add(openTab);
+                    //Tabs.Insert(0, openTab);
                 }
-                
+                //else
+                //{
+                //    Tabs.Move(Tabs.IndexOf(openTab), 0);
+                //}           
+                Tabs.Remove(openTab);
+                Tabs.Insert(0, openTab);
+                //Tabs.Move(Tabs.IndexOf(openTab), 0);
                 SelectedTab = openTab;
             }
         }
@@ -189,7 +200,8 @@ namespace EasyEncounters.ViewModels
                 else
                 ((EncounterDamageTabViewModel)openTab).HasSelectedAbility = false;
 
-            }
+            }           
+            Tabs.Move(Tabs.IndexOf(openTab), 0);
             SelectedTab = openTab;
 
 

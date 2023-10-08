@@ -43,7 +43,7 @@
                 TODO: Update item icons by updating FontIcon.Glyph properties.
                 https://docs.microsoft.com/windows/apps/design/style/segoe-fluent-icons-font#icon-list
                 -->
-                <NavigationViewItem x:Uid="Shell_Main" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.MainViewModel">
+                <!--<NavigationViewItem x:Uid="Shell_Main" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.MainViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe7c3;"/>
                     </NavigationViewItem.Icon>
@@ -52,8 +52,13 @@
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xe774;"/>
                     </NavigationViewItem.Icon>
+                </NavigationViewItem>-->
+                <NavigationViewItem x:Uid="Shell_CampaignCRUD" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.CampaignCRUDViewModel">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE774;"/>
+                    </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Uid="Shell_ListDetails" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.AbilityCRUDViewModel">
+                <NavigationViewItem x:Uid="Shell_SpellsCRUD" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.AbilityCRUDViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea37;"/>
                     </NavigationViewItem.Icon>
@@ -78,11 +83,7 @@
                         <FontIcon Glyph="&#xEE57;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem x:Uid="Shell_CampaignCRUD" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.CampaignCRUDViewModel">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE774;"/>
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
+
             </NavigationView.MenuItems>
             <NavigationView.HeaderTemplate>
                 <DataTemplate>

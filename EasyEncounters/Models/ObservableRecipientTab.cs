@@ -9,22 +9,31 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace EasyEncounters.Models
 {
-    public abstract class ObservableRecipientTab : ObservableRecipient, ITabAware
+    public abstract partial class ObservableRecipientTab : ObservableRecipient, ITabAware
     {
-        public Page? Content
-        {
-            get; set;
-        }
+        [ObservableProperty]
+        private Page? _content;
 
-        public string? TabName
-        {
-            get; set;
-        }
+        [ObservableProperty]
+        private string? _tabName;
+
+        [ObservableProperty]
+        private bool _isClosable;
+
+        //public Page? Content
+        //{
+        //    get; set;
+        //}
+
+        //public string? TabName
+        //{
+        //    get; set;
+        //}
         
-        public bool IsClosable
-        {
-            get; set;
-        }
+        //public bool IsClosable
+        //{
+        //    get; set;
+        //}
 
         public abstract void OnTabClosed();
         public abstract void OnTabOpened(object parameter);

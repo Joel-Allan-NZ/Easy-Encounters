@@ -21,7 +21,7 @@ namespace EasyEncounters.Services
             _pageService = pageService;
         }
 
-        public ObservableRecipientTab OpenTab(string tabKey, object parameter, string name = null) //todo: add closeable boolean, add logtab that isn't closeable.
+        public ObservableRecipientTab OpenTab(string tabKey, object parameter, string? name = null) //todo: add closeable boolean, add logtab that isn't closeable.
         {
             //var concreteType = tab.GetType();
 

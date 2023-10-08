@@ -14,12 +14,12 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Grid.RowDefinitions>
+        <!--<Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
             <RowDefinition Height="8*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <!--Upper Section-->
+        --><!--Upper Section--><!--
         <Grid Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -78,7 +78,7 @@
                        Grid.Row="2"
                        Grid.Column="4"/>
         </Grid>
-        <!--Lower Columns-->
+        --><!--Lower Columns--><!--
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -270,7 +270,7 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
-        <!--Footer-->
+        --><!--Footer--><!--
         <Button HorizontalAlignment="Left"
                 Grid.Row="2"
                 VerticalAlignment="Bottom"
@@ -282,7 +282,7 @@
                 VerticalAlignment="Bottom"
                 Command="{x:Bind ViewModel.DealDamageCommand}">
             <FontIcon Glyph="&#xF16C;"></FontIcon>
-        </Button>
+        </Button>-->
 
     </Grid>
 </Page>
