@@ -531,4 +531,25 @@
   <data name="Shell_SpellsCRUD.Content" xml:space="preserve">
     <value>Manage Spells</value>
   </data>
+  <data name="EncounterDifficulty_Deadly" xml:space="preserve">
+    <value>Deadly</value>
+  </data>
+  <data name="EncounterDifficulty_Easy" xml:space="preserve">
+    <value>Easy</value>
+  </data>
+  <data name="EncounterDifficulty_Hard" xml:space="preserve">
+    <value>Hard</value>
+  </data>
+  <data name="EncounterDifficulty_Medium" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="EncounterDifficulty_None" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="EncounterDifficulty_Trivial" xml:space="preserve">
+    <value>Trivial</value>
+  </data>
+  <data name="EncounterDifficulty_VeryDeadly" xml:space="preserve">
+    <value>Very Deadly</value>
+  </data>
 </root>

@@ -15,14 +15,14 @@ public class PageService : IPageService
     public PageService()
     {
         Configure<MainViewModel, MainPage>();
-        Configure<WebViewViewModel, WebViewPage>();
-        Configure<ListDetailsViewModel, ListDetailsPage>();
+        //Configure<WebViewViewModel, WebViewPage>();
+        //Configure<ListDetailsViewModel, ListDetailsPage>();
         Configure<SettingsViewModel, SettingsPage>();
         Configure<CampaignSplashViewModel, CampaignSplashPage>();
         Configure<PartySelectViewModel, PartySelectPage>();
         Configure<RunSessionViewModel, RunSessionPage>();
         Configure<RunEncounterViewModel, RunEncounterPage>();
-        Configure<DealDamageViewModel, DealDamagePage>();
+        //Configure<DealDamageViewModel, DealDamagePage>();
         Configure<CreatureCRUDViewModel, CreatureCRUDPage>();
         Configure<CreatureEditViewModel, CreatureEditPage>();
         Configure<PartyCRUDViewModel, PartyCRUDPage>();
@@ -30,8 +30,8 @@ public class PageService : IPageService
         Configure<CampaignCRUDViewModel, CampaignCRUDPage>();
         Configure<EncounterCRUDViewModel, EncounterCRUDPage>();
         Configure<EncounterEditViewModel, EncounterEditPage>();
-        Configure<TargetedDamageViewModel, TargetedDamagePage>();
-        Configure<ActiveEncounterViewModel, ActiveEncounterPage>();
+        //Configure<TargetedDamageViewModel, TargetedDamagePage>();
+        //Configure<ActiveEncounterViewModel, ActiveEncounterPage>();
         Configure<EncounterTabViewModel, EncounterTabPage>();
         Configure<AbilityCRUDViewModel, AbilityCRUDPage>();
         Configure<AbilityEditViewModel, AbilityEditPage>();

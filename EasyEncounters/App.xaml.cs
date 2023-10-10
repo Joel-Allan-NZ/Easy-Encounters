@@ -72,9 +72,11 @@ public partial class App : Application
             services.AddSingleton<ICreatureService, CreatureService>();
             services.AddSingleton<IAbilityService, AbilityService>();
             services.AddSingleton<IConditionService, ConditionService>();
+            services.AddSingleton<IValidationService, ValidationService>();
+            services.AddSingleton<IFilteringService, FilteringService>();
 
-           
-            
+
+
 
             // Core Services
             services.AddSingleton<ISampleDataService, SampleDataService>();
@@ -86,14 +88,15 @@ public partial class App : Application
             services.AddSingleton<IPartyXPService, PartyXPService>();
             services.AddSingleton<IDiceService, DiceService>();
             services.AddSingleton<ILogService, LogService>();
+            
 
             // Views and ViewModels
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<SettingsPage>();
-            services.AddTransient<ListDetailsViewModel>();
-            services.AddTransient<ListDetailsPage>();
-            services.AddTransient<WebViewViewModel>();
-            services.AddTransient<WebViewPage>();
+            //services.AddTransient<ListDetailsViewModel>();
+            //services.AddTransient<ListDetailsPage>();
+            //services.AddTransient<WebViewViewModel>();
+            //services.AddTransient<WebViewPage>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();
@@ -106,8 +109,8 @@ public partial class App : Application
             services.AddTransient<RunSessionPage>();
             services.AddTransient<RunEncounterViewModel>();
             services.AddTransient<RunEncounterPage>();
-            services.AddTransient<DealDamageViewModel>();
-            services.AddTransient<DealDamagePage>();
+            //services.AddTransient<DealDamageViewModel>();
+            //services.AddTransient<DealDamagePage>();
             services.AddTransient<CreatureEditViewModel>();
             services.AddTransient<CreatureEditPage>();
             services.AddTransient<CreatureCRUDViewModel>();
@@ -122,10 +125,10 @@ public partial class App : Application
             services.AddTransient<EncounterEditPage>();
             services.AddTransient<EncounterCRUDViewModel>();
             services.AddTransient<EncounterCRUDPage>();
-            services.AddTransient<TargetedDamagePage>();
-            services.AddTransient<TargetedDamageViewModel>();
-            services.AddTransient<ActiveEncounterViewModel>();
-            services.AddTransient<ActiveEncounterPage>();
+            //services.AddTransient<TargetedDamagePage>();
+            //services.AddTransient<TargetedDamageViewModel>();
+            //services.AddTransient<ActiveEncounterViewModel>();
+            //services.AddTransient<ActiveEncounterPage>();
             services.AddTransient<EncounterTabPage>();
             services.AddTransient<EncounterTabViewModel>();
             //services.AddTransient<CreatureAbilityViewModel>();

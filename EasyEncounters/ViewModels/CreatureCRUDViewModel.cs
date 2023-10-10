@@ -8,32 +8,48 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.UI;
+using CommunityToolkit.WinUI.UI.Controls;
 using EasyEncounters.Contracts.Services;
 using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Messages;
+using EasyEncounters.Services;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
+using Windows.ApplicationModel.Search.Core;
 using Windows.Services.Maps;
 
 namespace EasyEncounters.ViewModels;
 public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAware
 {
+    private readonly INavigationService _navigationService;
+    private readonly IDataService _dataService;
+    private readonly IFilteringService _filteringService;
+
+    private IList<CreatureViewModel> _creatureCache;
+
     public ObservableCollection<CreatureViewModel> Creatures
     {
         get; private set;
     } = new();
 
-    private readonly INavigationService _navigationService;
-    private readonly IDataService _dataService;
+    [ObservableProperty]
+    private double _minimumCRFilter;
 
-    private DispatcherQueueTimer _filterTimer;
+    [ObservableProperty]
+    private double _maximumCRFilter;
 
-    public CreatureCRUDViewModel(IDataService dataService, INavigationService navigationService)
+    [ObservableProperty]
+    private List<CreatureViewModel> searchSuggestions;
+
+    //private DispatcherQueueTimer _filterTimer;
+
+    public CreatureCRUDViewModel(IDataService dataService, INavigationService navigationService, IFilteringService filteringService)
     {
         _dataService = dataService;
         _navigationService = navigationService;
+        _filteringService = filteringService;
 
         WeakReferenceMessenger.Default.Register<CreatureCopyRequestMessage>(this, (r, m) =>
         {
@@ -48,8 +64,8 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
             EditCreature(m.Parameter);
         });
 
-        var dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
-        _filterTimer = dispatcherQueue.CreateTimer();
+        //var dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+        //_filterTimer = dispatcherQueue.CreateTimer();
 
 
 
@@ -69,7 +85,9 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
     private async void AddNewCreature()
     {
         var creature = new Creature();
-        Creatures.Add(new CreatureViewModel(creature));
+        var vm = new CreatureViewModel(creature);
+        Creatures.Add(vm);
+        _creatureCache.Add(vm);
         await _dataService.SaveAddAsync(creature);
         _navigationService.NavigateTo(typeof(CreatureEditViewModel).FullName!, creature);
     }
@@ -80,7 +98,9 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
         if (parameter != null && parameter is Creature)
         {
             var creature = (Creature)parameter;
-            Creatures.Remove(Creatures.First(x => x.Creature == creature));
+            var creatureVM = Creatures.First(x => x.Creature == creature);
+            Creatures.Remove(creatureVM);
+            _creatureCache.Remove(creatureVM);
             await _dataService.DeleteAsync(creature);
         }
     }
@@ -93,50 +113,147 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
             var copied = await _dataService.CopyAsync(parameter as Creature);
             if(copied != null)
             {
-                Creatures.Add(new CreatureViewModel(copied));
+                var creature = new CreatureViewModel(copied);
+                Creatures.Add(creature);
+                _creatureCache.Add(creature);
             }
 
         }
+    }
+
+    public event EventHandler<DataGridColumnEventArgs> Sorting;
+    protected virtual void OnSorting(DataGridColumnEventArgs e)
+    {
+        EventHandler<DataGridColumnEventArgs> handler = Sorting;
+        if (handler != null)
+            handler(this, e);
     }
 
     [RelayCommand]
-    private async void Filter(object parameter)
+    private void SearchTextChange(string text)
     {
-        _filterTimer.Debounce(async () =>
+        if (String.IsNullOrEmpty(text))
         {
-
-            await FilterAsync(parameter);
-
-        }, TimeSpan.FromSeconds(0.3));
-    }
-
-    private async Task FilterAsync(object parameter)
-    {
-        if (parameter is string)
-        {
-            var text = (string)parameter;
-
-            //remove is worse performance than clearing and repopulating the list, but much less 'flickery'.
-
-            List<CreatureViewModel> matched = Creatures.Where(x => x.Creature.Name.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToList();
-            List<CreatureViewModel> noMatch = new();
-
-
-            for (int i = Creatures.Count - 1; i >= 0; i--)
-            {
-                var item = Creatures[i];
-                if (!matched.Contains(item))
-                {
-                    Creatures.Remove(item);
-                    noMatch.Add(item);
-                }
-            }
-
-            foreach (var item in noMatch)
-                Creatures.Add(item);
-
+            var filtered = _filteringService.Filter(_creatureCache, x => x.Creature.LevelOrCR, MinimumCRFilter, MaximumCRFilter);
+            Creatures.Clear();
+            foreach (var creature in filtered)
+                Creatures.Add(creature);
         }
+        SearchSuggestions = _filteringService.Filter(Creatures, x => x.Creature.Name, text).ToList();
     }
+
+    [RelayCommand]
+    private void CreatureFilter(string text)
+    {
+        List<FilterCriteria<CreatureViewModel>> criteria = new List<FilterCriteria<CreatureViewModel>>()
+        {
+            new FilterCriteria<CreatureViewModel>(x => x.Creature.LevelOrCR, MinimumCRFilter, MaximumCRFilter),
+            new FilterCriteria<CreatureViewModel>(x => x.Creature.Name, text)
+        };
+
+        var filtered = _filteringService.Filter(_creatureCache, criteria);
+        Creatures.Clear();
+        foreach (var creature in filtered)
+            Creatures.Add(creature);
+    }
+
+    [RelayCommand]
+    private void DataGridSort(DataGridColumnEventArgs e)
+    {
+        OnSorting(e);
+        if (e.Column.Tag.ToString() == "CreatureName")
+        {
+            if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
+                SortCreaturesByName(false);
+            else
+                SortCreaturesByName(true);
+        }
+        else if (e.Column.Tag.ToString() == "CreatureCR")
+        {
+            if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
+                SortCreaturesByCR(false);
+            else
+                SortCreaturesByCR(true);
+        }
+
+        if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
+        {
+            e.Column.SortDirection = DataGridSortDirection.Ascending;
+        }
+        else
+        {
+            e.Column.SortDirection = DataGridSortDirection.Descending;
+        }
+
+    }
+
+    private void SortCreaturesByName(bool ascending)
+    {
+        IEnumerable<CreatureViewModel> tmp;
+
+        if (!ascending)
+            tmp = Creatures.OrderBy(x => x.Creature.Name).ToList();
+        else
+            tmp = Creatures.OrderByDescending(x => x.Creature.Name).ToList();
+
+        Creatures.Clear();
+        foreach (var creature in tmp)
+            Creatures.Add(creature);
+
+    }
+
+    private void SortCreaturesByCR(bool ascending)
+    {
+        IEnumerable<CreatureViewModel> tmp;
+
+        if (!ascending)
+            tmp = Creatures.OrderBy(x => x.Creature.LevelOrCR).ToList();
+        else
+            tmp = Creatures.OrderByDescending(x => x.Creature.LevelOrCR).ToList();
+
+        Creatures.Clear();
+        foreach (var creature in tmp)
+            Creatures.Add(creature);
+    }
+
+    //[RelayCommand]
+    //private async void Filter(object parameter)
+    //{
+    //    _filterTimer.Debounce(async () =>
+    //    {
+
+    //        await FilterAsync(parameter);
+
+    //    }, TimeSpan.FromSeconds(0.3));
+    //}
+
+    //private async Task FilterAsync(object parameter)
+    //{
+    //    if (parameter is string)
+    //    {
+    //        var text = (string)parameter;
+
+    //        //remove is worse performance than clearing and repopulating the list, but much less 'flickery'.
+
+    //        List<CreatureViewModel> matched = Creatures.Where(x => x.Creature.Name.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToList();
+    //        List<CreatureViewModel> noMatch = new();
+
+
+    //        for (int i = Creatures.Count - 1; i >= 0; i--)
+    //        {
+    //            var item = Creatures[i];
+    //            if (!matched.Contains(item))
+    //            {
+    //                Creatures.Remove(item);
+    //                noMatch.Add(item);
+    //            }
+    //        }
+
+    //        foreach (var item in noMatch)
+    //            Creatures.Add(item);
+
+    //    }
+    //}
 
 
     public void OnNavigatedFrom()
@@ -148,6 +265,11 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
         Creatures.Clear();
         foreach (var creature in await _dataService.GetAllCreaturesAsync())
             Creatures.Add(new CreatureViewModel(creature));
+
+        _creatureCache = new List<CreatureViewModel>(Creatures);
+        SearchSuggestions = new(Creatures);
+        MaximumCRFilter = 30;
+        
 
     }
 }

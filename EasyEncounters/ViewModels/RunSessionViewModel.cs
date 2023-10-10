@@ -1,17 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ABI.System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.UI.Controls;
+using EasyEncounters.Attributes;
 using EasyEncounters.Contracts.Services;
 using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
+using EasyEncounters.Core.Models.Enums;
+using EasyEncounters.Services;
+using Microsoft.UI.Xaml.Controls;
 using Windows.Media.Playback;
+using Windows.Security.ExchangeActiveSyncProvisioning;
 
 namespace EasyEncounters.ViewModels;
 public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
@@ -19,73 +26,118 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
     private readonly IActiveEncounterService _activeEncounterService;
+    private readonly IFilteringService _filteringService;
+    private readonly IList<EncounterDifficulty> _difficulties = Enum.GetValues(typeof(EncounterDifficulty)).Cast<EncounterDifficulty>().ToList();
+
+    private IList<EncounterData> _encounters;
+
+    //private Dictionary<string, FilterCriteria<EncounterData>> _filterCriteria;
+
+    public IList<EncounterDifficulty> Difficulties => _difficulties;
 
 
     public ObservableCollection<EncounterData> EncounterData { get; private set; } = new ObservableCollection<EncounterData>();
 
-    public RunSessionViewModel(IDataService dataService, INavigationService navigationService, IActiveEncounterService encounterService)
+    [ObservableProperty]
+    private List<EncounterData> searchSuggestions;
+
+    [ObservableProperty]
+    private EncounterDifficulty _minimumDifficulty;
+
+    [ObservableProperty]
+    private EncounterDifficulty _maximumDifficulty;
+
+    [ObservableProperty]
+    private int _minimumEnemiesFilter;
+
+    [ObservableProperty]
+    private int _maximumEnemiesFilter;
+
+    public RunSessionViewModel(IDataService dataService, INavigationService navigationService, IActiveEncounterService encounterService, IFilteringService filteringService)
     {
         _dataService = dataService;
         _activeEncounterService = encounterService;
         _navigationService = navigationService;
+        _filteringService = filteringService;
+        //_filterCriteria = new Dictionary<string, FilterCriteria<EncounterData>>();
+        _encounters = new List<EncounterData>();
     }
 
     public void OnNavigatedFrom()
     {
+
     }
     public async void OnNavigatedTo(object parameter)
     {
+
         if (parameter is Party)
         {
+            
             var party = (Party) parameter;
             EncounterData.Clear();
 
             var data = await _dataService.GetAllEncounterDataAsync(party);
             foreach (var item in data)
             {
+                _encounters.Add(item);
                 EncounterData.Add(item);
             }
-
+            MaximumEnemiesFilter = 1000;
+            MaximumDifficulty = EncounterDifficulty.VeryDeadly;
+            SearchSuggestions = new List<EncounterData>(EncounterData);
         }
+        
     }
 
     [RelayCommand]
     private async void EncounterSelected(EncounterData parameter)
     {
-        //if(parameter is EncounterData)
-        //{
+
         if (parameter != null)
         {
 
             var active = await _activeEncounterService.CreateActiveEncounterAsync(parameter.Encounter, parameter.Party);
-            //_navigationService.NavigateTo(typeof(RunEncounterViewModel).FullName!, active);
-            //_navigationService.NavigateTo(typeof(ActiveEncounterViewModel).FullName!, active);
             _navigationService.NavigateTo(typeof(EncounterTabViewModel).FullName!, active);
         }
-        //}
+
+    }
+
+    [RelayCommand]
+    private void SearchTextChange(string text)
+    {
+        if (text == "")
+        {
+            List<FilterCriteria<EncounterData>> criteriaList = new List<FilterCriteria<EncounterData>>()
+            {
+                new FilterCriteria<EncounterData>(x => x.DifficultyDescription, MinimumDifficulty, MaximumDifficulty),
+                new FilterCriteria<EncounterData>(x => x.Encounter.Creatures.Count, MinimumEnemiesFilter, MaximumEnemiesFilter)
+            };
+            var filtered = _filteringService.Filter(_encounters, criteriaList);
+            EncounterData.Clear();
+            foreach (var encounter in filtered)
+                EncounterData.Add(encounter);
+
+        }
+        SearchSuggestions = _filteringService.Filter(EncounterData, new FilterCriteria<EncounterData>(x => x.Encounter.Name, text)).ToList();
     }
 
     [RelayCommand]
     private void EncounterFilter(string text)
     {
-        List<EncounterData> tempFiltered;
-        var holding = new List<EncounterData>();
-
-        tempFiltered = EncounterData.Where(x => x.Encounter.Name.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToList();
-
-        for (int i = EncounterData.Count - 1; i >= 0; i--)
+        //conscious choice not to add the text to current filtering rules, but worth observing in future to see
+        //if it makes more sense to do so and then clear the filter when text changes
+        List<FilterCriteria<EncounterData>> criteriaList = new List<FilterCriteria<EncounterData>>()
         {
-            var item = EncounterData[i];
-            if (!tempFiltered.Contains(item))
-            {
-                EncounterData.Remove(item);
-                holding.Add(item);
-            }
-        }
-        foreach (var encounter in holding)
-        {
+            new FilterCriteria<EncounterData>(x => x.Encounter.Name, text),
+            new FilterCriteria<EncounterData>(x => x.DifficultyDescription, MinimumDifficulty, MaximumDifficulty),
+            new FilterCriteria<EncounterData>(x => x.Encounter.Creatures.Count, MinimumEnemiesFilter, MaximumEnemiesFilter)
+        };
+        var filtered = _filteringService.Filter(_encounters, criteriaList);
+        EncounterData.Clear();
+        foreach (var encounter in filtered)
             EncounterData.Add(encounter);
-        }
+    
+
     }
 
     [RelayCommand]
@@ -157,7 +209,6 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
         if (!ascending)
         {
             tmp = EncounterData.OrderBy(x => x.Encounter.Name).ToList();
-
         }
         else
         {
@@ -185,47 +236,12 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
     {
         IEnumerable<EncounterData> tmp;
         if (ascending)
-            tmp = EncounterData.OrderByDescending(x => x.DifficultyDescription, new DifficultyComparer()).ToList();
+            tmp = EncounterData.OrderByDescending(x => x.DifficultyDescription).ToList();
         else
-            tmp = EncounterData.OrderBy(x => x.DifficultyDescription, new DifficultyComparer()).ToList();
+            tmp = EncounterData.OrderBy(x => x.DifficultyDescription).ToList();
 
         EncounterData.Clear();
         foreach (var item in tmp)
             EncounterData.Add(item);
-    }
-
-    //bit smelly and lazy, but no expectation this will ever be reused elsewhere.
-    internal class DifficultyComparer : Comparer<string>
-    {
-        public override int Compare(string x, string y)
-        {
-            var indexX = GetIndex(x);
-            var indexY = GetIndex(y);
-
-            if (indexX == indexY)
-                return 0;
-            if (indexX > indexY)
-                return 1;
-            return -1;
-        }
-
-        private int GetIndex(string key)
-        {
-            switch (key)
-            {
-                case "Trivial":
-                    return 0;
-                case "Easy":
-                    return 1;
-                case "Medium":
-                    return 2;
-                case "Hard":
-                    return 3;
-                case "Deadly":
-                    return 4;
-                default:
-                    return 5;
-            }
-        }
     }
 }

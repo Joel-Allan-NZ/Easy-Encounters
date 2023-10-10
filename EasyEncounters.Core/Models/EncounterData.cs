@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EasyEncounters.Core.Contracts.Services;
+using EasyEncounters.Core.Models.Enums;
 
 namespace EasyEncounters.Core.Models;
 public class EncounterData
@@ -18,12 +19,12 @@ public class EncounterData
         get; set;
     }
 
-    public string DifficultyDescription
+    public EncounterDifficulty DifficultyDescription
     {
         get; set;
     }
 
-    public EncounterData(Encounter encounter, Party party, string difficultyDescription)
+    public EncounterData(Encounter encounter, Party party, EncounterDifficulty difficultyDescription)
     {
         Party = party;
         Encounter = encounter;

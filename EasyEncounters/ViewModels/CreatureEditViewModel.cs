@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.WinUI.UI;
 using EasyEncounters.Contracts.Services;
 using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
@@ -19,10 +21,11 @@ using EasyEncounters.Models;
 using Windows.Devices.WiFi;
 
 namespace EasyEncounters.ViewModels;
-public partial class CreatureEditViewModel : ObservableRecipient, INavigationAware
+public partial class CreatureEditViewModel : ObservableRecipientWithValidation, INavigationAware
 {
     private readonly INavigationService _navigationService;
     private readonly IDataService _dataService;
+    private readonly IValidationService _validationService;
     private readonly IList<CreatureAttributeType> _creatureAttributeTypes = Enum.GetValues(typeof(CreatureAttributeType)).Cast<CreatureAttributeType>().ToList();
 
     [ObservableProperty]
@@ -42,6 +45,14 @@ public partial class CreatureEditViewModel : ObservableRecipient, INavigationAwa
 
     [ObservableProperty]
     private SpellSlotViewModel _spellSlots;
+
+    [Required]
+    [CustomValidation(typeof(CreatureEditViewModel), nameof(ValidateLevelCR))]
+    public double LevelCR
+    {
+        get => Creature.LevelOrCR;
+        set => TrySetProperty(Creature.LevelOrCR, value, Creature, (v, m) => v.LevelOrCR = m, out IReadOnlyCollection<ValidationResult> errs);
+    }
 
    
     public IList<CreatureAttributeType> StatTypes => _creatureAttributeTypes;
@@ -82,10 +93,29 @@ public partial class CreatureEditViewModel : ObservableRecipient, INavigationAwa
         _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
     }
 
-    public CreatureEditViewModel(INavigationService navigationService, IDataService dataService)
+    [RelayCommand]
+    private async void SortSpellsByResolution()
+    {
+    
+    }
+
+    [RelayCommand]
+    private async void SortSpellsByName()
+    {
+    
+    }
+
+    [RelayCommand]
+    private async void SortSpellsByDamageType()
+    {
+    
+    }
+
+    public CreatureEditViewModel(INavigationService navigationService, IDataService dataService, IValidationService validationService)
     {
         _navigationService = navigationService;
         _dataService = dataService;
+        _validationService = validationService;
     }
 
     public void OnNavigatedFrom()
@@ -94,6 +124,7 @@ public partial class CreatureEditViewModel : ObservableRecipient, INavigationAwa
     }
     public async void OnNavigatedTo(object parameter)
     {
+
         if (parameter is Creature)
         {
             //set
@@ -168,6 +199,17 @@ public partial class CreatureEditViewModel : ObservableRecipient, INavigationAwa
         }
     }
 
+    public static ValidationResult ValidateLevelCR(double levelCR, ValidationContext context)
+    {
+        //todo: move validation to a service.
+        var instance = (CreatureEditViewModel)context.ObjectInstance;
+
+        bool valid = instance._validationService.Validate(instance, levelCR, "LevelCR");
+        if(valid)
+            return ValidationResult.Success;
+
+        return new("Not a valid Level or Challenge Rating");
+    }
 
 
 

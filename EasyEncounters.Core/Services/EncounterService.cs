@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
+using EasyEncounters.Core.Models.Enums;
 
 namespace EasyEncounters.Core.Services;
 public class EncounterService : IEncounterService
@@ -37,31 +38,31 @@ public class EncounterService : IEncounterService
 
     public int[] GetPartyXPThreshold(Party party) => _partyXPService.FindPartyXPThreshold(party);
 
-    public string DetermineDifficultyForParty(Encounter encounter, int[] partyXPThreshold)
+    public EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, int[] partyXPThreshold)
     {
         if (encounter.Creatures == null || encounter.Creatures.Count == 0)
-            return "N/A";
+            return EncounterDifficulty.None; //"N/A";
 
         if (encounter.AdjustedEncounterXP == -1)
             encounter.AdjustedEncounterXP = CalculateEncounterXP(encounter);
 
 
         if (encounter.AdjustedEncounterXP < partyXPThreshold[0])
-            return "Trivial";
+            return EncounterDifficulty.Trivial; //"Trivial";
 
         if (encounter.AdjustedEncounterXP < partyXPThreshold[1])
-            return "Easy";
+            return EncounterDifficulty.Easy; //"Easy";
 
         if (encounter.AdjustedEncounterXP < partyXPThreshold[2])
-            return "Medium";
+            return EncounterDifficulty.Medium;//"Medium";
 
         if (encounter.AdjustedEncounterXP < partyXPThreshold[3])
-            return "Hard";
+            return EncounterDifficulty.Hard;//"Hard";
 
         if (encounter.AdjustedEncounterXP < partyXPThreshold[3] * 1.5)
-            return "Deadly";
+            return EncounterDifficulty.Deadly;//"Deadly";
 
-        return "Very Deadly";
+        return EncounterDifficulty.VeryDeadly;//"Very Deadly";
     }
 
     public double CalculateEncounterXP(Encounter encounter)
@@ -78,7 +79,7 @@ public class EncounterService : IEncounterService
 
     }
 
-    public string DetermineDifficultyForParty(Encounter encounter, Party party)
+    public EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, Party party)
     {
         return DetermineDifficultyForParty(encounter, GetPartyXPThreshold(party));
     }

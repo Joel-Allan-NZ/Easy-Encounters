@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using CommunityToolkit.WinUI.UI.Controls;
 using EasyEncounters.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -30,6 +31,18 @@ public sealed partial class AbilityCRUDPage : Page
     public AbilityCRUDPage()
     {
         ViewModel = App.GetService<AbilityCRUDViewModel>();
+        ViewModel.Sorting += Sorting;
         this.InitializeComponent();
+    }
+    private void Sorting(object sender, DataGridColumnEventArgs e)
+    {
+        foreach (var dgColumn in AbilityListDG.Columns)
+        {
+            if (dgColumn.Tag.ToString() != e.Column.Tag.ToString())
+            {
+                dgColumn.SortDirection = null;
+            }
+
+        }
     }
 }

@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EasyEncounters.Core.Models;
+using EasyEncounters.Core.Models.Enums;
 
 namespace EasyEncounters.Core.Contracts.Services;
 public interface IEncounterService
 {
     int[] GetPartyXPThreshold(Party party);
 
-    string DetermineDifficultyForParty(Encounter encounter, Party party);
+    EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, Party party);
 
-    string DetermineDifficultyForParty(Encounter encounter, int[] partyXPThreshold);
+    EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, int[] partyXPThreshold);
 
     ActiveEncounterCreature CreateActiveEncounterCreature(Creature creature, bool maxHPRoll);
     void AddCreature(Encounter encounter, Creature creature);

@@ -30,11 +30,13 @@
                               Margin="2,2,2,2"
                              Header="Creature Name"
                              PlaceholderText="Enter a name for the Creature"/>
-                    <TextBox Text="{x:Bind ViewModel.Creature.LevelOrCR, Mode=TwoWay}"
+                    <NumberBox Value="{x:Bind ViewModel.LevelCR, Mode=TwoWay}"
                              Header="Creature Level or CR"
                              Margin="2,2,2,2"
-                             InputScope="Number"
-                             TextChanging="OnTextChangingDouble"/>
+                             AcceptsExpression="True"
+                             ValidationMode="InvalidInputOverwritten"
+                             Minimum="0"
+                             Maximum="30"/>
                     <TextBox Text="{x:Bind ViewModel.Creature.Hyperlink, Mode=TwoWay}"
                              Header="URI:"
                              Margin="2,2,2,2"
@@ -50,20 +52,30 @@
                             Padding="12"
                             BorderBrush="BlanchedAlmond">
                     <TextBlock Text="AC:" Margin="2,2,2,2"/>
-                    <TextBox Text="{x:Bind ViewModel.Creature.AC, Mode=TwoWay}"
+                    <NumberBox Value="{x:Bind ViewModel.Creature.AC, Mode=TwoWay}"
                              Margin="2,2,2,2"
-                             InputScope="Number"
-                             TextChanging="OnTextChanging"/>
+                               AcceptsExpression="True"
+                               Minimum="0"
+                               Maximum="40"
+                              ValidationMode="InvalidInputOverwritten"/>
+                             <!--InputScope="Number"
+                             TextChanging="OnTextChanging"-->
+
                     <TextBlock Text="Proficiency:" Margin="2,2,2,2"/>
-                    <TextBox Text="{x:Bind ViewModel.Creature.ProficiencyBonus, Mode=TwoWay}"
+                    <NumberBox Value="{x:Bind ViewModel.Creature.ProficiencyBonus, Mode=TwoWay}"
                              Margin="2,2,2,2" 
                              x:DefaultBindMode="TwoWay"
-                             InputScope="Number"
-                             TextChanging="OnTextChanging"/>
+                               AcceptsExpression="True"
+                               Minimum="2"
+                               Maximum="20"
+                              ValidationMode="InvalidInputOverwritten"/>
                     <TextBlock Text="Initiative Bonus:"  Margin="2,2,2,2"/>
-                    <TextBox Text="{x:Bind ViewModel.Creature.InitiativeBonus, Mode=TwoWay}"  Margin="2,2,2,2" x:DefaultBindMode="TwoWay" InputScope="Number"
-                             TextChanging="OnTextChanging"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.Creature.InitiativeAdvantage}" Content ="Has Advantage for Initiative?" x:DefaultBindMode="TwoWay"  Margin="2,2,2,2"/>
+                    <NumberBox Value="{x:Bind ViewModel.Creature.InitiativeBonus, Mode=TwoWay}"  Margin="2,2,2,2" x:DefaultBindMode="TwoWay" 
+                               AcceptsExpression="True"
+                               Minimum="0"
+                               Maximum="20"
+                              ValidationMode="InvalidInputOverwritten"/>
+                    <ToggleButton IsChecked="{x:Bind ViewModel.Creature.InitiativeAdvantage}" Content ="Has Advantage for Initiative?" x:DefaultBindMode="TwoWay"  Margin="2,2,2,2"/>
 
                 </StackPanel>
                 <StackPanel>
@@ -226,14 +238,16 @@
                              PlaceholderText="Enter a movement string"
                              Margin="5"
                              Text="{x:Bind ViewModel.Creature.Movement, Mode=TwoWay}"/>
-                    <CheckBox IsChecked="{x:Bind ViewModel.Creature.DMControl}" Content="Is an NPC?" x:DefaultBindMode="TwoWay"/>
+                    <ToggleButton IsChecked="{x:Bind ViewModel.Creature.DMControl}" Content="Is an NPC?" x:DefaultBindMode="TwoWay"/>
                     <TextBlock Text="Max HP (fixed):" Margin="2,2,2,2" 
                                Visibility="{x:Bind ViewModel.Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}"/>
-                    <TextBox Text="{x:Bind ViewModel.Creature.MaxHP, Mode=TwoWay}"
+                    <NumberBox Value="{x:Bind ViewModel.Creature.MaxHP, Mode=TwoWay}"
                             Margin="2,2,2,2"
-                            InputScope="Number"
-                            TextChanging="OnTextChanging"
-                             Visibility="{x:Bind ViewModel.Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}"></TextBox>
+                              AcceptsExpression="True"
+                               Minimum="0"
+                               Maximum="10000"
+                              ValidationMode="InvalidInputOverwritten"
+                             Visibility="{x:Bind ViewModel.Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}"></NumberBox>
                     <TextBlock Text="Max HP dicestring:" Margin="2,2,2,2"
                                Visibility="{x:Bind ViewModel.Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}"/>
                     <TextBox Text="{x:Bind ViewModel.Creature.MaxHPString, Mode=TwoWay}"
@@ -241,7 +255,8 @@
                             Margin="2,2,2,2"></TextBox>
                 </StackPanel>
 
-                <Expander Margin="5">
+                <Expander Margin="5"
+                          HorizontalAlignment="Stretch">
                     <Expander.Header>
                         <StackPanel>
                             <TextBlock Margin="2"
@@ -254,69 +269,70 @@
                     <VariableSizedWrapGrid Orientation="Horizontal"
                                            MaximumRowsOrColumns="5"
                                            ItemWidth="200">
-                        <CheckBox Grid.Row="0" Grid.Column="0"
+                        <ToggleButton Grid.Row="0" Grid.Column="0"
                                   IsChecked="{x:Bind ViewModel.Resists.Acid}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Acid"/>
-                        <CheckBox Grid.Row="0" Grid.Column="1"
+                        <ToggleButton Grid.Row="0" Grid.Column="1"
                                   IsChecked="{x:Bind ViewModel.Resists.Bludgeoning}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Bludgeoning"/>
-                        <CheckBox Grid.Row="0" Grid.Column="2"
+                        <ToggleButton Grid.Row="0" Grid.Column="2"
                                   IsChecked="{x:Bind ViewModel.Resists.Cold}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Cold"/>
-                        <CheckBox Grid.Row="0" Grid.Column="3"
+                        <ToggleButton Grid.Row="0" Grid.Column="3"
                                   IsChecked="{x:Bind ViewModel.Resists.Fire}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Fire"/>
-                        <CheckBox Grid.Row="0" Grid.Column="4"
+                        <ToggleButton Grid.Row="0" Grid.Column="4"
                                   IsChecked="{x:Bind ViewModel.Resists.Force}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Force"/>
-                        <CheckBox Grid.Row="1" Grid.Column="0"
+                        <ToggleButton Grid.Row="1" Grid.Column="0"
                                   IsChecked="{x:Bind ViewModel.Resists.Lightning}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Lightning"/>
-                        <CheckBox Grid.Row="1" Grid.Column="1"
+                        <ToggleButton Grid.Row="1" Grid.Column="1"
                                   IsChecked="{x:Bind ViewModel.Resists.Necrotic}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Necrotic"/>
-                        <CheckBox Grid.Row="1" Grid.Column="2"
+                        <ToggleButton Grid.Row="1" Grid.Column="2"
                                   IsChecked="{x:Bind ViewModel.Resists.Piercing}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Piercing"/>
-                        <CheckBox Grid.Row="1" Grid.Column="3"
+                        <ToggleButton Grid.Row="1" Grid.Column="3"
                                   IsChecked="{x:Bind ViewModel.Resists.Poison}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Poison"/>
-                        <CheckBox Grid.Row="1" Grid.Column="4"
+                        <ToggleButton Grid.Row="1" Grid.Column="4"
                                   IsChecked="{x:Bind ViewModel.Resists.Psychic}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Psychic"/>
-                        <CheckBox Grid.Row="2" Grid.Column="0"
+                        <ToggleButton Grid.Row="2" Grid.Column="0"
                                   IsChecked="{x:Bind ViewModel.Resists.Radiant}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Radiant"/>
-                        <CheckBox Grid.Row="2" Grid.Column="1"
+                        <ToggleButton Grid.Row="2" Grid.Column="1"
                                   IsChecked="{x:Bind ViewModel.Resists.Slashing}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Slashing"/>
-                        <CheckBox Grid.Row="2" Grid.Column="2"
+                        <ToggleButton Grid.Row="2" Grid.Column="2"
                                   IsChecked="{x:Bind ViewModel.Resists.Thunder}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Thunder"/>
-                        <CheckBox Grid.Row="2" Grid.Column="3"
+                        <ToggleButton Grid.Row="2" Grid.Column="3"
                                   IsChecked="{x:Bind ViewModel.Resists.NonSilveredPhysical}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Non-Silvered Physical"/>
-                        <CheckBox Grid.Row="2" Grid.Column="4"
+                        <ToggleButton Grid.Row="2" Grid.Column="4"
                                   Content="Non-Magical Physical"
                                   IsChecked="{x:Bind ViewModel.Resists.NonMagicalPhysical}"
                                   x:DefaultBindMode="TwoWay"/>
                     </VariableSizedWrapGrid>
                 </Expander>
-                <Expander Margin="5">
+                <Expander Margin="5"
+                           HorizontalAlignment="Stretch">
                     <Expander.Header>
                         <StackPanel>
                             <TextBlock Margin="2"
@@ -330,70 +346,71 @@
                         <VariableSizedWrapGrid MaximumRowsOrColumns="5"
                                                    Orientation="Horizontal"
                                                    ItemWidth="200">
-                            <CheckBox Grid.Row="0" Grid.Column="0"
+                            <ToggleButton Grid.Row="0" Grid.Column="0"
                                   IsChecked="{x:Bind ViewModel.Immunities.Acid}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Acid"/>
-                            <CheckBox Grid.Row="0" Grid.Column="1"
+                            <ToggleButton Grid.Row="0" Grid.Column="1"
                                   IsChecked="{x:Bind ViewModel.Immunities.Bludgeoning}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Bludgeoning"/>
-                            <CheckBox Grid.Row="0" Grid.Column="2"
+                            <ToggleButton Grid.Row="0" Grid.Column="2"
                                   IsChecked="{x:Bind ViewModel.Immunities.Cold}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Cold"/>
-                            <CheckBox Grid.Row="0" Grid.Column="3"
+                            <ToggleButton Grid.Row="0" Grid.Column="3"
                                   IsChecked="{x:Bind ViewModel.Immunities.Fire}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Fire"/>
-                            <CheckBox Grid.Row="0" Grid.Column="4"
+                            <ToggleButton Grid.Row="0" Grid.Column="4"
                                   IsChecked="{x:Bind ViewModel.Immunities.Force}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Force"/>
-                            <CheckBox Grid.Row="1" Grid.Column="0"
+                            <ToggleButton Grid.Row="1" Grid.Column="0"
                                   IsChecked="{x:Bind ViewModel.Immunities.Lightning}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Lightning"/>
-                            <CheckBox Grid.Row="1" Grid.Column="1"
+                            <ToggleButton Grid.Row="1" Grid.Column="1"
                                   IsChecked="{x:Bind ViewModel.Immunities.Necrotic}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Necrotic"/>
-                            <CheckBox Grid.Row="1" Grid.Column="2"
+                            <ToggleButton Grid.Row="1" Grid.Column="2"
                                   IsChecked="{x:Bind ViewModel.Immunities.Piercing}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Piercing"/>
-                            <CheckBox Grid.Row="1" Grid.Column="3"
+                            <ToggleButton Grid.Row="1" Grid.Column="3"
                                   IsChecked="{x:Bind ViewModel.Immunities.Poison}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Poison"/>
-                            <CheckBox Grid.Row="1" Grid.Column="4"
+                            <ToggleButton Grid.Row="1" Grid.Column="4"
                                   IsChecked="{x:Bind ViewModel.Immunities.Psychic}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Psychic"/>
-                            <CheckBox Grid.Row="2" Grid.Column="0"
+                            <ToggleButton Grid.Row="2" Grid.Column="0"
                                   IsChecked="{x:Bind ViewModel.Immunities.Radiant}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Radiant"/>
-                            <CheckBox Grid.Row="2" Grid.Column="1"
+                            <ToggleButton Grid.Row="2" Grid.Column="1"
                                   IsChecked="{x:Bind ViewModel.Immunities.Slashing}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Slashing"/>
-                            <CheckBox Grid.Row="2" Grid.Column="2"
+                            <ToggleButton Grid.Row="2" Grid.Column="2"
                                   IsChecked="{x:Bind ViewModel.Immunities.Thunder}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Thunder"/>
-                            <CheckBox Grid.Row="2" Grid.Column="3"
+                            <ToggleButton Grid.Row="2" Grid.Column="3"
                                   IsChecked="{x:Bind ViewModel.Immunities.NonSilveredPhysical}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Non-Silvered Physical"/>
-                            <CheckBox Grid.Row="2" Grid.Column="4"
+                            <ToggleButton Grid.Row="2" Grid.Column="4"
                                   Content="Non-Magical Physical"
                                   x:DefaultBindMode="TwoWay"
                                   IsChecked="{x:Bind ViewModel.Immunities.NonMagicalPhysical}"/>
                         </VariableSizedWrapGrid>
                     </Expander.Content>
                 </Expander>
-                <Expander Margin="5">
+                <Expander Margin="5"
+                           HorizontalAlignment="Stretch">
                     <Expander.Header>
                         <StackPanel>
                             <TextBlock Margin="2"
@@ -406,70 +423,71 @@
                     <VariableSizedWrapGrid Orientation="Horizontal"
                                                MaximumRowsOrColumns="5"
                                                ItemWidth="200">
-                        <CheckBox Grid.Row="0" Grid.Column="0"
+                        <ToggleButton Grid.Row="0" Grid.Column="0"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Acid}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Acid"/>
-                        <CheckBox Grid.Row="0" Grid.Column="1"
+                        <ToggleButton Grid.Row="0" Grid.Column="1"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Bludgeoning}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Bludgeoning"/>
-                        <CheckBox Grid.Row="0" Grid.Column="2"
+                        <ToggleButton Grid.Row="0" Grid.Column="2"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Cold}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Cold"/>
-                        <CheckBox Grid.Row="0" Grid.Column="3"
+                        <ToggleButton Grid.Row="0" Grid.Column="3"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Fire}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Fire"/>
-                        <CheckBox Grid.Row="0" Grid.Column="4"
+                        <ToggleButton Grid.Row="0" Grid.Column="4"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Force}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Force"/>
-                        <CheckBox Grid.Row="1" Grid.Column="0"
+                        <ToggleButton Grid.Row="1" Grid.Column="0"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Lightning}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Lightning"/>
-                        <CheckBox Grid.Row="1" Grid.Column="1"
+                        <ToggleButton Grid.Row="1" Grid.Column="1"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Necrotic}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Necrotic"/>
-                        <CheckBox Grid.Row="1" Grid.Column="2"
+                        <ToggleButton Grid.Row="1" Grid.Column="2"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Piercing}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Piercing"/>
-                        <CheckBox Grid.Row="1" Grid.Column="3"
+                        <ToggleButton Grid.Row="1" Grid.Column="3"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Poison}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Poison"/>
-                        <CheckBox Grid.Row="1" Grid.Column="4"
+                        <ToggleButton Grid.Row="1" Grid.Column="4"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Psychic}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Psychic"/>
-                        <CheckBox Grid.Row="2" Grid.Column="0"
+                        <ToggleButton Grid.Row="2" Grid.Column="0"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Radiant}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Radiant"/>
-                        <CheckBox Grid.Row="2" Grid.Column="1"
+                        <ToggleButton Grid.Row="2" Grid.Column="1"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Slashing}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Slashing"/>
-                        <CheckBox Grid.Row="2" Grid.Column="2"
+                        <ToggleButton Grid.Row="2" Grid.Column="2"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.Thunder}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Thunder"/>
-                        <CheckBox Grid.Row="2" Grid.Column="3"
+                        <ToggleButton Grid.Row="2" Grid.Column="3"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.NonSilveredPhysical}"
                                   x:DefaultBindMode="TwoWay"
                                   Content="Non-Silvered Physical"/>
-                        <CheckBox Grid.Row="2" Grid.Column="4"
+                        <ToggleButton Grid.Row="2" Grid.Column="4"
                                   Content="Non-Magical Physical"
                                   x:DefaultBindMode="TwoWay"
                                   IsChecked="{x:Bind ViewModel.Vulnerabilities.NonMagicalPhysical}"/>
                     </VariableSizedWrapGrid>
                 </Expander>
                 <Expander
-                          Margin="5">
+                          Margin="5"
+                     HorizontalAlignment="Stretch">
                     <Expander.Header>
                         <StackPanel>
                             <TextBlock Margin="2"
@@ -570,44 +588,69 @@
                 <Button Content="Add New Ability"
                         Command="{x:Bind ViewModel.AddCreatureAbilityCommand}"
                         Margin="2"/>
-                <ListView Header="Spells"
+                <Expander Header="Spells"
+                          HorizontalAlignment="Stretch"
+                          Margin="5">
+                    <Expander.Content>
+                        <ListView 
                           ui:ListViewExtensions.AlternateColor="Bisque"
                           Margin="5"
                           ItemsSource="{x:Bind ViewModel.Spells}"
                           SelectionMode="None">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Grid.ContextFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Text="Add" Command="{Binding AddAbilityRequestedCommand}"/>
-                                    </MenuFlyout>
-                                </Grid.ContextFlyout>
+                            <ListView.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0"
+                                            Content="Name"
+                                            Command="{x:Bind ViewModel.SortSpellsByNameCommand}"/>
+                                    <Button Grid.Column="1"
+                                            Command="{x:Bind ViewModel.SortSpellsByResolutionCommand}"
+                                            Content="Resolution"/>
+                                    <Button Grid.Column="2"
+                                            Command="{x:Bind ViewModel.SortSpellsByDamageTypeCommand}"
+                                            Content="Damage Type"/>
+                                </Grid>
+                            </ListView.Header>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.ContextFlyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem Text="Add" Command="{Binding AddAbilityRequestedCommand}"/>
+                                            </MenuFlyout>
+                                        </Grid.ContextFlyout>
 
-                                <TextBlock Grid.Column="0"
+                                        <TextBlock Grid.Column="0"
                                            Text="{Binding Ability.Name}" 
                                            FontWeight="Medium"
                                            Margin="5"></TextBlock>
-                                <TextBlock Grid.Column="1"
+                                        <TextBlock Grid.Column="1"
                                            Text="{Binding Ability.SpellLevel, Converter={StaticResource EnumToStringConverter}}"
                                            Margin="5"/>
-                                <TextBlock Grid.Column="2"
+                                        <TextBlock Grid.Column="2"
                                            Text="{Binding Ability.Resolution, Converter={StaticResource EnumToStringConverter}}"
                                            Margin="5"/>
-                                <TextBlock Grid.Column="3"
+                                        <TextBlock Grid.Column="3"
                                            Text="{Binding Ability.DamageTypes, Converter={StaticResource EnumToStringConverter}}"
                                            Margin="5"/>
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-
-                </ListView>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Expander.Content>
+                </Expander>
+                
                 <ScrollViewer>
                     <TextBox Header="Other Features"
                              PlaceholderText="Enter Features"
