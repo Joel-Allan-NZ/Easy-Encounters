@@ -21,14 +21,14 @@ namespace EasyEncounters.Services
             _pageService = pageService;
         }
 
-        public ObservableRecipientTab OpenTab(string tabKey, object parameter, string? name = null) //todo: add closeable boolean, add logtab that isn't closeable.
+        public ObservableRecipientTab OpenTab(string tabKey, object parameter, string? name = null, bool closeable = true) //todo: add closeable boolean, add logtab that isn't closeable.
         {
             //var concreteType = tab.GetType();
 
             var pageType = _pageService.GetPageType(tabKey);
             //need to do vaguely reflecty bullshit to get ITabAware viewmodel stuff. See: NavigateTo "_frame.GetPageVieWModel()" extension
             //tab.Content = (Page)Activator.CreateInstance(pageType); //should be safe, but? todo: safety
-            var page = (Page)Activator.CreateInstance(pageType);
+            var page = (Page?)Activator.CreateInstance(pageType);
 
             var pageVM = GetPageViewModel(page);
 
@@ -37,13 +37,14 @@ namespace EasyEncounters.Services
                 var obRecipTab = (ObservableRecipientTab)pageVM;
                 obRecipTab.Content = page;
                 obRecipTab.TabName = name ?? "New Tab";
+                obRecipTab.IsClosable = closeable;
                 obRecipTab.OnTabOpened(parameter);
                 return obRecipTab;
             }
             throw new ArgumentException("Tab Key does not refer to a valid Observable Recipient Tab");
         }
 
-        private object? GetPageViewModel(Page page) => page?.GetType().GetProperty("ViewModel")?.GetValue(page, null);
+        private object? GetPageViewModel(Page? page) => page?.GetType().GetProperty("ViewModel")?.GetValue(page, null);
 
         public void CloseTab(ObservableRecipientTab tab)
         {

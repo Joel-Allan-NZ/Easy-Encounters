@@ -16,16 +16,20 @@
     </Page.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*" MaxWidth="400"/>
+            <ColumnDefinition Width="5*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-    <StackPanel Orientation="Horizontal">
+        <!--<StackPanel Orientation="Horizontal">
         <ScrollViewer VerticalScrollMode="Enabled"
-                      MaxHeight="850">
+                      MaxHeight="850">-->
         <StackPanel Name="LHS"
-                    MaxWidth="500">
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    MaxWidth="400">
             <HyperlinkButton Content="{x:Bind ViewModel.Creature.EncounterName, Mode=OneWay}"
                              Margin="2"
                              FontWeight="Medium"
@@ -40,78 +44,84 @@
                           Margin="2"
                           IsChecked="{x:Bind ViewModel.CreatureVM.Concentrating, Mode=TwoWay}"/>
             </StackPanel>
-                <Expander HorizontalAlignment="Stretch">
-                    <Expander.Header>
-                        <StackPanel>
+        </StackPanel>
+        <ScrollViewer Grid.Row="1"
+                    Grid.Column="0"
+                    MaxWidth="400">
+        <StackPanel>
+            
+            <Expander HorizontalAlignment="Stretch">
+                <Expander.Header>
+                    <StackPanel>
                         <TextBlock Text="Active Conditions:"
                                    FontSize="10"/>
                         <TextBlock Text="{x:Bind ViewModel.CreatureVM.Conditions.EnumString, Mode=OneWay}"
                                    TextWrapping="Wrap"/>
-                        </StackPanel>
-                    </Expander.Header>
-                    <Expander.Content>
-                        <VariableSizedWrapGrid MaximumRowsOrColumns="5"
-                                               ItemWidth="200"
+                    </StackPanel>
+                </Expander.Header>
+                <Expander.Content>
+                    <VariableSizedWrapGrid MaximumRowsOrColumns="2"
+                                               ItemWidth="150"
                                                Orientation="Horizontal">
-                            <ToggleButton Content="Blinded"
+                        <ToggleButton Content="Blinded"
                                   Margin="2,2,2,2"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Blinded, Mode=TwoWay}"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.BlindTooltip}"/>
-                            <ToggleButton Content="Charmed"
+                        <ToggleButton Content="Charmed"
                                   Margin="2,2,2,2"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.CharmTooltip}"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Charmed, Mode=TwoWay}"/>
-                            <ToggleButton Content="Deafened"
+                        <ToggleButton Content="Deafened"
                                   Margin="2,2,2,2"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.DeafTooltip}"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Deafened, Mode=TwoWay}"/>
-                            <ToggleButton Content="Frightened"
+                        <ToggleButton Content="Frightened"
                                   Margin="2,2,2,2"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.FrightenTooltip}"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Frightened, Mode=TwoWay}"/>
-                            <ToggleButton Content="Grappled"
+                        <ToggleButton Content="Grappled"
                                   Margin="2,2,2,2"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.GrappledTooltip}"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Grappled, Mode=TwoWay}"/>
-                            <ToggleButton Content="Incapacitated"
+                        <ToggleButton Content="Incapacitated"
                                   Margin="2,2,2,2"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.IncapacitatedTooltip}"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Incapacitated, Mode=TwoWay}"/>
-                            <ToggleButton Content="Paralyzed"
+                        <ToggleButton Content="Paralyzed"
                                   Margin="2,2,2,2"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.ParalyzedTooltip}"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Paralyzed, Mode=TwoWay}"/>
-                            <ToggleButton Content="Petrified"
+                        <ToggleButton Content="Petrified"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.PetrifiedTooltip}"
                                   Margin="2,2,2,2"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Petrified, Mode=TwoWay}"/>
-                            <ToggleButton Content="Poisoned"
+                        <ToggleButton Content="Poisoned"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.PoisonedTooltip}"
                                   Margin="2,2,2,2"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Poisoned, Mode=TwoWay}"/>
-                            <ToggleButton Content="Prone"
+                        <ToggleButton Content="Prone"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.ProneTooltip}"
                                   Margin="2,2,2,2"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Prone, Mode=TwoWay}"/>
-                            <ToggleButton Content="Restrained"
+                        <ToggleButton Content="Restrained"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.RestrainedTooltip}"
                                   Margin="2,2,2,2"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Restrained, Mode=TwoWay}"/>
-                            <ToggleButton Content="Stunned"
+                        <ToggleButton Content="Stunned"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.StunnedTooltip}"
                                   Margin="2,2,2,2"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Stunned, Mode=TwoWay}"/>
-                            <ToggleButton Content="Unconscious"
+                        <ToggleButton Content="Unconscious"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.UnconsciousTooltip}"
                                   Margin="2,2,2,2"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Unconscious, Mode=TwoWay}"/>
-                            <ToggleButton Content="Exhausted"
+                        <ToggleButton Content="Exhausted"
                                           ToolTipService.ToolTip="{x:Bind ViewModel.CreatureVM.Conditions.ExhaustionTooltip}"
                                   Margin="2,2,2,2"
                                   IsChecked="{x:Bind ViewModel.CreatureVM.Conditions.Exhausted, Mode=TwoWay}"/>
-                        </VariableSizedWrapGrid>
-                    </Expander.Content>
-                </Expander>
+                    </VariableSizedWrapGrid>
+                </Expander.Content>
+            </Expander>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Armour Class:"
                        FontWeight="Medium"
@@ -267,7 +277,8 @@
                 <TextBlock Margin="2"
                        Text="Condition Immunities:"/>
                 <TextBlock Margin="2"
-                       Text="{x:Bind ViewModel.Creature.ConditionImmunities}"/>
+                       Text="{x:Bind ViewModel.Creature.ConditionImmunities}"
+                           TextWrapping="Wrap"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Margin="2"
@@ -282,12 +293,16 @@
             <NavigationViewItemSeparator></NavigationViewItemSeparator>
             <StackPanel Visibility="{x:Bind ViewModel.CreatureVM.HasFeatures, Converter={StaticResource BoolToVisibilityConverter}}">
                 <TextBlock Text="{x:Bind ViewModel.Creature.Features}"
+                           MaxWidth="400"
                        TextWrapping="Wrap"/>
             </StackPanel>
+            
         </StackPanel>
         </ScrollViewer>
+        <!--</ScrollViewer>-->
         <StackPanel Name="RHS"
-                    MaxWidth="800">
+                    Grid.Column="1"
+>
             <!--TODO: better-->
             <StackPanel Visibility="{x:Bind ViewModel.CreatureVM.HasSpellSlots}"
                     Orientation="Horizontal">
@@ -379,79 +394,83 @@
             <TextBlock Margin="2"
                        Text="{x:Bind ViewModel.Creature.AttackDescription}"
                        TextWrapping="Wrap"/>
-            <ScrollViewer VerticalScrollMode="Enabled">
-                <ListView Margin="2"
+            <!--<ScrollViewer VerticalScrollMode="Enabled">-->
+
+            <!--</ScrollViewer>-->
+        </StackPanel>
+        <ListView Margin="2"
+                  Grid.Row="1"
+                  Grid.Column="1"
+                          
                          
                       ItemsSource="{x:Bind ViewModel.Abilities, Mode=OneWay}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Expander HorizontalAlignment="Stretch">
-                                <Expander.Header>
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Text="{Binding Name}"
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Expander HorizontalAlignment="Stretch">
+                        <Expander.Header>
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{Binding Name}"
                                                    FontWeight="Medium"/>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding ActionSpeed, Converter={StaticResource EnumToStringConverter}}"
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding ActionSpeed, Converter={StaticResource EnumToStringConverter}}"
                                                    FontSize="10"
                                                    Margin="0,0,0,0"/>
-                                            <TextBlock Text="Concentration"
+                                    <TextBlock Text="Concentration"
                                                        FontSize="10"
                                                        Margin="10,0,0,0"
                                                        Visibility="{Binding Concentration, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                                            <TextBlock Text="{Binding SpellLevel, Converter={StaticResource EnumToStringConverter}}"
+                                    <TextBlock Text="{Binding SpellLevel, Converter={StaticResource EnumToStringConverter}}"
                                                        Margin="10,0,0,0"
                                                        FontSize="10"
                                                        Visibility="{Binding IsSpell, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                                            <TextBlock Text="{Binding Resolution, Converter={StaticResource EnumToStringConverter}}"
+                                    <TextBlock Text="{Binding Resolution, Converter={StaticResource EnumToStringConverter}}"
                                                        Margin="10,0,0,0"
                                                        FontSize="10"/>
 
-                                        </StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Margin="2"
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Margin="2"
                                        Text="{Binding SpellCastComponents}"
                                                        FontStyle="Italic"
                                                        FontSize="10"
                                        Visibility="{Binding IsSpell, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                                            <TextBlock Text="{Binding TargetDistance}"
+                                    <TextBlock Text="{Binding TargetDistance}"
                                                        Visibility="{Binding NeedsRangeValue, Converter={StaticResource BoolToVisibilityConverter}}"
                                                        FontSize="10"
                                                        Margin="2"/>
-                                            <TextBlock Text="{Binding TargetDistanceType, Converter={StaticResource EnumToStringConverter}}"
+                                    <TextBlock Text="{Binding TargetDistanceType, Converter={StaticResource EnumToStringConverter}}"
                                                        FontSize="10"
                                                        Margin="2"/>
-                                            <TextBlock Text="{Binding TargetSize}"
+                                    <TextBlock Text="{Binding TargetSize}"
                                                        FontSize="10"
                                                        Margin="2"
                                                        Visibility="{Binding NeedsArea, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                                            <TextBlock Text="{Binding TargetAreaType}"
+                                    <TextBlock Text="{Binding TargetAreaType}"
                                                        FontSize="10"
                                                        Margin="2"
                                                        Visibility="{Binding NeedsArea, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Expander.Header>
-                                <Expander.ContextFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Text="Use" Command="{Binding UseAbilityRequestedCommand}"/>
-                                    </MenuFlyout>
-                                </Expander.ContextFlyout>
-                                <Expander.Content>
+                                </StackPanel>
+                            </StackPanel>
+                        </Expander.Header>
+                        <Expander.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Use" Command="{Binding UseAbilityRequestedCommand}"/>
+                            </MenuFlyout>
+                        </Expander.ContextFlyout>
+                        <Expander.Content>
 
 
-                                    <StackPanel Orientation="Vertical">
-                                        <TextBlock Margin="2"
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock Margin="2"
                                        Text="{Binding EffectDescription}"
                                        TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                </Expander.Content>
-                            </Expander>
+                            </StackPanel>
+                        </Expander.Content>
+                    </Expander>
 
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </ScrollViewer>
-        </StackPanel>
-    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <!--</StackPanel>-->
     </Grid>
 </Page>

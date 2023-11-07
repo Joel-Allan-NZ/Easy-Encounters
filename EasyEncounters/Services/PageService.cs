@@ -38,6 +38,7 @@ public class PageService : IPageService
         //Configure<CreatureAbilityViewModel, CreatureAbilityPage>();
         Configure<CreatureDisplayTabViewModel, CreatureDisplayTabPage>();
         Configure<EncounterDamageTabViewModel, EncounterDamageTabPage>();
+        Configure<LogTabViewModel, LogTabPage>();
 
     }
 

@@ -23,17 +23,18 @@ public class AbilityService : IAbilityService
         ActiveAbility activeAbility = new ActiveAbility();
         CopyTo(activeAbility, ability);
 
-        //var resStatValue = _creatureService.GetAttributeTypeValue(creature, activeAbility.ResolutionStat);
-        if (activeAbility.Resolution == Models.Enums.ResolutionType.Attack)
+        switch (activeAbility.Resolution)
         {
-            activeAbility.ResolutionValue = abilityStatValue + _baseAttackBonus + creature.ProficiencyBonus;
+            case ResolutionType.Attack:
+                activeAbility.ResolutionValue = abilityStatValue + _baseAttackBonus + creature.ProficiencyBonus;
+                break;
+            case ResolutionType.SavingThrow:
+                activeAbility.ResolutionValue = abilityStatValue + _baseDCBonus + creature.ProficiencyBonus;
+                break;
+            default:
+                activeAbility.ResolutionValue = abilityStatValue;
+                break;
         }
-        else if (activeAbility.Resolution == Models.Enums.ResolutionType.SavingThrow)
-        {
-            activeAbility.ResolutionValue = abilityStatValue + _baseDCBonus + creature.ProficiencyBonus;
-        }
-        else
-            activeAbility.ResolutionValue = abilityStatValue;
 
         return activeAbility;
     }
@@ -51,7 +52,7 @@ public class AbilityService : IAbilityService
         copyTarget.TargetAreaType = copySource.TargetAreaType;
         copyTarget.TargetCount = copySource.TargetCount;
         copyTarget.TargetDistance = copySource.TargetDistance;
-        copyTarget.TargetSize = copySource.TargetSize;
+        copyTarget.TargetAreaSize = copySource.TargetAreaSize;
         copyTarget.SpellLevel = copySource.SpellLevel;
         copyTarget.TimeDuration = copySource.TimeDuration;
         copyTarget.TimeDurationType = copySource.TimeDurationType;

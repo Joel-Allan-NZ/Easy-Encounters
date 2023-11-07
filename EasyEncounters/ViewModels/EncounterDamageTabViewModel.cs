@@ -172,17 +172,24 @@ public partial class EncounterDamageTabViewModel : ObservableRecipientTab //Obse
     [RelayCommand]
     private void DealDamage()
     {
-        var msg = new List<string>();
-        foreach(var target in Targets)
-        {
-            msg.Add(_activeEncounterService.DealDamage(Encounter, new DamageInstance(target.ActiveEncounterCreatureViewModel.Creature, SourceCreature.Creature, SelectedDamageType,
-                target.SelectedDamageVolume, Damage)));
-            //msg.Add(_activeEncounterService.DealDamage(Encounter, SourceCreature.Creature, target.ActiveEncounterCreatureViewModel.Creature, SelectedDamageType, Damage));
-            target.ActiveEncounterCreatureViewModel.CurrentHP = target.ActiveEncounterCreatureViewModel.Creature.CurrentHP; //hax. TODO: better.
+        WeakReferenceMessenger.Default.Send(new DealDamageRequestMessage(Targets.ToList(), SourceCreature.Creature, Damage, SelectedDamageType));
+        //var msg = new List<string>();
+        //foreach(var target in Targets)
+        //{
+        //    msg.Add(_activeEncounterService.DealDamageAsync(Encounter, new DamageInstance(target.ActiveEncounterCreatureViewModel.Creature, SourceCreature.Creature, SelectedDamageType,
+        //        target.SelectedDamageVolume, Damage)));
+        //    //msg.Add(_activeEncounterService.DealDamage(Encounter, SourceCreature.Creature, target.ActiveEncounterCreatureViewModel.Creature, SelectedDamageType, Damage));
+        //    target.ActiveEncounterCreatureViewModel.CurrentHP = target.ActiveEncounterCreatureViewModel.Creature.CurrentHP; //hax. TODO: better.
             
-        }
+        //}
         
-        WeakReferenceMessenger.Default.Send(new LogMessageLogged(msg));
+        //WeakReferenceMessenger.Default.Send(new LogMessageLogged(msg));
+    }
+
+    [RelayCommand]
+    private void RequestInspect(ActiveEncounterCreatureViewModel creatureVM)
+    {
+        WeakReferenceMessenger.Default.Send(new InspectRequestMessage(creatureVM));
     }
 
     private void UpdateCreatures(IList<ActiveEncounterCreatureViewModel> creatures)

@@ -79,7 +79,7 @@ public partial class App : Application
 
 
             // Core Services
-            services.AddSingleton<ISampleDataService, SampleDataService>();
+            //services.AddSingleton<ISampleDataService, SampleDataService>();
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IDataService, DataService>();
             services.AddSingleton<IRandomService, RandomService>();
@@ -141,6 +141,8 @@ public partial class App : Application
             services.AddTransient<EncounterDamageTabViewModel>();
             services.AddTransient<CreatureDisplayTabPage>();
             services.AddTransient<CreatureDisplayTabViewModel>();
+            services.AddTransient<LogTabPage>();
+            services.AddTransient<LogTabViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
@@ -154,7 +156,7 @@ public partial class App : Application
     {
         var a = App.GetService<ILogService>();
         var exception = e.Exception;
-        a.Log(exception.Source + exception.Message + exception.StackTrace + exception.InnerException?.Message);
+        a.LogError(exception.Source + exception.Message + exception.StackTrace + exception.InnerException?.Message);
         // TODO: Log and handle exceptions as appropriate.
         // https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
         //if (!hasHandledUnhandledException)

@@ -19,55 +19,61 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" MinWidth="300"/>
+            <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <StackPanel MinWidth="300">
-                <!--MaxHeight="800"
+        <!--<StackPanel Orientation="Horizontal">-->
+            <!--MaxHeight="800"
                         MaxWidth="300"-->
-                        
-                <ScrollViewer>
-                    <ListView Grid.Row="0"
+
+                <ListView Grid.Row="0"
+                          MinWidth="300"
+                          Grid.RowSpan="2"
+                          
                   x:Name="CreaturesListView"
                   Grid.Column="0"
                   Header="Turn Order"
                   Margin="2"
                   ItemsSource="{x:Bind ViewModel.Creatures}">
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="DoubleTapped">
-                                <Core:InvokeCommandAction Command="{x:Bind ViewModel.ShowCreatureDisplayTabCommand}" 
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="DoubleTapped">
+                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.ShowCreatureDisplayTabCommand}" 
                                                       CommandParameter="{x:Bind CreaturesListView.SelectedItem, Mode=OneWay}"/>
-                            </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
-                        <ListView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid BorderThickness="{Binding TargetVisibility}"
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid BorderThickness="{Binding TargetVisibility}"
                               BorderBrush="CadetBlue">
 
 
-                                    <Grid.ContextFlyout>
-                                        <MenuFlyout>
-                                            <MenuFlyoutItem Text="Open in tab"
+                                <Grid.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="Open in tab"
                                                     Command="{Binding InspectRequestedCommand}"/>
-                                        </MenuFlyout>
-                                    </Grid.ContextFlyout>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="3*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-                                    <Image Source="/Assets/InitiativeBG.png"
+                                        <MenuFlyoutItem Text="Select as Damage Source"
+                                                            Command="{Binding DamageRequestedCommand}"/>
+                            </MenuFlyout>
+                                </Grid.ContextFlyout>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="3*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Image Source="/Assets/InitiativeBG.png"
                                    HorizontalAlignment="Left"
                                    Grid.Column="0"
                                    Opacity=".5"
                                     Width="30"
                                     Height="30" />
-                                    <NumberBox Grid.Column="0"
+                                <NumberBox Grid.Column="0"
                                        Visibility="{Binding Creature.DMControl, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='negate'}"
                                        HorizontalAlignment="Center"
                                        Margin="-38,2,2,2"
@@ -76,73 +82,83 @@
                                        VerticalAlignment="Center"
                                        AcceptsExpression="False"
                                        Text="{Binding Initiative, Mode=TwoWay}">
-                                    </NumberBox>
-                                    <TextBlock Grid.Column="0"
+                                </NumberBox>
+                                <TextBlock Grid.Column="0"
                                                HorizontalTextAlignment="Center"
                                                Visibility="{Binding Creature.DMControl, Converter={StaticResource BooleanToVisibilityConverter}}"                                          
                                                Margin="-39,2,2,2"
                                                MaxWidth="50"
                                                Text="{Binding Initiative, Mode=OneWay}"
                                                VerticalAlignment="Center"/>
-                                    <TextBlock Margin="2,2,2,2"
+                                <TextBlock Margin="2,2,2,2"
                                        Grid.Column="1"
                                        Text="{Binding Creature.EncounterName}"/>
-                                    <StackPanel Grid.Row="1"
+                                <StackPanel Grid.Row="1"
                                             Grid.Column="0"
                                             Grid.ColumnSpan="3"
                                             Orientation="Horizontal">
-                                        <TextBlock Margin="2"
+                                    <TextBlock Margin="2"
                                            Text="{Binding CurrentHP}"
                                            FontSize="10"/>
-                                        <TextBlock Text="/"
+                                    <TextBlock Text="/"
                                                    FontSize="10"/>
-                                        <TextBlock Margin="2"
+                                    <TextBlock Margin="2"
                                                    Text="{Binding Creature.EncounterMaxHP}"
                                                    FontSize="10"/>
-                                        <TextBlock Margin="10,2,2,2"
+                                    <TextBlock Margin="10,2,2,2"
                                                    FontSize="10"
                                                    Text="Conditions:"></TextBlock>
-                                        <TextBlock Margin="2"
+                                    <TextBlock Margin="2"
                                                    Text="{Binding Conditions.EnumString}"
                                                    FontSize="10"
                                                    TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </ScrollViewer>
-                <ScrollViewer MaxHeight="200">
-                    <ListView x:Name="log"
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <!--<ScrollViewer MaxHeight="200">-->
+                    <!--<ListView x:Name="log"
+                              Grid.Row="1"
+                          MaxHeight="200"
                           Margin="2"
-                          ItemsSource="{x:Bind ViewModel.CombatLog, Mode=OneWay}"/>
-                </ScrollViewer>
-            </StackPanel>
+                          ItemsSource="{x:Bind ViewModel.CombatLog, Mode=OneWay}"/>-->
+                <!--</ScrollViewer>-->
+            <!--</StackPanel>-->
             <TabView TabItemsSource="{x:Bind ViewModel.Tabs, Mode=OneWay}"
                  IsAddTabButtonVisible="False"
+                     Grid.Column="1"
+                     Grid.Row="0"
+                     Grid.RowSpan="2"
+                     CanReorderTabs="False"
+                     CanDragTabs="False"
+                     AllowDrop="False"
                  SelectedItem="{x:Bind ViewModel.SelectedTab, Mode=TwoWay}"
                  TabCloseRequested="TabView_TabCloseRequested"
                  TabWidthMode="SizeToContent">
                 <TabView.TabItemTemplate>
                     <DataTemplate>
-                        <TabViewItem Header="{Binding TabName}">
+                        <TabViewItem Header="{Binding TabName}"
+                                     IsClosable="{Binding IsClosable}">
                             <Frame Content="{Binding Content}"/>
                         </TabViewItem>
                     </DataTemplate>
                 </TabView.TabItemTemplate>
             </TabView>
-        </StackPanel>
+        <!--</StackPanel>-->
         <StackPanel Orientation="Horizontal" Grid.Row="2"
                 VerticalAlignment="Bottom">
             <Button Command="{x:Bind ViewModel.NextTurnCommand}"
+                    Visibility="{x:Bind ViewModel.InitiativeRolled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Content="Next Turn"
-                        Margin="20,2"/>
+                        Margin="5,8"/>
             <Button Command="{x:Bind ViewModel.RollInitiativeCommand}"
+                    Visibility="{x:Bind ViewModel.InitiativeRolled, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverter}, ConverterParameter='negate'}"
                         Content="Roll Initiative"
-                        Margin="20,2"/>
+                        Margin="5,8"/>
             <Button Command="{x:Bind ViewModel.EndEncounterCommand}"
                         Content="Encounter Finished"
-                        Margin="20,2"/>
+                        Margin="5,8"/>
         </StackPanel>
     </Grid>
 </Page>

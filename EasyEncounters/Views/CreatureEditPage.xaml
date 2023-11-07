@@ -592,62 +592,26 @@
                           HorizontalAlignment="Stretch"
                           Margin="5">
                     <Expander.Content>
-                        <ListView 
-                          ui:ListViewExtensions.AlternateColor="Bisque"
-                          Margin="5"
-                          ItemsSource="{x:Bind ViewModel.Spells}"
-                          SelectionMode="None">
-                            <ListView.Header>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Button Grid.Column="0"
-                                            Content="Name"
-                                            Command="{x:Bind ViewModel.SortSpellsByNameCommand}"/>
-                                    <Button Grid.Column="1"
-                                            Command="{x:Bind ViewModel.SortSpellsByResolutionCommand}"
-                                            Content="Resolution"/>
-                                    <Button Grid.Column="2"
-                                            Command="{x:Bind ViewModel.SortSpellsByDamageTypeCommand}"
-                                            Content="Damage Type"/>
-                                </Grid>
-                            </ListView.Header>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="*"/>
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.ContextFlyout>
-                                            <MenuFlyout>
-                                                <MenuFlyoutItem Text="Add" Command="{Binding AddAbilityRequestedCommand}"/>
-                                            </MenuFlyout>
-                                        </Grid.ContextFlyout>
-
-                                        <TextBlock Grid.Column="0"
-                                           Text="{Binding Ability.Name}" 
-                                           FontWeight="Medium"
-                                           Margin="5"></TextBlock>
-                                        <TextBlock Grid.Column="1"
-                                           Text="{Binding Ability.SpellLevel, Converter={StaticResource EnumToStringConverter}}"
-                                           Margin="5"/>
-                                        <TextBlock Grid.Column="2"
-                                           Text="{Binding Ability.Resolution, Converter={StaticResource EnumToStringConverter}}"
-                                           Margin="5"/>
-                                        <TextBlock Grid.Column="3"
-                                           Text="{Binding Ability.DamageTypes, Converter={StaticResource EnumToStringConverter}}"
-                                           Margin="5"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                        <local:SpellGrid
+                            FilterSpellLevelSource="{x:Bind ViewModel.SpellLevels}"
+                            FilterMinimumSpellLevel="{x:Bind ViewModel.MinimumSpellLeveLFilter, Mode=TwoWay}"
+                            FilterMaximumSpellLevel="{x:Bind ViewModel.MaximumSpellLevelFilter, Mode=TwoWay}"
+                            FilterSpellSchoolSource="{x:Bind ViewModel.MagicSchools}"
+                            FilterSpellSchoolSelected="{x:Bind ViewModel.SpellSchoolFilterSelected, Mode=TwoWay}"
+                            FilterConcentrationSource="{x:Bind ViewModel.ConcentrationStates}" 
+                            FilterConcentrationSelected="{x:Bind ViewModel.ConcentrationFilterSelected, Mode=TwoWay}"
+                            FilterResolutionSource="{x:Bind ViewModel.ResolutionTypes}"
+                            FilterResolutionSelected="{x:Bind ViewModel.ResolutionTypeFilterSelected, Mode=TwoWay}"
+                            FilterDamageTypeSource="{x:Bind ViewModel.DamageTypes}"
+                            FilterDamageTypeSelected="{x:Bind ViewModel.DamageTypeFilterSelected, Mode=TwoWay}"
+                            Suggestions="{x:Bind ViewModel.SearchSuggestions, Mode=OneWay}"
+                            FilterCommand="{x:Bind ViewModel.AbilityFilterCommand}"
+                            SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
+                            GridDataSource="{x:Bind ViewModel.Spells}"
+                            SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
+                            EditSpellCommand="{x:Bind ViewModel.EditAbilityCommand}"
+                            AddSpellCommand="{x:Bind ViewModel.AddAbilityCommand}"
+                            />
                     </Expander.Content>
                 </Expander>
                 

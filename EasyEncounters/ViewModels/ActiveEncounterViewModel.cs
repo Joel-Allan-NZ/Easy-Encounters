@@ -135,7 +135,7 @@ namespace EasyEncounters.ViewModels
             var instances = GetInstancesOfDamage();
             foreach (var instance in instances)
             {
-                _activeEncounterService.DealDamage(_activeEncounter, instance);
+                _activeEncounterService.DealDamageAsync(_activeEncounter, instance);
                 CombatLog.Insert(0, _activeEncounter.Log.Last());
             }
                 

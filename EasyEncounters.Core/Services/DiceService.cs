@@ -33,23 +33,6 @@ public class DiceService : IDiceService
     }
     public int Roll(string diceString) //we're assuming the diceString doesn't have any invalid elements - validating elsewhere.
     {
-        //var result = 0;
-
-
-        //var splitOnPlus = diceString.ToLower().Split('+', (StringSplitOptions)3); //discard empty values and trim splits.
-        //foreach (var split in splitOnPlus)
-        //{
-        //    var dieSplit = split.Split('d');
-        //    if (dieSplit.Length == 1) //only a flat value
-        //    {
-        //        result += int.Parse(dieSplit[0]);
-        //    }
-        //    else
-        //    {
-        //        result += Roll(int.Parse(dieSplit[1]), int.Parse(dieSplit[0]));
-        //    }
-        //}
-        //return result;
         if (diceString == null)
             return 0;
         return Parse(diceString);
@@ -59,7 +42,7 @@ public class DiceService : IDiceService
     {
         int result = 0;
 
-        DiceParseType parseType = DiceParseType.Dice;
+        DiceParseType parseType = DiceParseType.Flat;
         var lowerString = diceString.ToLower();
 
         Dictionary<int, int> dice = new();
@@ -110,6 +93,7 @@ public class DiceService : IDiceService
                 substringStart = substringCurrent;
             }
         }
+
         result += HandleToken(parseType, lowerString.Substring(substringStart));
         return result;
     }

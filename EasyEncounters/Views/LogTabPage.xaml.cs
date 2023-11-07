@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using CommunityToolkit.WinUI.UI.Controls;
 using EasyEncounters.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -20,29 +19,17 @@ using Windows.Foundation.Collections;
 
 namespace EasyEncounters.Views;
 /// <summary>
-/// An empty window that can be used on its own or navigated to within a Frame.
+/// An empty page that can be used on its own or navigated to within a Frame.
 /// </summary>
-public sealed partial class AbilityCRUDPage : Page
+public sealed partial class LogTabPage : Page
 {
-    public AbilityCRUDViewModel ViewModel
+    public LogTabViewModel ViewModel
     {
         get;
     }
-    public AbilityCRUDPage()
+    public LogTabPage()
     {
-        ViewModel = App.GetService<AbilityCRUDViewModel>();
-        //ViewModel.Sorting += Sorting;
+        ViewModel = App.GetService<LogTabViewModel>();
         this.InitializeComponent();
     }
-    //private void Sorting(object sender, DataGridColumnEventArgs e)
-    //{
-    //    foreach (var dgColumn in AbilityListDG.Columns)
-    //    {
-    //        if (dgColumn.Tag.ToString() != e.Column.Tag.ToString())
-    //        {
-    //            dgColumn.SortDirection = null;
-    //        }
-
-    //    }
-    //}
 }

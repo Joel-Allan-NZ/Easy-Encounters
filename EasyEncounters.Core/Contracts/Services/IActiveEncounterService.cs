@@ -17,9 +17,9 @@ public interface IActiveEncounterService
         get; set;
     }
 
-    string DealDamage(ActiveEncounter activeEncounter, ActiveEncounterCreature sourceCreature, ActiveEncounterCreature targetCreature, DamageType damageType, int damageValue);
+    //string DealDamage(ActiveEncounter activeEncounter, ActiveEncounterCreature sourceCreature, ActiveEncounterCreature targetCreature, DamageType damageType, int damageValue);
 
-    string DealDamage(ActiveEncounter activeEncounter, DamageInstance damageInstance);
+    Task<string> DealDamageAsync(ActiveEncounter activeEncounter, DamageInstance damageInstance);
 
     DamageVolume GetDamageVolumeSuggestion(ActiveEncounterCreature target, DamageType damageType);
 
@@ -33,7 +33,7 @@ public interface IActiveEncounterService
     /// <returns>The ActiveEncounterCreatures in the ActiveEncounter, returned in initiative order</returns>
     Task<IEnumerable<ActiveEncounterCreature>> UpdateInitiativeOrder(ActiveEncounter activeEncounter);
 
-    Task EndCurrentTurnAsync(ActiveEncounter activeEncounter);
+    Task<string> EndCurrentTurnAsync(ActiveEncounter activeEncounter);
 
     Task<ActiveEncounter> CreateActiveEncounterAsync(Encounter encounter, Party party);
 

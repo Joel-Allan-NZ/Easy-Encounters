@@ -30,11 +30,14 @@ namespace EasyEncounters.ViewModels
         [ObservableProperty]
         private ObservableRecipientTab _selectedTab;
 
-        public ObservableCollection<string> CombatLog
-        {
+        [ObservableProperty]
+        private bool _initiativeRolled;
 
-            get; set;
-        } = new();
+        //public ObservableCollection<string> CombatLog
+        //{
+
+        //    get; set;
+        //} = new();
 
         public ObservableCollection<ActiveEncounterCreatureViewModel> Creatures
         {
@@ -75,12 +78,16 @@ namespace EasyEncounters.ViewModels
             ShowCreatureDisplayTab(Creatures.First());
            
             await _dataService.SaveAddAsync(_activeEncounter);
+            InitiativeRolled = true;
+
+            WeakReferenceMessenger.Default.Send(new LogMessageLogged(new List<string>() { "Initiative Rolled!", $"{_activeEncounter.ActiveTurn?.EncounterName ?? "A creature"}'s turn" }));
         }
 
         [RelayCommand]
         private async void NextTurn()
         {
-            await _activeEncounterService.EndCurrentTurnAsync(_activeEncounter);
+            string current = await _activeEncounterService.EndCurrentTurnAsync(_activeEncounter); /*$"{_activeEncounter.ActiveTurn?.EncounterName ?? "A creature"} ends their turn.";*/
+
 
             if (_activeEncounter.CreatureTurns.Count != Creatures.Count)
             {
@@ -119,7 +126,8 @@ namespace EasyEncounters.ViewModels
                         creature.Targeted = false;
                 }
             }
-
+            //string next = $"{_activeEncounter.ActiveTurn?.EncounterName ?? "Another creature"}'s turn";
+            WeakReferenceMessenger.Default.Send(new LogMessageLogged(new List<string>() { current }));
             WeakReferenceMessenger.Default.Send(new EncounterCreatureChangedMessage(Creatures));
         }
 
@@ -143,8 +151,11 @@ namespace EasyEncounters.ViewModels
             if (obj != null && obj is ObservableRecipientTab)
             {
                 var tab = (ObservableRecipientTab)obj;
-                Tabs.Remove(tab);
-                _tabService.CloseTab(tab);
+                if (tab.IsClosable)
+                {
+                    Tabs.Remove(tab);
+                    _tabService.CloseTab(tab);
+                }
             }
         }
 
@@ -159,19 +170,26 @@ namespace EasyEncounters.ViewModels
 
                 if (openTab == null)
                 {
-                    openTab = _tabService.OpenTab(typeof(CreatureDisplayTabViewModel).FullName!,obj, obj.Creature.EncounterName);
+                    openTab = _tabService.OpenTab(typeof(CreatureDisplayTabViewModel).FullName!, obj, obj.Creature.EncounterName);
                     Tabs.Add(openTab);
-                    //Tabs.Insert(0, openTab);
                 }
-                //else
-                //{
-                //    Tabs.Move(Tabs.IndexOf(openTab), 0);
-                //}           
-                Tabs.Remove(openTab);
-                Tabs.Insert(0, openTab);
-                //Tabs.Move(Tabs.IndexOf(openTab), 0);
                 SelectedTab = openTab;
             }
+        }
+
+        private async void DealDamage(DealDamageRequestMessage request)
+        {
+            var msg = new List<string>();
+            foreach (var target in request.Targets)
+            {
+                msg.Add( await _activeEncounterService.DealDamageAsync(_activeEncounter, new DamageInstance(target.ActiveEncounterCreatureViewModel.Creature, request.SourceCreature, request.DamageType,
+                    target.SelectedDamageVolume, request.BaseDamage)));
+                //msg.Add(_activeEncounterService.DealDamage(Encounter, SourceCreature.Creature, target.ActiveEncounterCreatureViewModel.Creature, SelectedDamageType, Damage));
+                target.ActiveEncounterCreatureViewModel.CurrentHP = target.ActiveEncounterCreatureViewModel.Creature.CurrentHP; //hax. TODO: better.
+
+            }
+
+            WeakReferenceMessenger.Default.Send(new LogMessageLogged(msg));
         }
 
         private void ShowDamageTab(ObservableActiveAbility abilityVM, ActiveEncounterCreatureViewModel source)
@@ -188,6 +206,8 @@ namespace EasyEncounters.ViewModels
                 //Tuple.Create(_activeEncounter, source), $"Damage from {source.Creature.EncounterName}");
 
                 Tabs.Add(openTab);
+                //Tabs.Insert(0, openTab);
+                //Tabs.Insert(1, openTab);
             }
             else
             {
@@ -200,15 +220,8 @@ namespace EasyEncounters.ViewModels
                 else
                 ((EncounterDamageTabViewModel)openTab).HasSelectedAbility = false;
 
-            }           
-            Tabs.Move(Tabs.IndexOf(openTab), 0);
+            }
             SelectedTab = openTab;
-
-
-            //if (abilityVM != null)
-            //    Tabs.Add(_tabService.OpenTab(typeof(EncounterDamageTabViewModel).FullName!, Tuple.Create(_activeEncounter, source, abilityVM), $"Damage from {source.Creature.EncounterName}"));
-            //else
-            //    Tabs.Add(_tabService.OpenTab(typeof(EncounterDamageTabViewModel).FullName!, Tuple.Create(_activeEncounter, source), $"Damage from {source.Creature.EncounterName}"));
 
         }
 
@@ -236,10 +249,16 @@ namespace EasyEncounters.ViewModels
             {
                 ShowCreatureDisplayTab(m.Parameter);
             });
-            WeakReferenceMessenger.Default.Register<LogMessageLogged>(this, (r, m) =>
+
+            WeakReferenceMessenger.Default.Register<DealDamageRequestMessage>(this, (r, m) =>
             {
-                DamageLogged(m.LogMessages);
+                DealDamage(m);
             });
+            //WeakReferenceMessenger.Default.Register<LogMessageLogged>(this, (r, m) =>
+            //{
+            //    DamageLogged(m.LogMessages);
+            //});
+            Tabs.Add(_tabService.OpenTab(typeof(LogTabViewModel).FullName!, null, "Log", false));
         }
 
         //private void DealDamage(DamageInstance damage)
@@ -249,11 +268,11 @@ namespace EasyEncounters.ViewModels
         //    WeakReferenceMessenger.Default.Send(new LogMessageLogged(dmg));
 
         //}
-        private void DamageLogged(IList<string> toLog)
-        {
-            foreach (var msg in toLog.Reverse())
-                CombatLog.Add(msg);
-        }
+        //private void DamageLogged(IList<string> toLog)
+        //{
+        //    foreach (var msg in toLog.Reverse())
+        //        CombatLog.Add(msg);
+        //}
 
 
 
@@ -274,11 +293,11 @@ namespace EasyEncounters.ViewModels
             }
             Creatures.Clear();
 
-            foreach (var creature in _activeEncounter.CreatureTurns)
+            foreach (var creature in _activeEncounter.ActiveCreatures)
                 Creatures.Add(new ActiveEncounterCreatureViewModel(creature));
 
-            foreach (var combatLogString in _activeEncounter.Log.Reverse<string>())
-                CombatLog.Add(combatLogString);
+            //foreach (var combatLogString in _activeEncounter.Log.Reverse<string>())
+            //    CombatLog.Add(combatLogString);
         }
     }
 }

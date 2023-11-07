@@ -29,11 +29,13 @@
     <None Remove="Views\EncounterDamageTabPage.xaml" />
     <None Remove="Views\EncounterEditPage.xaml" />
     <None Remove="Views\EncounterTabPage.xaml" />
+    <None Remove="Views\LogTabPage.xaml" />
     <None Remove="Views\PartyCRUDPage.xaml" />
     <None Remove="Views\PartyEditPage.xaml" />
     <None Remove="Views\PartySelectPage.xaml" />
     <None Remove="Views\RunEncounterPage.xaml" />
     <None Remove="Views\RunSessionPage.xaml" />
+    <None Remove="Views\SpellGrid.xaml" />
     <None Remove="Views\TargetedDamagePage.xaml" />
   </ItemGroup>
 
@@ -58,6 +60,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\LogTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\EncounterDamageTabPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -131,5 +136,13 @@
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <CustomAdditionalCompileInputs Remove="Views\SpellGrid.xaml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Resource Remove="Views\SpellGrid.xaml" />
+  </ItemGroup>
 
 </Project>

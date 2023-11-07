@@ -16,18 +16,20 @@ public class ActiveEncounterService : IActiveEncounterService
     readonly IDataService _dataService;
     readonly ICreatureService _creatureService;
     readonly IEncounterService _encounterService;
+    readonly ILogService _logService;
 
     public bool RollHP
     {
         get; set;
     } = false; //defaults to false
 
-    public ActiveEncounterService(IRandomService randomService, IDataService dataService, IEncounterService encounterService, ICreatureService creatureService)
+    public ActiveEncounterService(IRandomService randomService, IDataService dataService, IEncounterService encounterService, ICreatureService creatureService, ILogService logService)
     {
         _encounterService = encounterService;
         _randomService = randomService;
         _dataService = dataService;
         _creatureService = creatureService;
+        _logService = logService;
 
     }
 
@@ -37,7 +39,7 @@ public class ActiveEncounterService : IActiveEncounterService
 
         var active = new ActiveEncounter(encounter, activeCreatures);
         await _dataService.SaveAddAsync(active);
-        OrderInitiative(active);
+        //OrderInitiative(active);
         return active;
     }
 
@@ -50,40 +52,47 @@ public class ActiveEncounterService : IActiveEncounterService
             activeCreatures.Add(_encounterService.CreateActiveEncounterCreature(creature, RollHP));
         }
         foreach (var creature in party.Members)
-            activeCreatures.Add(_encounterService.CreateActiveEncounterCreature(creature, false));
+            if(creature.DMControl)
+                activeCreatures.Add(_encounterService.CreateActiveEncounterCreature(creature, false));
+
+        foreach (var creature in party.Members)
+            if (!creature.DMControl)
+                activeCreatures.Add(_encounterService.CreateActiveEncounterCreature(creature, false));
 
         return activeCreatures;
     }
 
     public void AddEncounterCreature(ActiveEncounter activeEncounter, Creature creature, bool maxHPRoll)
     {
+        int collisions = 0;
         HashSet<string> names = new HashSet<string>();
         foreach (var activeCreature in activeEncounter.ActiveCreatures)
-            names.Add(activeCreature.Name);
+        {
+            if (names.Contains(activeCreature.Name))
+                collisions++;
+            else
+                names.Add(activeCreature.Name);
+        }
 
         var tempCreature = _encounterService.CreateActiveEncounterCreature(creature, maxHPRoll);
-        int collisions = 0;
-
-        while (names.Contains(tempCreature.EncounterName))
-        {
-            collisions++;
-            tempCreature.EncounterName = $"{tempCreature.Name} {collisions}";
-        }
+        if (names.Contains(tempCreature.Name))
+            tempCreature.EncounterName = $"{tempCreature.Name} {collisions+1}";
+        else
+            tempCreature.EncounterName = tempCreature.Name;
 
         activeEncounter.ActiveCreatures.Add(tempCreature); 
     }
 
-    public string DealDamage(ActiveEncounter activeEncounter, ActiveEncounterCreature sourceCreature, ActiveEncounterCreature targetCreature, DamageType damageType, int damageValue)
+    private async Task<string> DealDamageAsync(ActiveEncounter activeEncounter, ActiveEncounterCreature sourceCreature, ActiveEncounterCreature targetCreature, DamageType damageType, int damageValue)
     {
-        var logMessageString = "";
+        //var logMessageString = "";
         if (damageType == DamageType.Healing)
         {
             targetCreature.CurrentHP += damageValue;
             if (targetCreature.CurrentHP > targetCreature.MaxHP)
                 targetCreature.CurrentHP = targetCreature.MaxHP;
 
-            //activeEncounter.Log.Add($"{sourceCreature.EncounterName} healed {targetCreature.EncounterName} for {damageValue}");
-            logMessageString = $"{sourceCreature.EncounterName} healed {targetCreature.EncounterName} for {damageValue}";
+            //logMessageString = $"{sourceCreature.EncounterName} healed {targetCreature.EncounterName} for {damageValue}";
         }
         else
         {
@@ -93,17 +102,15 @@ public class ActiveEncounterService : IActiveEncounterService
             if (targetCreature.MaxHP != 0 && targetCreature.CurrentHP <= 0) //non-pc character dead'd
             {
                 targetCreature.Dead = true;
-                logMessageString = $"{sourceCreature.EncounterName} deals {damageValue} {DamageTypeToString(damageType)} " +
-                    $"to {targetCreature.EncounterName} \n {targetCreature.EncounterName} is downed! {targetCreature.CurrentHP} overkill.";
-                //activeEncounter.Log.Add($"{sourceCreature.EncounterName} deals {damageValue} {DamageTypeToString(damageType)} to {targetCreature.EncounterName} \n {targetCreature.EncounterName} is downed! {targetCreature.CurrentHP} overkill.");
+                //logMessageString = $"{sourceCreature.EncounterName} deals {damageValue} {DamageTypeToString(damageType)} " +
+                //    $"to {targetCreature.EncounterName} \n {targetCreature.EncounterName} is downed! {targetCreature.CurrentHP} overkill.";
             }
-            else
-                logMessageString = $"{sourceCreature.EncounterName} deals {damageValue} {DamageTypeToString(damageType)} to {targetCreature.EncounterName}";
-                //activeEncounter.Log.Add($"{sourceCreature.EncounterName} deals {damageValue} {DamageTypeToString(damageType)} to {targetCreature.EncounterName}");
+            //else
+            //    logMessageString = $"{sourceCreature.EncounterName} deals {damageValue} {DamageTypeToString(damageType)} to {targetCreature.EncounterName}";
         }
-        activeEncounter.Log.Add(logMessageString);
-        return logMessageString;
-        //WeakReferenceManager.Default
+        //activeEncounter.Log.Add(logMessageString);
+        //return logMessageString;
+        return await _logService.LogDamage(damageType, sourceCreature, targetCreature, damageValue);
     }
 
     private static string DamageTypeToString(DamageType damage)
@@ -117,7 +124,7 @@ public class ActiveEncounterService : IActiveEncounterService
         return sb.ToString();
     }
 
-    public async Task EndCurrentTurnAsync(ActiveEncounter activeEncounter)
+    public async Task<string> EndCurrentTurnAsync(ActiveEncounter activeEncounter)
     {
         if (activeEncounter.ActiveTurn != null && !activeEncounter.ActiveTurn.Dead)
             activeEncounter.CreatureTurns.Enqueue(activeEncounter.CreatureTurns.Dequeue());
@@ -142,12 +149,15 @@ public class ActiveEncounterService : IActiveEncounterService
         activeEncounter.ActiveTurn.CurrentLegendaryActions = activeEncounter.ActiveTurn.MaxLegendaryActions;
 
         await _dataService.SaveAddAsync(activeEncounter);
+        _logService.LogTurnEnd();
+        return _logService.LogTurnStart(activeEncounter.ActiveTurn);
     }
 
     public async Task EndEncounterAsync(ActiveEncounter activeEncounter)
     {
        await _dataService.WriteLog(activeEncounter.Log);
         await _dataService.ClearActiveEncounterAsync();
+        await _logService.EndEncounterLog();
     }
 
     private void RollInitiative(ActiveEncounterCreature activeEncounterCreature)
@@ -195,6 +205,8 @@ public class ActiveEncounterService : IActiveEncounterService
             throw new ArgumentException("The active turn must be a living creature that exists within the encounter.");
         await _dataService.SaveAddAsync(activeEncounter);
 
+        _logService.StartEncounterLog(activeEncounter.ActiveTurn);
+
         return activeEncounter.CreatureTurns;
     }
 
@@ -228,9 +240,9 @@ public class ActiveEncounterService : IActiveEncounterService
         return suggestedDamageVolume;
     }
 
-    public string DealDamage(ActiveEncounter activeEncounter, DamageInstance damageInstance)
+    public async Task<string> DealDamageAsync(ActiveEncounter activeEncounter, DamageInstance damageInstance)
     {
-        return DealDamage(activeEncounter, damageInstance.Source, damageInstance.Target, damageInstance.DamageType, GetEffectiveDamage(damageInstance.BaseDamageValue, damageInstance.DamageVolume));
+        return await DealDamageAsync(activeEncounter, damageInstance.Source, damageInstance.Target, damageInstance.DamageType, GetEffectiveDamage(damageInstance.BaseDamageValue, damageInstance.DamageVolume));
     }
 
     private int GetEffectiveDamage(int damage, DamageVolume multiplierEnum)

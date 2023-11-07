@@ -29,8 +29,21 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
     private readonly INavigationService _navigationService;
     private readonly IFilteringService _filteringService;
     private readonly IList<SpellLevel> _spellLevels = Enum.GetValues(typeof(SpellLevel)).Cast<SpellLevel>().ToList();
+    private readonly IList<MagicSchool> _magicSchools = Enum.GetValues(typeof(MagicSchool)).Cast<MagicSchool>().ToList();
+    private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
+    private readonly IList<ResolutionType> _resolutionTypes = Enum.GetValues(typeof(ResolutionType)).Cast<ResolutionType>().ToList();
+    private readonly IList<ThreeStateBoolean> _concentrationStates = Enum.GetValues(typeof(ThreeStateBoolean)).Cast<ThreeStateBoolean>().ToList();
+
 
     public IList<SpellLevel> SpellLevels => _spellLevels;
+
+    public IList<MagicSchool> MagicSchools => _magicSchools;
+
+    public IList<DamageType> DamageTypes => _damageTypes;
+
+    public IList<ResolutionType> ResolutionTypes => _resolutionTypes;
+
+    public IList<ThreeStateBoolean> ConcentrationStates => _concentrationStates;
 
     private List<AbilityViewModel> _abilityCache;
 
@@ -43,14 +56,30 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
     [ObservableProperty]
     private SpellLevel _maximumSpellLevelFilter;
 
+    [ObservableProperty]
+    private MagicSchool _spellSchoolFilterSelected;
 
-    public event EventHandler<DataGridColumnEventArgs> Sorting;
-    protected virtual void OnSorting(DataGridColumnEventArgs e)
-    {
-        EventHandler<DataGridColumnEventArgs> handler = Sorting;
-        if (handler != null)
-            handler(this, e);
-    }
+    [ObservableProperty]
+    private DamageType _damageTypeFilterSelected;
+
+    [ObservableProperty]
+    private ResolutionType _resolutionTypeFilterSelected;
+
+    [ObservableProperty]
+    private ThreeStateBoolean _concentrationFilterSelected;
+
+
+
+
+
+
+    //public event EventHandler<DataGridColumnEventArgs> Sorting;
+    //protected virtual void OnSorting(DataGridColumnEventArgs e)
+    //{
+    //    EventHandler<DataGridColumnEventArgs> handler = Sorting;
+    //    if (handler != null)
+    //        handler(this, e);
+    //}
 
     [RelayCommand]
     private void SearchTextChange(string text)
@@ -71,8 +100,18 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         List<FilterCriteria<AbilityViewModel>> criteria = new()
         {
             new FilterCriteria<AbilityViewModel>(x => x.Ability.SpellLevel, MinimumSpellLeveLFilter, MaximumSpellLevelFilter),
-            new FilterCriteria<AbilityViewModel>(x => x.Ability.Name, text)
+            new FilterCriteria<AbilityViewModel>(x => x.Ability.Name, text),
         };
+        if (ConcentrationFilterSelected == ThreeStateBoolean.False)
+            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.Concentration, false, false));
+        if (ConcentrationFilterSelected == ThreeStateBoolean.True)
+            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.Concentration, true, true));
+        if (ResolutionTypeFilterSelected != ResolutionType.Undefined)
+            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.Resolution, ResolutionTypeFilterSelected, ResolutionTypeFilterSelected));
+        if (SpellSchoolFilterSelected != MagicSchool.None)
+            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.MagicSchool, SpellSchoolFilterSelected, SpellSchoolFilterSelected));
+        if (DamageTypeFilterSelected != DamageType.Untyped)
+            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.DamageTypes, DamageTypeFilterSelected, DamageTypeFilterSelected));
 
         var filtered = _filteringService.Filter(_abilityCache, criteria);
         Abilities.Clear();
@@ -83,7 +122,7 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
     [RelayCommand]
     private void DataGridSort(DataGridColumnEventArgs e)
     {
-        OnSorting(e);
+        //OnSorting(e);
         if (e.Column.Tag.ToString() == "AbilityName")
         {
             SortByPredicate(Abilities, x => x.Ability.Name, e.Column.SortDirection == DataGridSortDirection.Ascending);
@@ -92,21 +131,29 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
             //else
             //    SortAbilitiesByName(true);
         }
-        else if (e.Column.Tag.ToString() == "AbilitySpellLevel")
+        else if (e.Column.Tag.ToString() == "AbilityLevel")
         {
                 SortByPredicate(Abilities, x => x.Ability.SpellLevel, e.Column.SortDirection == DataGridSortDirection.Ascending);
         }
         else if(e.Column.Tag.ToString() == "AbilityDamageType")
         {
             SortByPredicate(Abilities, x => x.Ability.DamageTypes, e.Column.SortDirection == DataGridSortDirection.Ascending);
-            //if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
-            //    SortAbilitiesByDamageType(false);
-            //else
-            //    SortAbilitiesByDamageType(true);
         }
         else if(e.Column.Tag.ToString() == "AbilityResolutionType")
         {
             SortByPredicate(Abilities, x => x.Ability.Resolution, e.Column.SortDirection == DataGridSortDirection.Ascending);
+        }
+        else if(e.Column.Tag.ToString() == "AbilityConcentration")
+        {
+            SortByPredicate(Abilities, x => x.Ability.Concentration, e.Column.SortDirection == DataGridSortDirection.Ascending);
+        }
+        else if (e.Column.Tag.ToString() == "AbilityResolutionStat")
+        {
+            SortByPredicate(Abilities, x => x.Ability.SaveType, e.Column.SortDirection == DataGridSortDirection.Ascending);
+        }
+        else if (e.Column.Tag.ToString() == "AbilitySchool")
+        {
+            SortByPredicate(Abilities, x => x.Ability.MagicSchool, e.Column.SortDirection == DataGridSortDirection.Ascending);
         }
 
         if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
@@ -128,31 +175,6 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         foreach(var item in tmp)
             collection.Add(item);
     }
-
-    //private void SortAbilitiesbyLevel(bool ascending)
-    //{
-    //    if (!ascending)
-    //        tmp = Creatures.OrderBy(x => x.Creature.Name).ToList();
-    //    else
-    //        tmp = Creatures.OrderByDescending(x => x.Creature.Name).ToList();
-
-    //    Creatures.Clear();
-    //    foreach (var creature in tmp)
-    //        Creatures.Add(creature);
-    //}
-
-    //private void SortAbilitiesByName(bool ascending)
-    //{
-    
-    //}
-
-    //private void SortAbilitiesByDamageType(bool ascending)
-    //{
-    
-    //}
-
-
-    // DispatcherQueueTimer _filterTimer;
 
 
     public ObservableCollection<AbilityViewModel> Abilities
@@ -203,19 +225,6 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         EditAbility(ability);
     }
 
-    //[RelayCommand]
-    //private async void Filter(object parameter)
-    //{
-    //    _filterTimer.Debounce(async () =>
-    //    {
-
-    //        await FilterAsync(parameter);
-
-    //    }, TimeSpan.FromSeconds(0.3));
-    //}
-
-
-
     public AbilityCRUDViewModel(IDataService dataService, INavigationService navigationService, IFilteringService filteringService)
     {
         _dataService = dataService;
@@ -246,6 +255,12 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         _abilityCache = new List<AbilityViewModel>(Abilities);
         SearchSuggestions = new(Abilities);
         MaximumSpellLevelFilter = SpellLevel.LevelNine;
+        ConcentrationFilterSelected = ThreeStateBoolean.Either;
+        MinimumSpellLeveLFilter = SpellLevel.Cantrip;
+        DamageTypeFilterSelected = DamageType.Untyped;
+        ResolutionTypeFilterSelected = ResolutionType.Undefined;
+        SpellSchoolFilterSelected = MagicSchool.None;
+        
     }
 
     private void HandleCRUDRequest(Ability ability, CRUDRequestType requestType)
@@ -264,31 +279,4 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         }
     }
 
-    //private async Task FilterAsync(object parameter)
-    //{
-    //    if (parameter is string)
-    //    {
-    //        var text = (string)parameter;
-
-    //        //remove is worse performance than clearing and repopulating the list, but much less 'flickery'.
-
-    //        List<AbilityViewModel> matched = Abilities.Where(x => x.Ability.Name.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToList();
-    //        List<AbilityViewModel> noMatch = new();
-
-
-    //        for (var i = Abilities.Count - 1; i >= 0; i--)
-    //        {
-    //            var item = Abilities[i];
-    //            if (!matched.Contains(item))
-    //            {
-    //                Abilities.Remove(item);
-    //                noMatch.Add(item);
-    //            }
-    //        }
-
-    //        foreach (var item in noMatch)
-    //            Abilities.Add(item);
-
-    //    }
-    //}
 }

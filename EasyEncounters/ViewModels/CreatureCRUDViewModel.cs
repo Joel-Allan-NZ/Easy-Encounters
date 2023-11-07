@@ -216,46 +216,6 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
             Creatures.Add(creature);
     }
 
-    //[RelayCommand]
-    //private async void Filter(object parameter)
-    //{
-    //    _filterTimer.Debounce(async () =>
-    //    {
-
-    //        await FilterAsync(parameter);
-
-    //    }, TimeSpan.FromSeconds(0.3));
-    //}
-
-    //private async Task FilterAsync(object parameter)
-    //{
-    //    if (parameter is string)
-    //    {
-    //        var text = (string)parameter;
-
-    //        //remove is worse performance than clearing and repopulating the list, but much less 'flickery'.
-
-    //        List<CreatureViewModel> matched = Creatures.Where(x => x.Creature.Name.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToList();
-    //        List<CreatureViewModel> noMatch = new();
-
-
-    //        for (int i = Creatures.Count - 1; i >= 0; i--)
-    //        {
-    //            var item = Creatures[i];
-    //            if (!matched.Contains(item))
-    //            {
-    //                Creatures.Remove(item);
-    //                noMatch.Add(item);
-    //            }
-    //        }
-
-    //        foreach (var item in noMatch)
-    //            Creatures.Add(item);
-
-    //    }
-    //}
-
-
     public void OnNavigatedFrom()
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);

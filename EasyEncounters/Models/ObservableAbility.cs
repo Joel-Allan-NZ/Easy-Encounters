@@ -44,8 +44,8 @@ namespace EasyEncounters.Models
 
         public int TargetSize
         {
-            get => _ability.TargetSize;
-            set => SetProperty(_ability.TargetSize, value, _ability, (m, v) => m.TargetSize = v);
+            get => _ability.TargetAreaSize;
+            set => SetProperty(_ability.TargetAreaSize, value, _ability, (m, v) => m.TargetAreaSize = v);
         }
 
         public int TargetDistance

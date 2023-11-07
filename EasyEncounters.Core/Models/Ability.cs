@@ -33,7 +33,7 @@ public class Ability : IPersistable
     /// <summary>
     /// The size of the target area. 0 for abilities without an area.
     /// </summary>
-    public int TargetSize
+    public int TargetAreaSize
     {
         get; set;
     }
@@ -158,7 +158,7 @@ public class Ability : IPersistable
         Name = name;
         Resolution = resolutionType;
         TargetCount = targetCount;
-        TargetSize = targetSize;
+        TargetAreaSize = targetSize;
         TargetDistance = targetDistance;
         TargetAreaType = targetAreaType;
         EffectDescription = effectDescription;

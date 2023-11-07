@@ -552,4 +552,13 @@
   <data name="EncounterDifficulty_VeryDeadly" xml:space="preserve">
     <value>Very Deadly</value>
   </data>
+  <data name="ThreeStateBoolean_Either" xml:space="preserve">
+    <value>Either</value>
+  </data>
+  <data name="ThreeStateBoolean_False" xml:space="preserve">
+    <value>False</value>
+  </data>
+  <data name="ThreeStateBoolean_True" xml:space="preserve">
+    <value>True</value>
+  </data>
 </root>

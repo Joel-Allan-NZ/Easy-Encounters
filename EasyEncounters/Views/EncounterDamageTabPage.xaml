@@ -18,84 +18,82 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="5*"/>
+            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <!--Source Creature Info-->
         <StackPanel Orientation="Vertical"
                     Grid.Row="0"
                     Grid.Column="0">
-            <TextBlock Margin="2"
-                       Text="{x:Bind ViewModel.SourceCreature.Creature.EncounterName, Mode=OneWay}"/>
+            <Button Margin="2"
+                    Content="{x:Bind ViewModel.SourceCreature.Creature.EncounterName, Mode=OneWay}"
+                    Command="{x:Bind ViewModel.RequestInspectCommand}"
+                    CommandParameter="{x:Bind ViewModel.SourceCreature}"/>
             <!--Source ability:-->
-            <Expander HorizontalAlignment="Stretch"
-                      Visibility="{x:Bind ViewModel.HasSelectedAbility, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                <Expander.Header>
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Text="{x:Bind ViewModel.SelectedAbility.Name}"
+            <StackPanel Visibility="{x:Bind ViewModel.HasSelectedAbility, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                        Margin="5">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Text="{x:Bind ViewModel.SelectedAbility.Name}"
                                                    FontWeight="Medium"/>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.ActionSpeed, Converter={StaticResource EnumToStringConverter}}"
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Bind ViewModel.SelectedAbility.ActionSpeed, Converter={StaticResource EnumToStringConverter}}"
                                                    FontSize="10"
                                                    Margin="0,0,0,0"/>
-                            <TextBlock Text="Concentration"
+                        <TextBlock Text="Concentration"
                                                        FontSize="10"
                                                        Margin="10,0,0,0"
                                                        Visibility="{x:Bind ViewModel.SelectedAbility.Concentration, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.SpellLevel, Converter={StaticResource EnumToStringConverter}}"
+                        <TextBlock Text="{x:Bind ViewModel.SelectedAbility.SpellLevel, Converter={StaticResource EnumToStringConverter}}"
                                                        Margin="10,0,0,0"
                                                        FontSize="10"
                                                        Visibility="{x:Bind ViewModel.SelectedAbility.IsSpell, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.Resolution, Converter={StaticResource EnumToStringConverter}}"
+                        <TextBlock Text="{x:Bind ViewModel.SelectedAbility.Resolution, Converter={StaticResource EnumToStringConverter}}"
                                                        Margin="10,0,0,0"
                                                        FontSize="10"/>
-                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.SaveType}"
+                        <TextBlock Text="{x:Bind ViewModel.SelectedAbility.SaveType}"
                                                                               Margin="5,0,0,0"
                                        FontSize="10"/>
-                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.ResolutionValue}"
+                        <TextBlock Text="{x:Bind ViewModel.SelectedAbility.ResolutionValue}"
                                        Margin="5,0,0,0"
                                        FontSize="10"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Margin="2"
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Margin="2"
                                        Text="{x:Bind ViewModel.SelectedAbility.SpellCastComponents}"
                                                        FontStyle="Italic"
                                                        FontSize="10"
                                        Visibility="{x:Bind ViewModel.SelectedAbility.IsSpell, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.TargetDistance}"
+                        <TextBlock Text="{x:Bind ViewModel.SelectedAbility.TargetDistance}"
                                                        Visibility="{x:Bind ViewModel.SelectedAbility.NeedsRangeValue, Converter={StaticResource BoolToVisibilityConverter}}"
                                                        FontSize="10"
                                                        Margin="2"/>
-                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.TargetDistanceType, Converter={StaticResource EnumToStringConverter}}"
+                        <TextBlock Text="{x:Bind ViewModel.SelectedAbility.TargetDistanceType, Converter={StaticResource EnumToStringConverter}}"
                                                        FontSize="10"
                                                        Margin="2"/>
-                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.TargetSize}"
+                        <TextBlock Text="{x:Bind ViewModel.SelectedAbility.TargetSize}"
                                                        FontSize="10"
                                                        Margin="2"
                                                        Visibility="{x:Bind ViewModel.SelectedAbility.NeedsArea, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                            <TextBlock Text="{x:Bind ViewModel.SelectedAbility.TargetAreaType}"
+                        <TextBlock Text="{x:Bind ViewModel.SelectedAbility.TargetAreaType}"
                                                        FontSize="10"
                                                        Margin="2"
                                                        Visibility="{x:Bind ViewModel.SelectedAbility.NeedsArea, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        </StackPanel>
                     </StackPanel>
-                </Expander.Header>
-                <Expander.Content>
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Margin="2"
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Margin="2"
                                        Text="{x:Bind ViewModel.SelectedAbility.EffectDescription}"
                                        TextWrapping="Wrap"/>
-                    </StackPanel>
-                </Expander.Content>
-            </Expander>
+                </StackPanel>
+            </StackPanel>
             <!--todo: reaction etc info?-->
         </StackPanel>
-        <StackPanel Grid.Row="1">
-        <ListView 
+        <ListView Grid.Row="1"
                   x:Name="SelectableTargets"
                   Grid.Column="0"
                   ItemsSource="{x:Bind ViewModel.SelectableCreatures}"
@@ -108,7 +106,44 @@
             </Interactivity:Interaction.Behaviors>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
+                    <Grid>
+                        <Grid.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Add Selected Targets"
+                                                Command="{Binding AddTargetRequestedCommand}"/>
+                            </MenuFlyout>
+                        </Grid.ContextFlyout>
+                        <TextBlock Margin="2"
+                                   Text="{Binding Creature.EncounterName}"/>
+                        <StackPanel Margin="5,0,5,0"
+                                    Width="100"
+                                    HorizontalAlignment="Right">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="HP:"
+                                           Margin="2"
+                                           FontSize="10"/>
+                                <TextBlock Margin="2"
+                                       FontSize="10"
+                                   Text="{Binding CurrentHP, Mode=OneWay}"/>
+                                <TextBlock Margin="2"
+                                           FontSize="10"
+                                           Text="/"/>
+                                <TextBlock Margin="2"
+                                           FontSize="10"
+                                           Text="{Binding Creature.EncounterMaxHP}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Margin="2"
+                                           FontSize="10"
+                                           Text="AC:"/>
+                                <TextBlock Margin="2"
+                                           FontSize="10"
+                                       Text="{Binding Creature.AC, Mode=OneWay}"/>
+                            </StackPanel>
+
+                        </StackPanel>
+                    </Grid>
+                    <!--<StackPanel Orientation="Horizontal">
                         <StackPanel.ContextFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem Text="Add Selected Targets"
@@ -117,24 +152,31 @@
                         </StackPanel.ContextFlyout>
                         <TextBlock Margin="2"
                                    Text="{Binding Creature.EncounterName}"/>
-                        <TextBlock Margin="2"
-                                   Text="{Binding CurrentHP, Mode=OneWay}"/>
-                        <!--better creature display-->
-                    </StackPanel>
+
+
+                        -->
+                    <!--better creature display-->
+                    <!--
+                    </StackPanel>-->
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-            <Button Grid.Column="1"
-                Grid.Row="0"
+        <Button Grid.Column="1"
+                Grid.Row="2"
                 Command="{x:Bind ViewModel.DealDamageCommand}"
-                Content="Deal Damage"/>
-        </StackPanel>
+                Content="Deal Damage">
+            <Button.Flyout>
+                <Flyout>
+                    <TextBlock Text="Damage Dealt!"/>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
         <!--Damage Type and Volume Selection-->
         <StackPanel Orientation="Vertical" Grid.Column="1">
             <NumberBox Text="{x:Bind ViewModel.Damage, Mode=TwoWay}"
                   Header="Damage Value:"
                   Margin="2"
-                  AcceptsExpression="False"
+                  AcceptsExpression="True"
                   Minimum="0"/>
             <ComboBox Name="selectDamageType"
                   VerticalAlignment="Stretch"
@@ -146,136 +188,73 @@
                   Margin="2"/>
         </StackPanel>
         <!--Selected Targets-->
-        <ScrollViewer Grid.Row="1"
+        <!--<ScrollViewer Grid.Row="1"
                       Grid.Column="2"
-                      MaxHeight="600">
-            <ListView Name="SelectedTargets"
+                      MaxHeight="600">-->
+        <ListView Name="SelectedTargets"
                       ItemsSource="{x:Bind ViewModel.Targets, Mode=OneWay}"
+                      Grid.Column="2"
+                      Grid.Row="1"
                       Margin="2,2,2,2">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <StackPanel.ContextFlyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Text="Remove"
-                                                    Command="{Binding RemoveTargetRequestedCommand}"/>
-                                </MenuFlyout>
-                            </StackPanel.ContextFlyout>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.Name}"
-                                           FontSize="30"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <ToggleButton Content="Reaction"
-                                              Margin="2"
-                                              IsChecked="{Binding ActiveEncounterCreatureViewModel.Reaction, Mode=TwoWay}"/>
-                                <ToggleButton Content="Concentrating"
-                                              Margin="2"
-                                              IsChecked="{Binding ActiveEncounterCreatureViewModel.Concentrating, Mode=TwoWay}"/>    
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Armour Class:"
-                       FontWeight="Medium"
-                                 Margin="2"/>
-                                <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.AC}"
-                                 Margin="2"/>
-                            </StackPanel>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="Hit Points:"
-                       FontWeight="Medium"
-                                 Margin="2"/>
-                                <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.CurrentHP, Mode=OneWay}"
-                                 Margin="2"/>
-                                <TextBlock Text="/" Margin="2"/>
-                                <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.EncounterMaxHP}"
-                           Margin="2"/>
-                            </StackPanel>
-                            <ComboBox Name="selectDamageVolume"
-                                      Header="Damage Taken Multiplier:"
-                                      Grid.Column="3"
-                                      Grid.ColumnSpan="4"
-                                      Grid.Row="2"
-                                      Grid.RowSpan="2"
-                                      ItemsSource="{Binding DamageVolumes}"
-                                      SelectedItem="{Binding SelectedDamageVolume, Mode=TwoWay}">
-                            </ComboBox>
-                        </StackPanel>
-                        <!--<Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="2*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="2*"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.ContextFlyout>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <StackPanel.ContextFlyout>
                             <MenuFlyout>
                                 <MenuFlyoutItem Text="Remove"
                                                     Command="{Binding RemoveTargetRequestedCommand}"/>
                             </MenuFlyout>
-                        </Grid.ContextFlyout>
-                        <TextBlock Grid.Row="0"
-                                       Grid.Column="0"
-                                       Grid.ColumnSpan="7"
-                                       Text="{Binding ActiveEncounterCreatureViewModel.Creature.Name}"
-                                       Margin="2,2,2,2"
-                                       FontSize="30"/>
-                        <TextBlock Grid.Row="1"
-                                       Grid.Column="2"
-                                       Margin="2,2,2,2"
-                                       Text="{Binding ActiveEncounterCreatureViewModel.CurrentHP, Mode=OneWay}"/>
-                        <TextBlock Grid.Row="1"
-                                       Grid.Column="3"
-                                       Margin="2,2,2,2"
-                                       Text="/"/>
-                        <TextBlock Grid.Row="1"
-                                       Grid.Column="4"
-                                       Margin="2,2,2,2"
-                                       Text="{Binding ActiveEncounterCreatureViewModel.Creature.EncounterMaxHP}"/>
-                        <TextBlock Grid.Row="1"
-                                       Grid.Column="5"
-                                       Margin="2,2,2,2"
-                                       Text="AC:"/>
-                        <TextBlock Grid.Row="1"
-                                       Grid.Column="6"
-                                       Margin="2,2,2,2"
-                                       Text="{Binding ActiveEncounterCreatureViewModel.Creature.AC}"/>
-                        <ToggleButton Grid.Row="2"
-                                      Grid.Column="0"
-                                      Grid.ColumnSpan="3"
-                                      Margin="2,2,2,2"
-                                      IsChecked="{Binding ActiveEncounterCreatureViewModel.Reaction}"
-                                      Content="Reaction?"></ToggleButton>
-                        <ToggleButton Grid.Row="3"
-                                      Grid.Column="0"
-                                      Grid.ColumnSpan="3"
-                                      Margin="2,2,2,2"
-                                      IsChecked="{Binding ActiveEncounterCreatureViewModel.Concentrating}"
-                                      Content="Concentrating?"/>
+                        </StackPanel.ContextFlyout>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.EncounterName}"
+                                           FontSize="30"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton Content="Reaction"
+                                              Margin="2"
+                                              IsChecked="{Binding ActiveEncounterCreatureViewModel.Reaction, Mode=TwoWay}"/>
+                            <ToggleButton Content="Concentrating"
+                                              Margin="2"
+                                              IsChecked="{Binding ActiveEncounterCreatureViewModel.Concentrating, Mode=TwoWay}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Armour Class:"
+                       FontWeight="Medium"
+                                 Margin="2"/>
+                            <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.AC}"
+                                 Margin="2"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Hit Points:"
+                       FontWeight="Medium"
+                                 Margin="2"/>
+                            <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.CurrentHP, Mode=OneWay}"
+                                 Margin="2"/>
+                            <TextBlock Text="/" Margin="2"/>
+                            <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.EncounterMaxHP}"
+                           Margin="2"/>
+                        </StackPanel>
                         <ComboBox Name="selectDamageVolume"
-                                      Header="Damage Taken Multiplier:"
                                       Grid.Column="3"
                                       Grid.ColumnSpan="4"
                                       Grid.Row="2"
                                       Grid.RowSpan="2"
                                       ItemsSource="{Binding DamageVolumes}"
                                       SelectedItem="{Binding SelectedDamageVolume, Mode=TwoWay}">
+                            <ComboBox.Header>
+                                <TextBlock Text="Damage Taken Multiplier:"
+                                               FontSize="10"/>
+                            </ComboBox.Header>
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
                         </ComboBox>
-                    </Grid>-->
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </ScrollViewer>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
 
     </Grid>
 </Page>

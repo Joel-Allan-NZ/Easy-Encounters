@@ -213,7 +213,13 @@ public class EncounterService : IEncounterService
         _creatureService.CopyTo(result, creature);
         if (maxHPRoll && creature.DMControl)
         {
-            result.EncounterMaxHP = _diceService.Roll(creature.MaxHPString);
+            if (creature.MaxHPString != null)
+            {
+                result.EncounterMaxHP = _diceService.Roll(creature.MaxHPString);
+            }
+            else
+                result.EncounterMaxHP = creature.MaxHP;
+            
             result.CurrentHP = result.EncounterMaxHP;
         }
         else

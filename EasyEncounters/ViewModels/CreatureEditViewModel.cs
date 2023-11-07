@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.UI;
+using CommunityToolkit.WinUI.UI.Controls;
 using EasyEncounters.Contracts.Services;
 using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
@@ -18,6 +19,8 @@ using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Core.Services;
 using EasyEncounters.Messages;
 using EasyEncounters.Models;
+using EasyEncounters.Services;
+using Windows.ApplicationModel.Search.Core;
 using Windows.Devices.WiFi;
 
 namespace EasyEncounters.ViewModels;
@@ -27,6 +30,41 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     private readonly IDataService _dataService;
     private readonly IValidationService _validationService;
     private readonly IList<CreatureAttributeType> _creatureAttributeTypes = Enum.GetValues(typeof(CreatureAttributeType)).Cast<CreatureAttributeType>().ToList();
+    private readonly IFilteringService _filteringService;
+    private readonly IList<SpellLevel> _spellLevels = Enum.GetValues(typeof(SpellLevel)).Cast<SpellLevel>().ToList();
+    private readonly IList<MagicSchool> _magicSchools = Enum.GetValues(typeof(MagicSchool)).Cast<MagicSchool>().ToList();
+    private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
+    private readonly IList<ResolutionType> _resolutionTypes = Enum.GetValues(typeof(ResolutionType)).Cast<ResolutionType>().ToList();
+    private readonly IList<ThreeStateBoolean> _concentrationStates = Enum.GetValues(typeof(ThreeStateBoolean)).Cast<ThreeStateBoolean>().ToList();
+
+    public IList<SpellLevel> SpellLevels => _spellLevels;
+    public IList<MagicSchool> MagicSchools => _magicSchools;
+    public IList<DamageType> DamageTypes => _damageTypes;
+    public IList<ResolutionType> ResolutionTypes => _resolutionTypes;
+    public IList<ThreeStateBoolean> ConcentrationStates => _concentrationStates;
+
+    private List<AbilityViewModel> _spellCache;
+
+    [ObservableProperty]
+    private List<AbilityViewModel> _searchSuggestions;
+
+    [ObservableProperty]
+    private SpellLevel _minimumSpellLeveLFilter;
+
+    [ObservableProperty]
+    private SpellLevel _maximumSpellLevelFilter;
+
+    [ObservableProperty]
+    private MagicSchool _spellSchoolFilterSelected;
+
+    [ObservableProperty]
+    private DamageType _damageTypeFilterSelected;
+
+    [ObservableProperty]
+    private ResolutionType _resolutionTypeFilterSelected;
+
+    [ObservableProperty]
+    private ThreeStateBoolean _concentrationFilterSelected;
 
     [ObservableProperty]
     private Creature _creature;
@@ -45,6 +83,7 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
 
     [ObservableProperty]
     private SpellSlotViewModel _spellSlots;
+    
 
     [Required]
     [CustomValidation(typeof(CreatureEditViewModel), nameof(ValidateLevelCR))]
@@ -93,23 +132,6 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
         _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
     }
 
-    [RelayCommand]
-    private async void SortSpellsByResolution()
-    {
-    
-    }
-
-    [RelayCommand]
-    private async void SortSpellsByName()
-    {
-    
-    }
-
-    [RelayCommand]
-    private async void SortSpellsByDamageType()
-    {
-    
-    }
 
     public CreatureEditViewModel(INavigationService navigationService, IDataService dataService, IValidationService validationService)
     {
@@ -191,12 +213,34 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     {
         if(requestType == CRUDRequestType.Edit)
         {
-            _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability.Ability);//Tuple.Create(Creature, ability.Ability));
+            _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability.Ability);
         }
         else if(requestType == CRUDRequestType.Delete)
         {
             CreatureAbilities.Remove(ability);
         }
+    }
+
+    [RelayCommand]
+    private async void EditAbility(object ability)
+    {
+        if (ability != null && ability is Ability)
+        {
+            _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
+        }
+        else if (ability != null && ability is AbilityViewModel)
+        {
+            _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ((AbilityViewModel)ability).Ability);
+        }
+    }
+
+    [RelayCommand]
+    private async void AddAbility()
+    {
+        var ability = new Ability();
+        Spells.Add(new AbilityViewModel(ability));
+        await _dataService.SaveAddAsync(ability);
+        EditAbility(ability);
     }
 
     public static ValidationResult ValidateLevelCR(double levelCR, ValidationContext context)
@@ -209,6 +253,103 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
             return ValidationResult.Success;
 
         return new("Not a valid Level or Challenge Rating");
+    }
+
+
+    [RelayCommand]
+    private void AbilityFilter(string text)
+    {
+        List<FilterCriteria<AbilityViewModel>> criteria = new()
+        {
+            new FilterCriteria<AbilityViewModel>(x => x.Ability.SpellLevel, MinimumSpellLeveLFilter, MaximumSpellLevelFilter),
+            new FilterCriteria<AbilityViewModel>(x => x.Ability.Name, text),
+        };
+        if (ConcentrationFilterSelected == ThreeStateBoolean.False)
+            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.Concentration, false, false));
+        if (ConcentrationFilterSelected == ThreeStateBoolean.True)
+            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.Concentration, true, true));
+        if (ResolutionTypeFilterSelected != ResolutionType.Undefined)
+            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.Resolution, ResolutionTypeFilterSelected, ResolutionTypeFilterSelected));
+        if (SpellSchoolFilterSelected != MagicSchool.None)
+            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.MagicSchool, SpellSchoolFilterSelected, SpellSchoolFilterSelected));
+        if (DamageTypeFilterSelected != DamageType.Untyped)
+            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.DamageTypes, DamageTypeFilterSelected, DamageTypeFilterSelected));
+
+        var filtered = _filteringService.Filter(_spellCache, criteria);
+        Spells.Clear();
+        foreach (var ability in filtered)
+            Spells.Add(ability);
+    }
+
+    [RelayCommand]
+    private void DataGridSort(DataGridColumnEventArgs e)
+    {
+        //OnSorting(e);
+        if (e.Column.Tag.ToString() == "AbilityName")
+        {
+            SortByPredicate(Spells, x => x.Ability.Name, e.Column.SortDirection == DataGridSortDirection.Ascending);
+            //if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
+            //    SortAbilitiesByName(false);
+            //else
+            //    SortAbilitiesByName(true);
+        }
+        else if (e.Column.Tag.ToString() == "AbilityLevel")
+        {
+            SortByPredicate(Spells, x => x.Ability.SpellLevel, e.Column.SortDirection == DataGridSortDirection.Ascending);
+        }
+        else if (e.Column.Tag.ToString() == "AbilityDamageType")
+        {
+            SortByPredicate(Spells, x => x.Ability.DamageTypes, e.Column.SortDirection == DataGridSortDirection.Ascending);
+        }
+        else if (e.Column.Tag.ToString() == "AbilityResolutionType")
+        {
+            SortByPredicate(Spells, x => x.Ability.Resolution, e.Column.SortDirection == DataGridSortDirection.Ascending);
+        }
+        else if (e.Column.Tag.ToString() == "AbilityConcentration")
+        {
+            SortByPredicate(Spells, x => x.Ability.Concentration, e.Column.SortDirection == DataGridSortDirection.Ascending);
+        }
+        else if (e.Column.Tag.ToString() == "AbilityResolutionStat")
+        {
+            SortByPredicate(Spells, x => x.Ability.SaveType, e.Column.SortDirection == DataGridSortDirection.Ascending);
+        }
+        else if (e.Column.Tag.ToString() == "AbilitySchool")
+        {
+            SortByPredicate(Spells, x => x.Ability.MagicSchool, e.Column.SortDirection == DataGridSortDirection.Ascending);
+        }
+
+        if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
+        {
+            e.Column.SortDirection = DataGridSortDirection.Ascending;
+        }
+        else
+        {
+            e.Column.SortDirection = DataGridSortDirection.Descending;
+        }
+
+    }
+
+    private void SortByPredicate<T, U>(ObservableCollection<T> collection, Func<T, U> expression, bool ascending)
+    {
+        IEnumerable<T> tmp = (ascending) ? collection.OrderBy(expression).ToList() : collection.OrderByDescending(expression).ToList();
+
+        collection.Clear();
+        foreach (var item in tmp)
+            collection.Add(item);
+    }
+
+
+    [RelayCommand]
+    private void SearchTextChange(string text)
+    {
+        if (String.IsNullOrEmpty(text))
+        {
+            var filtered = _filteringService.Filter(_spellCache, x => x.Ability.SpellLevel, MinimumSpellLeveLFilter, MaximumSpellLevelFilter);
+            Spells.Clear();
+            foreach (var ability in filtered)
+                Spells.Add(ability);
+        }
+        SearchSuggestions = _filteringService.Filter(Spells, x => x.Ability.Name, text).ToList();
     }
 
 

@@ -234,7 +234,7 @@ public partial class TargetedDamageViewModel : ObservableRecipient, INavigationA
     {
         var instances = GetInstancesOfDamage();
         foreach (var instance in instances)
-            _activeEncounterService.DealDamage(_activeEncounter, instance);
+            _activeEncounterService.DealDamageAsync(_activeEncounter, instance);
 
         _navigationService.NavigateTo(typeof(RunEncounterViewModel).FullName!, ignoreNavigation: true);
     }
