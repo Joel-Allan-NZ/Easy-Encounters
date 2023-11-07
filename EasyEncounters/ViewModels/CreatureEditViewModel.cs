@@ -133,9 +133,10 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     }
 
 
-    public CreatureEditViewModel(INavigationService navigationService, IDataService dataService, IValidationService validationService)
+    public CreatureEditViewModel(INavigationService navigationService, IDataService dataService, IValidationService validationService, IFilteringService filterService)
     {
         _navigationService = navigationService;
+        _filteringService = filterService;
         _dataService = dataService;
         _validationService = validationService;
     }
