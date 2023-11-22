@@ -23,6 +23,7 @@ public class ActiveEncounterService : IActiveEncounterService
         get; set;
     } = false; //defaults to false
 
+
     public ActiveEncounterService(IRandomService randomService, IDataService dataService, IEncounterService encounterService, ICreatureService creatureService, ILogService logService)
     {
         _encounterService = encounterService;
@@ -227,6 +228,18 @@ public class ActiveEncounterService : IActiveEncounterService
         
     }
 
+    public void ReorderInitiative(ActiveEncounter activeEncounter, IEnumerable<ActiveEncounterCreature> creatures)
+    {
+        activeEncounter.CreatureTurns.Clear();
+        foreach (var creature in creatures)
+            activeEncounter.CreatureTurns.Enqueue(creature);
+
+        while (activeEncounter.ActiveTurn != activeEncounter.CreatureTurns.Peek())
+        {
+            activeEncounter.CreatureTurns.Enqueue(activeEncounter.CreatureTurns.Dequeue());
+        }
+    }
+
     public DamageVolume GetDamageVolumeSuggestion(ActiveEncounterCreature target, DamageType damageType)
     {
         DamageVolume suggestedDamageVolume = DamageVolume.Normal;
@@ -239,6 +252,7 @@ public class ActiveEncounterService : IActiveEncounterService
 
         return suggestedDamageVolume;
     }
+
 
     public async Task<string> DealDamageAsync(ActiveEncounter activeEncounter, DamageInstance damageInstance)
     {

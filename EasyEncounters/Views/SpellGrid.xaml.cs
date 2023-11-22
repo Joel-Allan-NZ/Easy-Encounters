@@ -74,6 +74,20 @@ public sealed partial class SpellGrid : UserControl
         set => SetValue(EditSpellCommandProperty, value);
     }
 
+
+
+    public ICommand SelectSpellCommand
+    {
+        get => (ICommand)GetValue(SelectSpellCommandProperty);
+        set => SetValue(SelectSpellCommandProperty, value);
+    }
+
+    // Using a DependencyProperty as the backing store for SelectSpellCommand.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty SelectSpellCommandProperty =
+        DependencyProperty.Register("SelectSpellCommand", typeof(ICommand), typeof(SpellGrid), new PropertyMetadata(null));
+
+
+
     // Using a DependencyProperty as the backing store for EditSpellCommand.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty EditSpellCommandProperty =
         DependencyProperty.Register("EditSpellCommand", typeof(ICommand), typeof(SpellGrid), new PropertyMetadata(null));

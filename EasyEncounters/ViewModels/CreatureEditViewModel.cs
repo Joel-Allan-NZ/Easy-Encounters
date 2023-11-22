@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -37,11 +37,16 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     private readonly IList<ResolutionType> _resolutionTypes = Enum.GetValues(typeof(ResolutionType)).Cast<ResolutionType>().ToList();
     private readonly IList<ThreeStateBoolean> _concentrationStates = Enum.GetValues(typeof(ThreeStateBoolean)).Cast<ThreeStateBoolean>().ToList();
 
+    private Dictionary<string, List<string>> validationIssuesByProperty;
+
     public IList<SpellLevel> SpellLevels => _spellLevels;
     public IList<MagicSchool> MagicSchools => _magicSchools;
     public IList<DamageType> DamageTypes => _damageTypes;
     public IList<ResolutionType> ResolutionTypes => _resolutionTypes;
     public IList<ThreeStateBoolean> ConcentrationStates => _concentrationStates;
+
+    [ObservableProperty]
+    private bool _hasValidFields;
 
     private List<AbilityViewModel> _spellCache;
 
@@ -83,16 +88,65 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
 
     [ObservableProperty]
     private SpellSlotViewModel _spellSlots;
-    
 
+    [Required]
+    [MinLength(1)]
+    public string MaxHPString
+    {
+        get => Creature.MaxHPString;
+        set
+        {
+            TrySetProperty(Creature.MaxHPString, value, Creature, (v, m) => v.MaxHPString = m, out IReadOnlyCollection<ValidationResult> errs);
+            CheckValidation(errs);
+        }
+    }
+    
     [Required]
     [CustomValidation(typeof(CreatureEditViewModel), nameof(ValidateLevelCR))]
     public double LevelCR
     {
         get => Creature.LevelOrCR;
-        set => TrySetProperty(Creature.LevelOrCR, value, Creature, (v, m) => v.LevelOrCR = m, out IReadOnlyCollection<ValidationResult> errs);
+        set
+        {
+            TrySetProperty(Creature.LevelOrCR, value, Creature, (v, m) => v.LevelOrCR = m, out IReadOnlyCollection<ValidationResult> errs);
+            CheckValidation(errs);
+        }
+    }
+    //private int ac;
+    [Required]
+    [Range(1, 50)]
+    public int AC
+    {
+        get => Creature.AC;
+        set
+        {
+            TrySetProperty(Creature.AC, value, Creature, (v, m) => v.AC = m, out IReadOnlyCollection<ValidationResult> errs);
+            CheckValidation(errs);
+        }
     }
 
+    private void CheckValidation(IReadOnlyCollection<ValidationResult> errs, [CallerMemberName] string name = null)
+    {
+        if (errs?.Count > 0)
+        {
+            foreach (var error in errs)
+            {
+                if (!validationIssuesByProperty.ContainsKey(name))
+                    validationIssuesByProperty[name] = new();
+
+                validationIssuesByProperty[name].Add(error.ErrorMessage);
+            }
+            HasValidFields = false;
+        }
+        else
+        {
+           if (validationIssuesByProperty.ContainsKey(name))
+                validationIssuesByProperty.Remove(name);
+
+            if (validationIssuesByProperty.Keys.Count == 0)
+                HasValidFields = true;
+        }
+    }
    
     public IList<CreatureAttributeType> StatTypes => _creatureAttributeTypes;
 
@@ -110,16 +164,28 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     [RelayCommand]
     private async void CommitChanges(object obj)
     {
-        Creature.Resistance = Resists.DamageTypes;
-        Creature.Immunity = Immunities.DamageTypes;
-        Creature.Vulnerability = Vulnerabilities.DamageTypes;
-        Creature.ConditionImmunities = ConditionImmunities.ConditionTypes;
-        Creature.Abilities = CreatureAbilities.Select(x => x.Ability).ToList();
+        //check validation
+        ValidateAllProperties();
 
-        await _dataService.SaveAddAsync(Creature);
+        if (!HasErrors)
+        {
 
-        if (_navigationService.CanGoBack)
-            _navigationService.GoBack();
+            Creature.Resistance = Resists.DamageTypes;
+            Creature.Immunity = Immunities.DamageTypes;
+            Creature.Vulnerability = Vulnerabilities.DamageTypes;
+            Creature.ConditionImmunities = ConditionImmunities.ConditionTypes;
+            Creature.Abilities = CreatureAbilities.Select(x => x.Ability).ToList();
+            //Creature.AC = AC;
+
+            await _dataService.SaveAddAsync(Creature);
+
+            if (!(obj is bool && (bool)obj))
+            {
+                if (_navigationService.CanGoBack)
+                    _navigationService.GoBack();
+            }
+        }
+
     }
 
     [RelayCommand]
@@ -189,6 +255,17 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
             {
                 Spells.Add(new AbilityViewModel(spell));
             }
+
+            _spellCache = new List<AbilityViewModel>(Spells);
+            MaximumSpellLevelFilter = SpellLevel.LevelNine;
+            ConcentrationFilterSelected = ThreeStateBoolean.Either;
+            MinimumSpellLeveLFilter = SpellLevel.Cantrip;
+            DamageTypeFilterSelected = DamageType.Untyped;
+            ResolutionTypeFilterSelected = ResolutionType.Undefined;
+            SpellSchoolFilterSelected = MagicSchool.None;
+
+            validationIssuesByProperty = new();
+           // ac = Creature.AC;
         }
     }
 
@@ -227,10 +304,14 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     {
         if (ability != null && ability is Ability)
         {
+            //save current state rather than discarding changes
+            CommitChanges(true);
+
             _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
         }
         else if (ability != null && ability is AbilityViewModel)
         {
+            CommitChanges(true);
             _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ((AbilityViewModel)ability).Ability);
         }
     }
@@ -244,16 +325,25 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
         EditAbility(ability);
     }
 
+    [RelayCommand]
+    private async void AddSelectedSpell(object ability)
+    {
+        if (ability is AbilityViewModel)
+        {
+            CreatureAbilities.Add((AbilityViewModel)ability);
+        }
+    }
+
     public static ValidationResult ValidateLevelCR(double levelCR, ValidationContext context)
     {
         //todo: move validation to a service.
         var instance = (CreatureEditViewModel)context.ObjectInstance;
 
-        bool valid = instance._validationService.Validate(instance, levelCR, "LevelCR");
-        if(valid)
+        bool valid = instance._validationService.Validate(instance, levelCR, context.MemberName);
+        if (valid)
             return ValidationResult.Success;
-
-        return new("Not a valid Level or Challenge Rating");
+        else
+            return new("Not a valid Level or Challenge Rating");
     }
 
 

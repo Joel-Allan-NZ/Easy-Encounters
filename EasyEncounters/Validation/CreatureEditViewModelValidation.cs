@@ -16,8 +16,16 @@ namespace EasyEncounters.Validation
             return propertyPath switch
             {
                 "LevelCR" => ValidateLevelCR(value),
+                "AC" => ValidateInt(value, 1,50),
                 _ => throw new NotImplementedException($"Validation for CreatureEditViewModel.{propertyPath} is not yet implemented.")
             };
+        }
+
+        private static bool ValidateInt(object obj, int min, int max)
+        {
+            //if (obj is int)
+            var v = (int)obj;
+            return v >= min && v <= max;
         }
 
         private static bool ValidateLevelCR(object obj)

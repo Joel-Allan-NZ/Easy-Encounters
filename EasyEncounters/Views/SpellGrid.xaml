@@ -178,7 +178,7 @@
                     <Core:InvokeCommandAction Command="{x:Bind SortCommand}"/>
                 </Core:EventTriggerBehavior>
                 <Core:EventTriggerBehavior EventName="DoubleTapped">
-                    <Core:InvokeCommandAction Command="{x:Bind EditSpellCommand}" CommandParameter="{x:Bind SpellDG.SelectedItem, Mode=OneWay}"/>
+                    <Core:InvokeCommandAction Command="{x:Bind SelectSpellCommand}" CommandParameter="{x:Bind SpellDG.SelectedItem, Mode=OneWay}"/>
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
             <controls:DataGrid.RowStyle>
@@ -186,9 +186,9 @@
                     <Setter Property="controls:DataGridRow.ContextFlyout">
                         <Setter.Value>
                             <MenuFlyout>
-                                <MenuFlyoutItem Text="Edit" Command="{Binding EditAbilityRequestCommand}"/>
-                                <MenuFlyoutItem Text="Copy" Command="{Binding CopyAbilityRequestCommand}"/>
-                                <MenuFlyoutItem Text="Delete" Command="{Binding DeleteAbilityRequestCommand}"/>
+                                <MenuFlyoutItem Text="Edit" Command="{Binding EditAbilityRequestedCommand}"/>
+                                <MenuFlyoutItem Text="Copy" Command="{Binding CopyAbilityRequestedCommand}"/>
+                                <MenuFlyoutItem Text="Delete" Command="{Binding DeleteAbilityRequestedCommand}"/>
                             </MenuFlyout>
                         </Setter.Value>
                     </Setter>

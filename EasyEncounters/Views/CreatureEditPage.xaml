@@ -52,15 +52,12 @@
                             Padding="12"
                             BorderBrush="BlanchedAlmond">
                     <TextBlock Text="AC:" Margin="2,2,2,2"/>
-                    <NumberBox Value="{x:Bind ViewModel.Creature.AC, Mode=TwoWay}"
+                    <NumberBox Value="{x:Bind ViewModel.AC, Mode=TwoWay}"
                              Margin="2,2,2,2"
                                AcceptsExpression="True"
                                Minimum="0"
                                Maximum="40"
                               ValidationMode="InvalidInputOverwritten"/>
-                             <!--InputScope="Number"
-                             TextChanging="OnTextChanging"-->
-
                     <TextBlock Text="Proficiency:" Margin="2,2,2,2"/>
                     <NumberBox Value="{x:Bind ViewModel.Creature.ProficiencyBonus, Mode=TwoWay}"
                              Margin="2,2,2,2" 
@@ -68,7 +65,7 @@
                                AcceptsExpression="True"
                                Minimum="2"
                                Maximum="20"
-                              ValidationMode="InvalidInputOverwritten"/>
+                               ValidationMode="InvalidInputOverwritten"/>
                     <TextBlock Text="Initiative Bonus:"  Margin="2,2,2,2"/>
                     <NumberBox Value="{x:Bind ViewModel.Creature.InitiativeBonus, Mode=TwoWay}"  Margin="2,2,2,2" x:DefaultBindMode="TwoWay" 
                                AcceptsExpression="True"
@@ -250,7 +247,7 @@
                              Visibility="{x:Bind ViewModel.Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}"></NumberBox>
                     <TextBlock Text="Max HP dicestring:" Margin="2,2,2,2"
                                Visibility="{x:Bind ViewModel.Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}"/>
-                    <TextBox Text="{x:Bind ViewModel.Creature.MaxHPString, Mode=TwoWay}"
+                    <TextBox Text="{x:Bind ViewModel.MaxHPString, Mode=TwoWay}"
                              Visibility="{x:Bind ViewModel.Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}"
                             Margin="2,2,2,2"></TextBox>
                 </StackPanel>
@@ -610,6 +607,7 @@
                             GridDataSource="{x:Bind ViewModel.Spells}"
                             SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
                             EditSpellCommand="{x:Bind ViewModel.EditAbilityCommand}"
+                            SelectSpellCommand="{x:Bind ViewModel.AddSelectedSpellCommand}"
                             AddSpellCommand="{x:Bind ViewModel.AddAbilityCommand}"
                             />
                     </Expander.Content>
@@ -620,17 +618,21 @@
                              PlaceholderText="Enter Features"
                              ToolTipService.ToolTip="Other features the creature may have, like Devil Sight or Magic Resistance"
                              TextWrapping="Wrap"
+                             AcceptsReturn="True"
                              Text="{x:Bind ViewModel.Creature.Features, Mode=TwoWay}"/>
                 </ScrollViewer>
                 <ScrollViewer>
                     <TextBox Header="Description"
                                  PlaceholderText="Enter a description"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
                                  Text="{x:Bind ViewModel.Creature.Description, Mode=TwoWay}"/>
                 </ScrollViewer>
             </StackPanel>
         </ScrollViewer>
         <Button HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
+                IsEnabled="{x:Bind ViewModel.HasValidFields, Mode=OneWay}"
                 Command="{x:Bind ViewModel.CommitChangesCommand}">
             <FontIcon Glyph="&#xF16C;"></FontIcon>
         </Button>

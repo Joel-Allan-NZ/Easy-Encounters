@@ -32,6 +32,7 @@
         GridDataSource="{x:Bind ViewModel.Abilities}"
         SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
         EditSpellCommand="{x:Bind ViewModel.EditAbilityCommand}"
+        SelectSpellCommand="{x:Bind ViewModel.EditAbilityCommand}"
         AddSpellCommand="{x:Bind ViewModel.AddAbilityCommand}"
         />
     <!--<Grid>

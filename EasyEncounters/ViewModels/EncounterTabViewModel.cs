@@ -84,6 +84,12 @@ namespace EasyEncounters.ViewModels
         }
 
         [RelayCommand]
+        private async void ReportReorder()
+        {
+            _activeEncounterService.ReorderInitiative(_activeEncounter, Creatures.Select(x => x.Creature));
+        }
+
+        [RelayCommand]
         private async void NextTurn()
         {
             string current = await _activeEncounterService.EndCurrentTurnAsync(_activeEncounter); /*$"{_activeEncounter.ActiveTurn?.EncounterName ?? "A creature"} ends their turn.";*/
@@ -260,21 +266,6 @@ namespace EasyEncounters.ViewModels
             //});
             Tabs.Add(_tabService.OpenTab(typeof(LogTabViewModel).FullName!, null, "Log", false));
         }
-
-        //private void DealDamage(DamageInstance damage)
-        //{
-        //    var dmg = _activeEncounterService.DealDamage(_activeEncounter, damage);
-        //    //CombatLog.Insert(0, _activeEncounter.Log.Last());
-        //    WeakReferenceMessenger.Default.Send(new LogMessageLogged(dmg));
-
-        //}
-        //private void DamageLogged(IList<string> toLog)
-        //{
-        //    foreach (var msg in toLog.Reverse())
-        //        CombatLog.Add(msg);
-        //}
-
-
 
         public void OnNavigatedFrom()
         {

@@ -33,7 +33,9 @@
                 <ListView Grid.Row="0"
                           MinWidth="300"
                           Grid.RowSpan="2"
-                          
+                          CanReorderItems="True"
+                          CanDragItems="True"
+                          AllowDrop="True"
                   x:Name="CreaturesListView"
                   Grid.Column="0"
                   Header="Turn Order"
@@ -44,6 +46,9 @@
                             <Core:InvokeCommandAction Command="{x:Bind ViewModel.ShowCreatureDisplayTabCommand}" 
                                                       CommandParameter="{x:Bind CreaturesListView.SelectedItem, Mode=OneWay}"/>
                         </Core:EventTriggerBehavior>
+                        <Core:EventTriggerBehavior EventName="DragItemsCompleted">
+                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.ReportReorderCommand}"/>
+                        </Core:EventTriggerBehavior>    
                     </Interactivity:Interaction.Behaviors>
                     <ListView.ItemTemplate>
                         <DataTemplate>

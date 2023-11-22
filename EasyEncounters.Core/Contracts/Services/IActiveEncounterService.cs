@@ -38,4 +38,6 @@ public interface IActiveEncounterService
     Task<ActiveEncounter> CreateActiveEncounterAsync(Encounter encounter, Party party);
 
     void AddEncounterCreature(ActiveEncounter activeEncounter, Creature creature, bool maxHPRoll);
+
+    void ReorderInitiative(ActiveEncounter activeEncounter, IEnumerable<ActiveEncounterCreature> creatures);
 }

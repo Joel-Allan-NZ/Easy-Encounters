@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,24 +15,56 @@ using EasyEncounters.Contracts.Services;
 using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
+using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Messages;
+using EasyEncounters.Models;
 using EasyEncounters.Services;
 using Microsoft.UI.Dispatching;
+using Windows.Storage.Pickers.Provider;
 
 namespace EasyEncounters.ViewModels;
 public partial class EncounterEditViewModel : ObservableRecipient, INavigationAware
 {
+    //public delegate void PartyOrCreaturesChangedEventHandler(object sender, CollectionChangeEventArgs e);
+
+    //public event NotifyCollectionChangedEventHandler PartyOrCreaturesChanged;
+
+    //protected virtual void OnPartyOrCreaturesChanged(CollectionChangeEventArgs e)
+    //{
+    //    NotifyCollectionChangedEventHandler handler = PartyOrCreaturesChanged;
+
+    //}
+    [ObservableProperty]
+    private EncounterDifficulty _expectedDifficulty;
+
     private IList<CreatureViewModel> _creatureCache;
 
-    public ObservableCollection<CreatureViewModel> EncounterCreatures
+    public ObservableCollection<ObservableKVP<CreatureViewModel, int>> EncounterCreaturesByCount
     {
         get; private set;
     } = new();
+
+    [ObservableProperty]
+    private Party _selectedParty;
+
+    partial void OnSelectedPartyChanged(Party value) => SetDifficulty();
+
+    public ObservableCollection<Party> Parties
+    {
+        get;
+        private set;
+    } = new();
+
+    //public ObservableCollection<CreatureViewModel> EncounterCreatures
+    //{
+    //    get; private set;
+    //} = new();
 
     public ObservableCollection<CreatureViewModel> Creatures
     {
         get; private set;
     } = new();
+
 
     [ObservableProperty]
     private Encounter _encounter;
@@ -47,6 +81,14 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
     [RelayCommand]
     private async void CommitChanges(object obj)
     {
+        //update encounter creature counts to match the kvp version
+        Encounter.Creatures.Clear();
+        foreach(var kvp in EncounterCreaturesByCount)
+        {
+            for (int i = 0; i < kvp.Value; i++)
+                Encounter.Creatures.Add(kvp.Key.Creature);
+        }
+
         await _dataService.SaveAddAsync(Encounter);
         if (_navigationService.CanGoBack)
             _navigationService.GoBack();
@@ -58,9 +100,19 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
         if (obj != null && obj is CreatureViewModel)
         {
             CreatureViewModel creature = (CreatureViewModel)obj;
-            EncounterCreatures.Add(new CreatureViewModel(creature.Creature));
+
+            var match = EncounterCreaturesByCount.FirstOrDefault(x => x.Key.Creature.Equals(creature.Creature));
+
+            if (match == null)
+            {
+                EncounterCreaturesByCount.Add(new ObservableKVP<CreatureViewModel, int>(creature, 1));
+            }
+            else
+                match.Value++;
+            
+            //EncounterCreatures.Add(new CreatureViewModel(creature.Creature));
             //Encounter.Creatures.Add(creature.Creature);
-            _encounterService.AddCreature(Encounter, creature.Creature);
+            _encounterService.AddCreature(Encounter, creature.Creature); //todo: switch this to dictionary?
         }
     }
 
@@ -70,8 +122,13 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
         if (obj != null && obj is CreatureViewModel)
         {
             CreatureViewModel toRemove = (CreatureViewModel)obj;
-            EncounterCreatures.Remove(EncounterCreatures.First(x => x.Creature == toRemove.Creature));
-            _encounterService.RemoveCreature(Encounter, toRemove.Creature);
+
+            var match = EncounterCreaturesByCount.FirstOrDefault(x => x.Key.Creature.Equals(toRemove.Creature));
+            EncounterCreaturesByCount.Remove(match);
+
+            //EncounterCreatures.Remove(EncounterCreatures.First(x => x.Creature == toRemove.Creature));
+            while(Encounter.Creatures.Contains(toRemove.Creature))
+                _encounterService.RemoveCreature(Encounter, toRemove.Creature);
             //Encounter.Creatures.Remove(toRemove.Creature);
         }
     }
@@ -213,9 +270,16 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
         {
             Encounter = (Encounter)parameter;
 
-            EncounterCreatures.Clear();
-            foreach (var creature in Encounter.Creatures)
-                EncounterCreatures.Add(new CreatureViewModel(creature));
+            EncounterCreaturesByCount.Clear();
+            foreach(var creature in Encounter.Creatures)
+            {
+                var match = EncounterCreaturesByCount.FirstOrDefault(x => x.Key.Creature.Equals(creature));
+
+                if (match != null)
+                    match.Value++;
+                else
+                    EncounterCreaturesByCount.Add(new ObservableKVP<CreatureViewModel, int>(new CreatureViewModel(creature), 1));
+            }
         }
         else
         {
@@ -231,5 +295,28 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
         _creatureCache = new List<CreatureViewModel>(Creatures);
 
         SearchSuggestions = new(Creatures);
+
+        foreach (var party in await _dataService.GetAllPartiesAsync())
+            Parties.Add(party);
+
+        ExpectedDifficulty = EncounterDifficulty.None;
+
+        Creatures.CollectionChanged += PartyOrCreaturesChanged;
+
+    }
+
+    void PartyOrCreaturesChanged(object? sender, EventArgs e)
+    {
+        SetDifficulty();
+    }
+
+    private void SetDifficulty()
+    {
+        if (SelectedParty == null || SelectedParty.Members.Count == 0 || Creatures.Count == 0)
+            ExpectedDifficulty = EncounterDifficulty.None;
+        else
+        {
+            ExpectedDifficulty = _encounterService.DetermineDifficultyForParty(Encounter, SelectedParty); //todo: possible issue here where the number of creatures doesn't reflect the count. TBD.
+        }
     }
 }
