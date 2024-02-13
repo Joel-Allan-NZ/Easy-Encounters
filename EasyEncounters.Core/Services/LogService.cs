@@ -12,7 +12,7 @@ using EasyEncounters.Core.Models.Logs;
 namespace EasyEncounters.Core.Services;
 public class LogService : ILogService
 {
-    private static readonly string folderPath = @"F:\D&D\DND Tools";
+    private static readonly string folderPath = @"D:\D&D\DND Tools";
     private static readonly string errorfileName = @"ErrorLogging.txt";
     private static readonly string fileName = @"Log.txt";
     private readonly IDataService _dataService;

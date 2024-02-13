@@ -40,6 +40,9 @@ public class PageService : IPageService
         Configure<EncounterDamageTabViewModel, EncounterDamageTabPage>();
         Configure<LogTabViewModel, LogTabPage>();
 
+        //experimental:
+        Configure<EncounterAddCreaturesTabViewModel, EncounterAddCreaturesTabPage>();
+
     }
 
     public Type GetPageType(string key)

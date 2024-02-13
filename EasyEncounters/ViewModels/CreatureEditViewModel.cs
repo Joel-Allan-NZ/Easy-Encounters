@@ -28,7 +28,6 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
 {
     private readonly INavigationService _navigationService;
     private readonly IDataService _dataService;
-    private readonly IValidationService _validationService;
     private readonly IList<CreatureAttributeType> _creatureAttributeTypes = Enum.GetValues(typeof(CreatureAttributeType)).Cast<CreatureAttributeType>().ToList();
     private readonly IFilteringService _filteringService;
     private readonly IList<SpellLevel> _spellLevels = Enum.GetValues(typeof(SpellLevel)).Cast<SpellLevel>().ToList();
@@ -36,8 +35,6 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
     private readonly IList<ResolutionType> _resolutionTypes = Enum.GetValues(typeof(ResolutionType)).Cast<ResolutionType>().ToList();
     private readonly IList<ThreeStateBoolean> _concentrationStates = Enum.GetValues(typeof(ThreeStateBoolean)).Cast<ThreeStateBoolean>().ToList();
-
-    private Dictionary<string, List<string>> validationIssuesByProperty;
 
     public IList<SpellLevel> SpellLevels => _spellLevels;
     public IList<MagicSchool> MagicSchools => _magicSchools;
@@ -89,64 +86,37 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     [ObservableProperty]
     private SpellSlotViewModel _spellSlots;
 
-    [Required]
-    [MinLength(1)]
-    public string MaxHPString
-    {
-        get => Creature.MaxHPString;
-        set
-        {
-            TrySetProperty(Creature.MaxHPString, value, Creature, (v, m) => v.MaxHPString = m, out IReadOnlyCollection<ValidationResult> errs);
-            CheckValidation(errs);
-        }
-    }
+    //[Obser]
+
+    //public string MaxHPString
+    //{
+    //    get => Creature.MaxHPString;
+    //    set
+    //    {
+    //        TrySetProperty(Creature.MaxHPString, value, Creature, (v, m) => v.MaxHPString = m, out IReadOnlyCollection<ValidationResult> errs);
+    //    }
+    //}
     
-    [Required]
-    [CustomValidation(typeof(CreatureEditViewModel), nameof(ValidateLevelCR))]
-    public double LevelCR
-    {
-        get => Creature.LevelOrCR;
-        set
-        {
-            TrySetProperty(Creature.LevelOrCR, value, Creature, (v, m) => v.LevelOrCR = m, out IReadOnlyCollection<ValidationResult> errs);
-            CheckValidation(errs);
-        }
-    }
+    //[Required]
+    //public double LevelCR
+    //{
+    //    get => Creature.LevelOrCR;
+    //    set
+    //    {
+    //        TrySetProperty(Creature.LevelOrCR, value, Creature, (v, m) => v.LevelOrCR = m, out IReadOnlyCollection<ValidationResult> errs);
+    //    }
+    //}
     //private int ac;
-    [Required]
-    [Range(1, 50)]
-    public int AC
-    {
-        get => Creature.AC;
-        set
-        {
-            TrySetProperty(Creature.AC, value, Creature, (v, m) => v.AC = m, out IReadOnlyCollection<ValidationResult> errs);
-            CheckValidation(errs);
-        }
-    }
-
-    private void CheckValidation(IReadOnlyCollection<ValidationResult> errs, [CallerMemberName] string name = null)
-    {
-        if (errs?.Count > 0)
-        {
-            foreach (var error in errs)
-            {
-                if (!validationIssuesByProperty.ContainsKey(name))
-                    validationIssuesByProperty[name] = new();
-
-                validationIssuesByProperty[name].Add(error.ErrorMessage);
-            }
-            HasValidFields = false;
-        }
-        else
-        {
-           if (validationIssuesByProperty.ContainsKey(name))
-                validationIssuesByProperty.Remove(name);
-
-            if (validationIssuesByProperty.Keys.Count == 0)
-                HasValidFields = true;
-        }
-    }
+    //[Required]
+    //[Range(1, 50)]
+    //public int AC
+    //{
+    //    get => Creature.AC;
+    //    set
+    //    {
+    //        TrySetProperty(Creature.AC, value, Creature, (v, m) => v.AC = m, out IReadOnlyCollection<ValidationResult> errs);
+    //    }
+    //}
    
     public IList<CreatureAttributeType> StatTypes => _creatureAttributeTypes;
 
@@ -165,7 +135,7 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     private async void CommitChanges(object obj)
     {
         //check validation
-        ValidateAllProperties();
+        //ValidateAllProperties();
 
         if (!HasErrors)
         {
@@ -199,12 +169,11 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     }
 
 
-    public CreatureEditViewModel(INavigationService navigationService, IDataService dataService, IValidationService validationService, IFilteringService filterService)
+    public CreatureEditViewModel(INavigationService navigationService, IDataService dataService, IFilteringService filterService)
     {
         _navigationService = navigationService;
         _filteringService = filterService;
         _dataService = dataService;
-        _validationService = validationService;
     }
 
     public void OnNavigatedFrom()
@@ -264,8 +233,8 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
             ResolutionTypeFilterSelected = ResolutionType.Undefined;
             SpellSchoolFilterSelected = MagicSchool.None;
 
-            validationIssuesByProperty = new();
-           // ac = Creature.AC;
+            HasValidFields = true;//todo: proper validation.
+            // ac = Creature.AC;
         }
     }
 
@@ -332,18 +301,6 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
         {
             CreatureAbilities.Add((AbilityViewModel)ability);
         }
-    }
-
-    public static ValidationResult ValidateLevelCR(double levelCR, ValidationContext context)
-    {
-        //todo: move validation to a service.
-        var instance = (CreatureEditViewModel)context.ObjectInstance;
-
-        bool valid = instance._validationService.Validate(instance, levelCR, context.MemberName);
-        if (valid)
-            return ValidationResult.Success;
-        else
-            return new("Not a valid Level or Challenge Rating");
     }
 
 

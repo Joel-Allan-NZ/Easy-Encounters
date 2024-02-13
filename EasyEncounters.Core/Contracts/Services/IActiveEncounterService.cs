@@ -40,4 +40,11 @@ public interface IActiveEncounterService
     void AddEncounterCreature(ActiveEncounter activeEncounter, Creature creature, bool maxHPRoll);
 
     void ReorderInitiative(ActiveEncounter activeEncounter, IEnumerable<ActiveEncounterCreature> creatures);
+
+    /// <summary>
+    /// Adds an ActiveEncounterCreature based on selected creature to the ActiveEncounter, ensuring its EncounterName is unique.
+    /// </summary>
+    /// <param name="activeEncounter"></param>
+    /// <param name="creature"></param>
+    void AddCreatureInProgress(ActiveEncounter activeEncounter, Creature creature);
 }

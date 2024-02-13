@@ -14,7 +14,7 @@ public class DataService : IDataService
 {
     private Data _cached;
     private readonly IFileService _fileService;
-    private static readonly string folderPath = @"F:\D&D\DND Tools"; //todo: make setting
+    private static readonly string folderPath = @"D:\D&D\DND Tools"; //todo: make setting
     private readonly IEncounterService _encounterService;
     private static readonly string jsonFile = @"TextJson.txt";
     private static readonly string logFile = @"LogTextJson.txt";

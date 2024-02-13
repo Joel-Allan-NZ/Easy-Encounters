@@ -26,6 +26,7 @@
     <None Remove="Views\CreatureDisplayTabPage.xaml" />
     <None Remove="Views\CreatureEditPage.xaml" />
     <None Remove="Views\DealDamagePage.xaml" />
+    <None Remove="Views\EncounterAddCreaturesTabPage.xaml" />
     <None Remove="Views\EncounterCRUDPage.xaml" />
     <None Remove="Views\EncounterDamageTabPage.xaml" />
     <None Remove="Views\EncounterEditPage.xaml" />
@@ -48,6 +49,8 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="CommunityToolkit.WinUI.UI.Controls" Version="7.1.2" />
     <PackageReference Include="Microsoft.AppCenter.Crashes" Version="5.0.3" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.8.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.231115000" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
@@ -61,6 +64,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\EncounterAddCreaturesTabPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Styles\ValidatingStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -131,10 +137,6 @@
 
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="SourceGenerators\" />
   </ItemGroup>
   
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">

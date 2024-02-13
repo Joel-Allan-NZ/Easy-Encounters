@@ -63,6 +63,7 @@ public class ActiveEncounterService : IActiveEncounterService
         return activeCreatures;
     }
 
+    //deprecated
     public void AddEncounterCreature(ActiveEncounter activeEncounter, Creature creature, bool maxHPRoll)
     {
         int collisions = 0;
@@ -82,6 +83,21 @@ public class ActiveEncounterService : IActiveEncounterService
             tempCreature.EncounterName = tempCreature.Name;
 
         activeEncounter.ActiveCreatures.Add(tempCreature); 
+    }
+
+    public void AddCreatureInProgress(ActiveEncounter activeEncounter, Creature creature)
+    {
+        int collisions = 1;
+        foreach(var existingCreature in activeEncounter.ActiveCreatures)
+        {
+            if(existingCreature.Name == creature.Name) collisions++;
+        }
+        var toAdd = _encounterService.CreateActiveEncounterCreature(creature, RollHP);
+        toAdd.EncounterName = creature.Name + " " + collisions;
+
+        activeEncounter.ActiveCreatures.Add(toAdd);
+        activeEncounter.CreatureTurns.Enqueue(toAdd);
+
     }
 
     private async Task<string> DealDamageAsync(ActiveEncounter activeEncounter, ActiveEncounterCreature sourceCreature, ActiveEncounterCreature targetCreature, DamageType damageType, int damageValue)

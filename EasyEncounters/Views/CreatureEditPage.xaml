@@ -30,7 +30,7 @@
                               Margin="2,2,2,2"
                              Header="Creature Name"
                              PlaceholderText="Enter a name for the Creature"/>
-                    <NumberBox Value="{x:Bind ViewModel.LevelCR, Mode=TwoWay}"
+                    <NumberBox Value="{x:Bind ViewModel.Creature.LevelOrCR, Mode=TwoWay}"
                              Header="Creature Level or CR"
                              Margin="2,2,2,2"
                              AcceptsExpression="True"
@@ -52,7 +52,7 @@
                             Padding="12"
                             BorderBrush="BlanchedAlmond">
                     <TextBlock Text="AC:" Margin="2,2,2,2"/>
-                    <NumberBox Value="{x:Bind ViewModel.AC, Mode=TwoWay}"
+                    <NumberBox Value="{x:Bind ViewModel.Creature.AC, Mode=TwoWay}"
                              Margin="2,2,2,2"
                                AcceptsExpression="True"
                                Minimum="0"
@@ -247,7 +247,7 @@
                              Visibility="{x:Bind ViewModel.Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}"></NumberBox>
                     <TextBlock Text="Max HP dicestring:" Margin="2,2,2,2"
                                Visibility="{x:Bind ViewModel.Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}"/>
-                    <TextBox Text="{x:Bind ViewModel.MaxHPString, Mode=TwoWay}"
+                    <TextBox Text="{x:Bind ViewModel.Creature.MaxHPString, Mode=TwoWay}"
                              Visibility="{x:Bind ViewModel.Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}"
                             Margin="2,2,2,2"></TextBox>
                 </StackPanel>

@@ -164,6 +164,9 @@
             <Button Command="{x:Bind ViewModel.EndEncounterCommand}"
                         Content="Encounter Finished"
                         Margin="5,8"/>
+            <Button Command="{x:Bind ViewModel.ShowAddCreatureTabCommand}"
+                    Content="Add Creatures"
+                    Margin="5,8"/>
         </StackPanel>
     </Grid>
 </Page>

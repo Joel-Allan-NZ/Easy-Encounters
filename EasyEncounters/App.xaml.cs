@@ -72,7 +72,6 @@ public partial class App : Application
             services.AddSingleton<ICreatureService, CreatureService>();
             services.AddSingleton<IAbilityService, AbilityService>();
             services.AddSingleton<IConditionService, ConditionService>();
-            services.AddSingleton<IValidationService, ValidationService>();
             services.AddSingleton<IFilteringService, FilteringService>();
 
 
@@ -143,6 +142,10 @@ public partial class App : Application
             services.AddTransient<CreatureDisplayTabViewModel>();
             services.AddTransient<LogTabPage>();
             services.AddTransient<LogTabViewModel>();
+
+            //Experimental:
+            services.AddTransient<EncounterAddCreaturesTabPage>();
+            services.AddTransient<EncounterAddCreaturesTabViewModel>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

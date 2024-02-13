@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -15,6 +16,7 @@ using EasyEncounters.Messages;
 using EasyEncounters.Models;
 using EasyEncounters.Views;
 using Microsoft.UI.Xaml.Media.Animation;
+using Windows.Web.UI;
 
 namespace EasyEncounters.ViewModels
 {
@@ -81,6 +83,19 @@ namespace EasyEncounters.ViewModels
             InitiativeRolled = true;
 
             WeakReferenceMessenger.Default.Send(new LogMessageLogged(new List<string>() { "Initiative Rolled!", $"{_activeEncounter.ActiveTurn?.EncounterName ?? "A creature"}'s turn" }));
+        }
+
+        [RelayCommand]
+        private async void AddCreatures(ICollection<ObservableKVP<CreatureViewModel, int>> creaturesToAdd)
+        {
+            foreach(var kvp in creaturesToAdd)
+            {
+                for(int i =0;i<kvp.Value; i++)
+                {
+                    _activeEncounterService.AddCreatureInProgress(_activeEncounter, kvp.Key.Creature);
+                    Creatures.Add(new ActiveEncounterCreatureViewModel(_activeEncounter.ActiveCreatures.Last()));
+                }
+            }
         }
 
         [RelayCommand]
@@ -198,6 +213,21 @@ namespace EasyEncounters.ViewModels
             WeakReferenceMessenger.Default.Send(new LogMessageLogged(msg));
         }
 
+        [RelayCommand]
+        private async void ShowAddCreatureTab()
+        {
+            var openTab = Tabs.FirstOrDefault(x => x.TabName == "Add Creatures");
+            if(openTab == null)
+            {
+                openTab = _tabService.OpenTab(typeof(EncounterAddCreaturesTabViewModel).FullName!,
+                    _activeEncounter, "Add Creatures");
+
+                Tabs.Add(openTab);
+            }
+
+            SelectedTab = openTab;
+        }
+
         private void ShowDamageTab(ObservableActiveAbility abilityVM, ActiveEncounterCreatureViewModel source)
         {
             var openTab = Tabs.FirstOrDefault(x => x.TabName == $"Damage from {source.Creature.EncounterName}");
@@ -259,6 +289,11 @@ namespace EasyEncounters.ViewModels
             WeakReferenceMessenger.Default.Register<DealDamageRequestMessage>(this, (r, m) =>
             {
                 DealDamage(m);
+            });
+
+            WeakReferenceMessenger.Default.Register<AddCreaturesRequestMessage>(this, (r, m) =>
+            {
+                AddCreatures(m.CreaturesToAdd);
             });
             //WeakReferenceMessenger.Default.Register<LogMessageLogged>(this, (r, m) =>
             //{
