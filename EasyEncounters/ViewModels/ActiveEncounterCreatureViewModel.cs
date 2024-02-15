@@ -172,6 +172,8 @@ public partial class ActiveEncounterCreatureViewModel : ObservableRecipient //to
         }
         return false;
     }
+
+    public override int GetHashCode() => Creature.GetHashCode();    
 }
 
 

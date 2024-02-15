@@ -173,7 +173,7 @@ public class EncounterService : IEncounterService
     private int EffectiveMonsterCount(Encounter encounter)
     {
         var averageCR = encounter.Creatures.Average(x => x.LevelOrCR);
-        int creatureCount = encounter.Creatures.Count;
+        var creatureCount = encounter.Creatures.Count;
         if (averageCR != 0)
         {
             creatureCount = 0;

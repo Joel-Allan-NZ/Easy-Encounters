@@ -18,36 +18,40 @@ using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Messages;
 using EasyEncounters.Models;
-using EasyEncounters.Services;
+using EasyEncounters.Services.Filter;
 using Microsoft.UI.Dispatching;
 using Windows.Storage.Pickers.Provider;
 
 namespace EasyEncounters.ViewModels;
 public partial class EncounterEditViewModel : ObservableRecipient, INavigationAware
 {
-    //public delegate void PartyOrCreaturesChangedEventHandler(object sender, CollectionChangeEventArgs e);
+    public event EventHandler<DataGridColumnEventArgs>? Sorting;
+    partial void OnSelectedPartyChanged(Party? value) => SetDifficulty();
 
-    //public event NotifyCollectionChangedEventHandler PartyOrCreaturesChanged;
 
-    //protected virtual void OnPartyOrCreaturesChanged(CollectionChangeEventArgs e)
-    //{
-    //    NotifyCollectionChangedEventHandler handler = PartyOrCreaturesChanged;
+    private readonly INavigationService _navigationService;
+    private readonly IDataService _dataService;
+    private readonly IEncounterService _encounterService;
+    private readonly IFilteringService _filteringService;
 
-    //}
+    private IList<CreatureViewModel> _creatureCache;
+
     [ObservableProperty]
     private EncounterDifficulty _expectedDifficulty;
 
-    private IList<CreatureViewModel> _creatureCache;
+    [ObservableProperty]
+    private Party? _selectedParty;
+
+    [ObservableProperty]
+    private Encounter? _encounter;
+
+    [ObservableProperty]
+    private CreatureFilter _creatureFilterValues;
 
     public ObservableCollection<ObservableKVP<CreatureViewModel, int>> EncounterCreaturesByCount
     {
         get; private set;
     } = new();
-
-    [ObservableProperty]
-    private Party _selectedParty;
-
-    partial void OnSelectedPartyChanged(Party value) => SetDifficulty();
 
     public ObservableCollection<Party> Parties
     {
@@ -55,43 +59,28 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
         private set;
     } = new();
 
-    //public ObservableCollection<CreatureViewModel> EncounterCreatures
-    //{
-    //    get; private set;
-    //} = new();
-
     public ObservableCollection<CreatureViewModel> Creatures
     {
         get; private set;
     } = new();
 
-
-    [ObservableProperty]
-    private Encounter _encounter;
-
-    [ObservableProperty]
-    private double _minimumCRFilter;
-
-    [ObservableProperty]
-    private double _maximumCRFilter;
-
-    [ObservableProperty]
-    private List<CreatureViewModel> searchSuggestions;
-
     [RelayCommand]
-    private async void CommitChanges(object obj)
+    private async Task CommitChanges(object obj)
     {
+        if (Encounter != null)
         //update encounter creature counts to match the kvp version
-        Encounter.Creatures.Clear();
-        foreach(var kvp in EncounterCreaturesByCount)
         {
-            for (int i = 0; i < kvp.Value; i++)
-                Encounter.Creatures.Add(kvp.Key.Creature);
-        }
+            Encounter.Creatures.Clear();
+            foreach (var kvp in EncounterCreaturesByCount)
+            {
+                for (var i = 0; i < kvp.Value; i++)
+                    Encounter.Creatures.Add(kvp.Key.Creature);
+            }
 
-        await _dataService.SaveAddAsync(Encounter);
-        if (_navigationService.CanGoBack)
-            _navigationService.GoBack();
+            await _dataService.SaveAddAsync(Encounter);
+            if (_navigationService.CanGoBack)
+                _navigationService.GoBack();
+        }
     }
 
     [RelayCommand]
@@ -109,9 +98,7 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
             }
             else
                 match.Value++;
-            
-            //EncounterCreatures.Add(new CreatureViewModel(creature.Creature));
-            //Encounter.Creatures.Add(creature.Creature);
+           
             _encounterService.AddCreature(Encounter, creature.Creature); //todo: switch this to dictionary?
         }
     }
@@ -119,51 +106,41 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
     [RelayCommand]
     private void RemoveCreature(object obj)
     {
-        if (obj != null && obj is CreatureViewModel)
+        if (obj != null && obj is CreatureViewModel && Encounter != null)
         {
             CreatureViewModel toRemove = (CreatureViewModel)obj;
 
             var match = EncounterCreaturesByCount.FirstOrDefault(x => x.Key.Creature.Equals(toRemove.Creature));
-            EncounterCreaturesByCount.Remove(match);
+            if(match != null)
+                EncounterCreaturesByCount.Remove(match);
 
-            //EncounterCreatures.Remove(EncounterCreatures.First(x => x.Creature == toRemove.Creature));
             while(Encounter.Creatures.Contains(toRemove.Creature))
                 _encounterService.RemoveCreature(Encounter, toRemove.Creature);
-            //Encounter.Creatures.Remove(toRemove.Creature);
         }
     }
 
-    public event EventHandler<DataGridColumnEventArgs> Sorting;
+
     protected virtual void OnSorting(DataGridColumnEventArgs e)
     {
-        EventHandler<DataGridColumnEventArgs> handler = Sorting;
-        if (handler != null)
-            handler(this, e);
+        Sorting?.Invoke(this, e);
     }
 
     [RelayCommand]
     private void SearchTextChange(string text)
     {
+        var filtered = _filteringService.Filter(_creatureCache, CreatureFilterValues, text);
         if (String.IsNullOrEmpty(text))
         {
-            var filtered = _filteringService.Filter(_creatureCache, x => x.Creature.LevelOrCR, MinimumCRFilter, MaximumCRFilter);
             Creatures.Clear();
             foreach (var creature in filtered)
                 Creatures.Add(creature);
         }
-        SearchSuggestions = _filteringService.Filter(Creatures, x => x.Creature.Name, text).ToList();
     }
 
     [RelayCommand]
     private void CreatureFilter(string text)
     {
-        List<FilterCriteria<CreatureViewModel>> criteria = new List<FilterCriteria<CreatureViewModel>>()
-        {
-            new FilterCriteria<CreatureViewModel>(x => x.Creature.LevelOrCR, MinimumCRFilter, MaximumCRFilter),
-            new FilterCriteria<CreatureViewModel>(x => x.Creature.Name, text)
-        };
-
-        var filtered = _filteringService.Filter(_creatureCache, criteria);
+        var filtered = _filteringService.Filter(_creatureCache, CreatureFilterValues, text);
         Creatures.Clear();
         foreach (var creature in filtered)
             Creatures.Add(creature);
@@ -229,10 +206,6 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
     }
 
 
-    private readonly INavigationService _navigationService;
-    private readonly IDataService _dataService;
-    private readonly IEncounterService _encounterService;
-    private readonly IFilteringService _filteringService;
     //private readonly DispatcherQueueTimer _filterTimer;
 
     public EncounterEditViewModel(INavigationService navigationService, IDataService dataService, IEncounterService encounterService, IFilteringService filteringService)
@@ -291,10 +264,7 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
         foreach (var creature in await _dataService.GetAllCreaturesAsync())
             Creatures.Add(new CreatureViewModel(creature));
 
-        MaximumCRFilter = 30; //that's as high as she goes cap'n
         _creatureCache = new List<CreatureViewModel>(Creatures);
-
-        SearchSuggestions = new(Creatures);
 
         foreach (var party in await _dataService.GetAllPartiesAsync())
             Parties.Add(party);
@@ -302,6 +272,8 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
         ExpectedDifficulty = EncounterDifficulty.None;
 
         Creatures.CollectionChanged += PartyOrCreaturesChanged;
+
+        CreatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<CreatureViewModel>();
 
     }
 

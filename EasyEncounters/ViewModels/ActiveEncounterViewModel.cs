@@ -15,188 +15,195 @@ using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Messages;
 using Windows.ApplicationModel.UserDataTasks;
 
-namespace EasyEncounters.ViewModels
+namespace EasyEncounters.ViewModels;
 
-    //todo:
-    //view.
+//todo:
+//view.
+
+public partial class ActiveEncounterViewModel : ObservableRecipient, INavigationAware
 {
-    public partial class ActiveEncounterViewModel : ObservableRecipient, INavigationAware
+    private readonly INavigationService _navigationService;
+    private readonly IDataService _dataService;
+    private readonly IActiveEncounterService _activeEncounterService;
+    private ActiveEncounter? _activeEncounter;
+
+    private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
+    public IList<DamageType> DamageTypes => _damageTypes;
+
+    [ObservableProperty]
+    private TargetDamageInstanceViewModel? _selectedTargetDamageInstance;
+
+    [ObservableProperty]
+    private ActiveEncounterCreatureViewModel? _selectedCreature;
+
+    [ObservableProperty]
+    private ActiveEncounterCreatureViewModel? _damageSourceCreature;
+
+    public ObservableCollection<ActiveEncounterCreatureViewModel> Creatures
     {
-        private readonly INavigationService _navigationService;
-        private readonly IDataService _dataService;
-        private readonly IActiveEncounterService _activeEncounterService;
-        private ActiveEncounter? _activeEncounter;
+        get; private set;
+    } = new();
 
-        private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
-        public IList<DamageType> DamageTypes => _damageTypes;
+    public ObservableCollection<string> CombatLog
+    {
+        get; private set;
+    } = new();
 
-        [ObservableProperty]
-        private TargetDamageInstanceViewModel? _selectedTargetDamageInstance;
+    public ObservableCollection<TargetDamageInstanceViewModel> DamageInstances
+    {
+        get; private set;
+    } = new();
 
-        [ObservableProperty]
-        private ActiveEncounterCreatureViewModel? _selectedCreature;
 
-        [ObservableProperty]
-        private ActiveEncounterCreatureViewModel? _damageSourceCreature;
 
-        public ObservableCollection<ActiveEncounterCreatureViewModel> Creatures
+
+    public ActiveEncounterViewModel(INavigationService navigationService, IDataService dataService, IActiveEncounterService activeEncounterService)
+    {
+        _dataService = dataService;
+        _navigationService = navigationService;
+        _activeEncounterService = activeEncounterService;
+
+        //Register for Messages
+        WeakReferenceMessenger.Default.Register<AddTargetCreatureRequestMessage>(this, (r, m) =>
         {
-            get; private set;
-        } = new();
+            AddTarget(m.Parameter);
+        });
 
-        public ObservableCollection<string> CombatLog
+        WeakReferenceMessenger.Default.Register<RemoveTargetCreatureRequestMessage>(this, (r, m) =>
         {
-            get; private set;
-        } = new();
+            RemoveTarget(m.Parameter);
+        });
 
-        public ObservableCollection<TargetDamageInstanceViewModel> DamageInstances
+        WeakReferenceMessenger.Default.Register<TargetedDamageCopyRequestMessage>(this, (r, m) =>
         {
-            get; private set;
-        } = new();
+            CopyDamage(m.Parameter);
+        });
 
-
-
-
-        public ActiveEncounterViewModel(INavigationService navigationService, IDataService dataService, IActiveEncounterService activeEncounterService)
+        WeakReferenceMessenger.Default.Register<TargetedDamageDeleteRequestMessage>(this, (r, m) =>
         {
-            _dataService = dataService;
-            _navigationService = navigationService;
-            _activeEncounterService = activeEncounterService;
+            RemoveDamage(m.Parameter);
+        });
 
-            //Register for Messages
-            WeakReferenceMessenger.Default.Register<AddTargetCreatureRequestMessage>(this, (r, m) =>
-            {
-                AddTarget(m.Parameter);
-            });
+        WeakReferenceMessenger.Default.Register<DamageTypeChangedMessage>(this, (r, m) =>
+        {
+            DamageTypeChanged(m.Parameter);
+        });
 
-            WeakReferenceMessenger.Default.Register<RemoveTargetCreatureRequestMessage>(this, (r, m) =>
-            {
-                RemoveTarget(m.Parameter);
-            });
+        WeakReferenceMessenger.Default.Register<DamageSourceSelectedMessage>(this, (r, m) =>
+        {
+            DamageSourceChangeRequested(m.Value);
+        });
+    }
 
-            WeakReferenceMessenger.Default.Register<TargetedDamageCopyRequestMessage>(this, (r, m) =>
-            {
-                CopyDamage(m.Parameter);
-            });
+    [RelayCommand]
+    private void AddDamage()
+    {
+        if (DamageSourceCreature == null)
+            return;
 
-            WeakReferenceMessenger.Default.Register<TargetedDamageDeleteRequestMessage>(this, (r, m) =>
-            {
-                RemoveDamage(m.Parameter);
-            });
-
-            WeakReferenceMessenger.Default.Register<DamageTypeChangedMessage>(this, (r, m) =>
-            {
-                DamageTypeChanged(m.Parameter);
-            });
-
-            WeakReferenceMessenger.Default.Register<DamageSourceSelectedMessage>(this, (r, m) =>
-            {
-                DamageSourceChangeRequested(m.Value);
-            });
+        var count = 1;
+        if (DamageInstances.Count > 0)
+        {
+            count = DamageInstances.Last().Count + 1;
         }
+        DamageInstances.Add(new TargetDamageInstanceViewModel(count));
+    }
 
-        [RelayCommand]
-        private void AddDamage()
+    [RelayCommand]
+    private void AddTarget(ActiveEncounterCreatureViewModel creature)
+    {
+        if (SelectedTargetDamageInstance != null)
         {
-            if (DamageSourceCreature == null)
-                return;
 
-            int count = 1;
-            if (DamageInstances.Count > 0)
+            var contains = false;
+            foreach (var target in SelectedTargetDamageInstance.Targets)
             {
-                count = DamageInstances.Last().Count + 1;
+                if (target.ActiveEncounterCreatureViewModel!.Creature.EncounterID == creature.Creature.EncounterID)
+                    contains = true;
             }
-            DamageInstances.Add(new TargetDamageInstanceViewModel(count));
-        }
-
-        [RelayCommand]
-        private void AddTarget(ActiveEncounterCreatureViewModel creature)
-        {
-            if (SelectedTargetDamageInstance != null)
+            if (!contains)
             {
-
-                bool contains = false;
-                foreach (var target in SelectedTargetDamageInstance.Targets)
-                {
-                    if (target.ActiveEncounterCreatureViewModel!.Creature.EncounterID == creature.Creature.EncounterID)
-                        contains = true;
-                }
-                if (!contains)
-                {
-                    var vm = new DamageCreatureViewModel(creature);
-                    SelectedTargetDamageInstance.Targets.Add(vm);
-                }
+                var vm = new DamageCreatureViewModel(creature);
+                SelectedTargetDamageInstance.Targets.Add(vm);
             }
         }
+    }
 
-        [RelayCommand]
-        private void DealDamage()
+    [RelayCommand]
+    private void DealDamage()
+    {
+        if (_activeEncounter != null)
         {
+
+
             var instances = GetInstancesOfDamage();
             foreach (var instance in instances)
             {
                 _activeEncounterService.DealDamageAsync(_activeEncounter, instance);
                 CombatLog.Insert(0, _activeEncounter.Log.Last());
             }
-                
 
-            
 
-            SelectedTargetDamageInstance.Targets.Clear();
+
+
+            SelectedTargetDamageInstance?.Targets.Clear();
             SelectedTargetDamageInstance = null;
             DamageInstances.Clear();
-            
-            
-
-            //_navigationService.NavigateTo(typeof(RunEncounterViewModel).FullName!, ignoreNavigation: true);
         }
+       
+    }
 
 
-        [RelayCommand]
-        private async void RollInitiative()
+    [RelayCommand]
+    private async Task RollInitiative()
+    {
+
+        var orderedInitiative = await _activeEncounterService.UpdateInitiativeOrder(_activeEncounter);
+
+        var tempAECreatureList = new List<ActiveEncounterCreatureViewModel>(Creatures);
+        Creatures.Clear();
+
+        foreach(var orderedCreature in orderedInitiative)
         {
-
-            var orderedInitiative = await _activeEncounterService.UpdateInitiativeOrder(_activeEncounter);
-
-            var tempAECreatureList = new List<ActiveEncounterCreatureViewModel>(Creatures);
-            Creatures.Clear();
-
-            foreach(var orderedCreature in orderedInitiative)
+            foreach(var creature in tempAECreatureList)
             {
-                foreach(var creature in tempAECreatureList)
+                if (creature.IsWrapperFor(orderedCreature))
                 {
-                    if (creature.IsWrapperFor(orderedCreature))
-                    {
-                        Creatures.Add(creature);
-                        break;
-                    }
+                    Creatures.Add(creature);
+                    break;
                 }
             }
-
-            await _dataService.SaveAddAsync(_activeEncounter);
         }
 
-        [RelayCommand]
-        private async void NextTurn()
-        {
-            //await _activeEncounterService.EndCurrentTurnAsync(_activeEncounter);
+        await _dataService.SaveAddAsync(_activeEncounter);
+    }
 
-            //var temp = new List<ActiveEncounterCreatureViewModel>(Creatures);
-            //Creatures.Clear();
-            //foreach (var creatureTurn in _activeEncounter.CreatureTurns)
-            //{
-            //    foreach(var creature in temp)
-            //    {
-            //        if (creature.IsWrapperFor(creatureTurn))
-            //        {
-            //            Creatures.Add(creature);
-            //            break;
-            //        }
-            //    }
-            //}
+    [RelayCommand]
+    private async Task NextTurn()
+    {
+        //await _activeEncounterService.EndCurrentTurnAsync(_activeEncounter);
+
+        //var temp = new List<ActiveEncounterCreatureViewModel>(Creatures);
+        //Creatures.Clear();
+        //foreach (var creatureTurn in _activeEncounter.CreatureTurns)
+        //{
+        //    foreach(var creature in temp)
+        //    {
+        //        if (creature.IsWrapperFor(creatureTurn))
+        //        {
+        //            Creatures.Add(creature);
+        //            break;
+        //        }
+        //    }
+        //}
+        if (_activeEncounter != null)
+        {
+
             await _activeEncounterService.EndCurrentTurnAsync(_activeEncounter);
 
-            if(_activeEncounter.CreatureTurns.Count != Creatures.Count)
+
+
+            if (_activeEncounter.CreatureTurns.Count != Creatures.Count)
             {
                 var temp = new List<ActiveEncounterCreatureViewModel>(Creatures);
                 Creatures.Clear();
@@ -221,148 +228,148 @@ namespace EasyEncounters.ViewModels
             }
             else
             {
-                foreach(var creature in Creatures)
+                foreach (var creature in Creatures)
                 {
-                    if (_activeEncounter.ActiveTurn.Equals(creature.Creature))
+                    if (_activeEncounter.ActiveTurn?.Equals(creature.Creature) ?? false)
                         creature.Targeted = true;
                     else
                         creature.Targeted = false;
                 }
             }
         }
+    }
 
-        [RelayCommand]
-        private async void EndEncounter()
+    [RelayCommand]
+    private async Task EndEncounter()
+    {
+        await _activeEncounterService.EndEncounterAsync(_activeEncounter);
+        if (_navigationService.CanGoBack)
+            _navigationService.GoBack();
+        else
+            _navigationService.NavigateTo(typeof(CampaignSplashViewModel).FullName!, clearNavigation: true);
+    }
+
+    public async void OnNavigatedTo(object parameter) 
+    {
+        if(parameter is ActiveEncounter && parameter != null)
         {
-            await _activeEncounterService.EndEncounterAsync(_activeEncounter);
-            if (_navigationService.CanGoBack)
-                _navigationService.GoBack();
-            else
-                _navigationService.NavigateTo(typeof(CampaignSplashViewModel).FullName!, clearNavigation: true);
+            _activeEncounter = (ActiveEncounter)parameter;
+        }
+        else
+        {
+            _activeEncounter = await _dataService.GetActiveEncounterAsync();
         }
 
-        public async void OnNavigatedTo(object parameter) 
+        Creatures.Clear();
+
+        foreach (var creature in _activeEncounter.CreatureTurns)
+            Creatures.Add(new ActiveEncounterCreatureViewModel(creature));
+
+        foreach (var combatLogString in _activeEncounter.Log.Reverse<string>())
+            CombatLog.Add(combatLogString);
+
+    }
+
+    public void OnNavigatedFrom()
+    {
+        WeakReferenceMessenger.Default.UnregisterAll(this);
+    }
+
+    private void CopyDamage(TargetDamageInstanceViewModel damageInstance)
+    {
+        AddDamage();
+        var last = DamageInstances.Last();
+        foreach (var target in damageInstance.Targets)
         {
-            if(parameter is ActiveEncounter && parameter != null)
+            last.Targets.Add(new DamageCreatureViewModel(target.ActiveEncounterCreatureViewModel!));
+        }
+
+    }
+
+    private void RemoveDamage(TargetDamageInstanceViewModel damageInstance)
+    {
+        if (DamageInstances.Count < 1)
+            return;
+
+        var index = -1;
+        for (var i = 0; i < DamageInstances.Count; i++)
+        {
+            if (DamageInstances[i].Name == damageInstance.Name)
             {
-                _activeEncounter = (ActiveEncounter)parameter;
+                index = i;
+                break;
+            }
+        }
+        if (index > -1)
+        {
+            if (DamageInstances[index] == SelectedTargetDamageInstance)
+            {
+                DamageInstances.RemoveAt(index);
+                SelectedTargetDamageInstance = DamageInstances[0];
             }
             else
-            {
-                _activeEncounter = await _dataService.GetActiveEncounterAsync();
-            }
-
-            Creatures.Clear();
-
-            foreach (var creature in _activeEncounter.CreatureTurns)
-                Creatures.Add(new ActiveEncounterCreatureViewModel(creature));
-
-            foreach (var combatLogString in _activeEncounter.Log.Reverse<string>())
-                CombatLog.Add(combatLogString);
-
+                DamageInstances.RemoveAt(index);
         }
 
-        public void OnNavigatedFrom()
+    }
+
+    private void DamageSourceChangeRequested(ActiveEncounterCreatureViewModel creature)
+    {
+        DamageSourceCreature = creature;
+        DamageInstances.Clear();
+        DamageInstances.Add(new TargetDamageInstanceViewModel(1));
+        SelectedTargetDamageInstance = DamageInstances.First();
+    }
+
+    private void RemoveTarget(DamageCreatureViewModel creature)
+    {
+        if (SelectedTargetDamageInstance != null && creature != null)
         {
-            WeakReferenceMessenger.Default.UnregisterAll(this);
-        }
-
-        private void CopyDamage(TargetDamageInstanceViewModel damageInstance)
-        {
-            AddDamage();
-            var last = DamageInstances.Last();
-            foreach (var target in damageInstance.Targets)
-            {
-                last.Targets.Add(new DamageCreatureViewModel(target.ActiveEncounterCreatureViewModel!));
-            }
-
-        }
-
-        private void RemoveDamage(TargetDamageInstanceViewModel damageInstance)
-        {
-            if (DamageInstances.Count < 1)
-                return;
-
             var index = -1;
-            for (var i = 0; i < DamageInstances.Count; i++)
+            for (var i = 0; i < SelectedTargetDamageInstance.Targets.Count; i++)
             {
-                if (DamageInstances[i].Name == damageInstance.Name)
+                if (SelectedTargetDamageInstance.Targets[i].ActiveEncounterCreatureViewModel!.Creature.EncounterID
+                        == creature.ActiveEncounterCreatureViewModel!.Creature.EncounterID)
                 {
                     index = i;
                     break;
                 }
             }
             if (index > -1)
-            {
-                if (DamageInstances[index] == SelectedTargetDamageInstance)
-                {
-                    DamageInstances.RemoveAt(index);
-                    SelectedTargetDamageInstance = DamageInstances[0];
-                }
-                else
-                    DamageInstances.RemoveAt(index);
-            }
-
+                SelectedTargetDamageInstance.Targets.RemoveAt(index);
         }
+    }
 
-        private void DamageSourceChangeRequested(ActiveEncounterCreatureViewModel creature)
-        {
-            DamageSourceCreature = creature;
-            DamageInstances.Clear();
-            DamageInstances.Add(new TargetDamageInstanceViewModel(1));
-            SelectedTargetDamageInstance = DamageInstances.First();
-        }
 
-        private void RemoveTarget(DamageCreatureViewModel creature)
+
+    private void DamageTypeChanged(DamageType damageType)
+    {
+        if (SelectedTargetDamageInstance != null)
         {
-            if (SelectedTargetDamageInstance != null && creature != null)
+            foreach (var target in SelectedTargetDamageInstance.Targets)
             {
-                var index = -1;
-                for (var i = 0; i < SelectedTargetDamageInstance.Targets.Count; i++)
-                {
-                    if (SelectedTargetDamageInstance.Targets[i].ActiveEncounterCreatureViewModel!.Creature.EncounterID
-                            == creature.ActiveEncounterCreatureViewModel!.Creature.EncounterID)
-                    {
-                        index = i;
-                        break;
-                    }
-                }
-                if (index > -1)
-                    SelectedTargetDamageInstance.Targets.RemoveAt(index);
+                target.SelectedDamageVolume = _activeEncounterService.GetDamageVolumeSuggestion(target.ActiveEncounterCreatureViewModel!.Creature, damageType);
             }
         }
+    }
 
 
 
-        private void DamageTypeChanged(DamageType damageType)
+    private IEnumerable<DamageInstance> GetInstancesOfDamage()
+    {
+        List<DamageInstance> instances = new List<DamageInstance>();
+
+        foreach (var targetedDamage in DamageInstances)
         {
-            if (SelectedTargetDamageInstance != null)
+            foreach (var target in targetedDamage.Targets)
             {
-                foreach (var target in SelectedTargetDamageInstance.Targets)
-                {
-                    target.SelectedDamageVolume = _activeEncounterService.GetDamageVolumeSuggestion(target.ActiveEncounterCreatureViewModel!.Creature, damageType);
-                }
+                instances.Add(new DamageInstance(target.ActiveEncounterCreatureViewModel!.Creature,
+                                                    DamageSourceCreature!.Creature,
+                                                    targetedDamage.SelectedDamageType,
+                                                    target.SelectedDamageVolume,
+                                                    targetedDamage.DamageAmount));
             }
         }
-
-
-
-        private IEnumerable<DamageInstance> GetInstancesOfDamage()
-        {
-            List<DamageInstance> instances = new List<DamageInstance>();
-
-            foreach (var targetedDamage in DamageInstances)
-            {
-                foreach (var target in targetedDamage.Targets)
-                {
-                    instances.Add(new DamageInstance(target.ActiveEncounterCreatureViewModel!.Creature,
-                                                        DamageSourceCreature!.Creature,
-                                                        targetedDamage.SelectedDamageType,
-                                                        target.SelectedDamageVolume,
-                                                        targetedDamage.DamageAmount));
-                }
-            }
-            return instances;
-        }
+        return instances;
     }
 }

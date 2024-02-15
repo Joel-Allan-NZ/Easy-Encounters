@@ -15,18 +15,18 @@
         <helpers:EnumToStringConverter x:Key="EnumToStringConverter"/>
     </Page.Resources>
     <local:SpellGrid
-        FilterSpellLevelSource="{x:Bind ViewModel.SpellLevels}"
-        FilterMinimumSpellLevel="{x:Bind ViewModel.MinimumSpellLeveLFilter, Mode=TwoWay}"
-        FilterMaximumSpellLevel="{x:Bind ViewModel.MaximumSpellLevelFilter, Mode=TwoWay}"
-        FilterSpellSchoolSource="{x:Bind ViewModel.MagicSchools}"
-        FilterSpellSchoolSelected="{x:Bind ViewModel.SpellSchoolFilterSelected, Mode=TwoWay}"
-        FilterConcentrationSource="{x:Bind ViewModel.ConcentrationStates}" 
-        FilterConcentrationSelected="{x:Bind ViewModel.ConcentrationFilterSelected, Mode=TwoWay}"
-        FilterResolutionSource="{x:Bind ViewModel.ResolutionTypes}"
-        FilterResolutionSelected="{x:Bind ViewModel.ResolutionTypeFilterSelected, Mode=TwoWay}"
-        FilterDamageTypeSource="{x:Bind ViewModel.DamageTypes}"
-        FilterDamageTypeSelected="{x:Bind ViewModel.DamageTypeFilterSelected, Mode=TwoWay}"
-        Suggestions="{x:Bind ViewModel.SearchSuggestions, Mode=OneWay}"
+        FilterSpellLevelSource="{x:Bind ViewModel.AbilityFilterValues.SpellLevels}"
+        FilterMinimumSpellLevel="{x:Bind ViewModel.AbilityFilterValues.MinimumSpellLevelFilter, Mode=TwoWay}"
+        FilterMaximumSpellLevel="{x:Bind ViewModel.AbilityFilterValues.MaximumSpellLevelFilter, Mode=TwoWay}"
+        FilterSpellSchoolSource="{x:Bind ViewModel.AbilityFilterValues.MagicSchools}"
+        FilterSpellSchoolSelected="{x:Bind ViewModel.AbilityFilterValues.SpellSchoolFilterSelected, Mode=TwoWay}"
+        FilterConcentrationSource="{x:Bind ViewModel.AbilityFilterValues.ConcentrationStates}" 
+        FilterConcentrationSelected="{x:Bind ViewModel.AbilityFilterValues.ConcentrationFilterSelected, Mode=TwoWay}"
+        FilterResolutionSource="{x:Bind ViewModel.AbilityFilterValues.ResolutionTypes}"
+        FilterResolutionSelected="{x:Bind ViewModel.AbilityFilterValues.ResolutionTypeFilterSelected, Mode=TwoWay}"
+        FilterDamageTypeSource="{x:Bind ViewModel.AbilityFilterValues.DamageTypes}"
+        FilterDamageTypeSelected="{x:Bind ViewModel.AbilityFilterValues.DamageTypeFilterSelected, Mode=TwoWay}"
+        Suggestions="{x:Bind ViewModel.AbilityFilterValues.SearchSuggestions, Mode=OneWay}"
         FilterCommand="{x:Bind ViewModel.AbilityFilterCommand}"
         SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
         GridDataSource="{x:Bind ViewModel.Abilities}"
@@ -35,166 +35,4 @@
         SelectSpellCommand="{x:Bind ViewModel.EditAbilityCommand}"
         AddSpellCommand="{x:Bind ViewModel.AddAbilityCommand}"
         />
-    <!--<Grid>
-        <Grid.Resources>
-            <ResourceDictionary>
-                <SolidColorBrush x:Key="DataGridCellFocusVisualPrimaryBrush" Color="Transparent"/>
-                <SolidColorBrush x:Key="DataGridCellFocusVisualSecondaryBrush" Color="Transparent"/>
-                <DataTemplate x:Key="RowDetailsTemplate">
-                    <StackPanel>
-                        <TextBlock Text="{Binding Ability.EffectDescription}"
-                                   Margin="5"
-                               TextWrapping="Wrap"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ResourceDictionary>
-        </Grid.Resources>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="10*"/>
-            <RowDefinition Height="*" MaxHeight="50" MinHeight="50"/>
-        </Grid.RowDefinitions>
-        <StackPanel Name="DataGridFilterBox"
-                    Orientation="Horizontal"
-                    Margin="0"
-                    Grid.Row="0"
-                    Background="{ThemeResource SystemAltHighColor}">
-            <CommandBar DefaultLabelPosition="Right"
-                            VerticalAlignment="Center"
-                            Background="Transparent">
-                <AppBarButton Icon="Filter"
-                                  Label="Filter"
-                                  AllowFocusOnInteraction="True"
-                                  Width="80">
-                    <AppBarButton.Flyout>
-                        <Flyout>
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="Spell Level:"/>
-                                </StackPanel>
-                                <StackPanel Orientation="Vertical">
-                                    <StackPanel Orientation="Horizontal">
-                                        <ComboBox ItemsSource="{x:Bind ViewModel.SpellLevels}"
-                                                  SelectedItem="{x:Bind ViewModel.MinimumSpellLeveLFilter, Mode=TwoWay}"
-                                                  MinWidth="124"
-                                                  Margin="2">
-                                            <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </ComboBox>
-                                        <TextBlock Text="-"
-                                                       Margin="2"
-                                                       VerticalAlignment="Center"/>
-                                        <ComboBox ItemsSource="{x:Bind ViewModel.SpellLevels}"
-                                                  SelectedItem="{x:Bind ViewModel.MaximumSpellLevelFilter, Mode=TwoWay}"
-                                                  MinWidth="124"
-                                                  Margin="2">
-                                            <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </ComboBox>
-                                    </StackPanel>
-                                </StackPanel>
-                            </StackPanel>
-                        </Flyout>
-                    </AppBarButton.Flyout>
-                </AppBarButton>
-            </CommandBar>
-            <AutoSuggestBox x:Name="SearchBox"                            
-                            HorizontalAlignment="Stretch"
-                            MinWidth="200"
-                            QueryIcon="Find"
-                            VerticalAlignment="Center"
-                            ItemsSource="{x:Bind ViewModel.SearchSuggestions, Mode=OneWay}"
-                            TextMemberPath="Creature.Name"
-                            DisplayMemberPath="Creature.Name"
-                            FontSize="20"
-                            Margin="5,0,0,0">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="QuerySubmitted">
-                        <Core:EventTriggerBehavior.Actions>
-                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.AbilityFilterCommand}" CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}"/>
-                        </Core:EventTriggerBehavior.Actions>
-                    </Core:EventTriggerBehavior>
-                    <Core:EventTriggerBehavior EventName="TextChanged">
-                        <Core:EventTriggerBehavior.Actions>
-                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.SearchTextChangeCommand}" CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}"/>
-                        </Core:EventTriggerBehavior.Actions>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-            </AutoSuggestBox>
-            <CommandBar DefaultLabelPosition="Right"
-                        Background="Transparent"
-                        VerticalAlignment="Center"
-                        Margin="0,0,8,0">
-                <AppBarButton Label="Search"                      
-                              Command="{x:Bind ViewModel.AbilityFilterCommand}"
-                              CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}"/>
-            </CommandBar>
-        </StackPanel>
-        <controls:DataGrid Grid.Row="1"
-                           x:Name="AbilityListDG"
-                           IsReadOnly="True"
-                           SelectionMode="Single"
-                           GridLinesVisibility="Horizontal"
-                           RowDetailsTemplate="{StaticResource RowDetailsTemplate}"
-                           Margin="0"
-                           ItemsSource="{x:Bind ViewModel.Abilities}"
-                           AutoGenerateColumns="False">
-            <Interactivity:Interaction.Behaviors>
-                <Core:EventTriggerBehavior EventName="Sorting">
-                    <Core:InvokeCommandAction Command="{x:Bind ViewModel.DataGridSortCommand}"/>
-                </Core:EventTriggerBehavior>
-                <Core:EventTriggerBehavior EventName="DoubleTapped">
-                    <Core:InvokeCommandAction Command="{x:Bind ViewModel.EditAbilityCommand}" CommandParameter="{x:Bind AbilityListDG.SelectedItem, Mode=OneWay}" />
-                </Core:EventTriggerBehavior>
-            </Interactivity:Interaction.Behaviors>
-            <controls:DataGrid.RowStyle>
-                <Style TargetType="controls:DataGridRow">
-                    <Setter Property="controls:DataGridRow.ContextFlyout">
-                        <Setter.Value>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Text="Edit" Command="{Binding EditAbilityRequestedCommand}"/>
-                                <MenuFlyoutItem Text="Copy" Command="{Binding CopyAbilityRequestedCommand}"/>
-                                <MenuFlyoutItem Text="Delete" Command="{Binding DeleteAbilityRequestedCommand}"/>
-                            </MenuFlyout>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </controls:DataGrid.RowStyle>
-            <controls:DataGrid.Columns>
-                <controls:DataGridTextColumn Header="Name"
-                                             Tag="AbilityName"
-                                             Binding="{Binding Ability.Name}"
-                                             CanUserSort="True"/>
-                <controls:DataGridTextColumn Header="Spell Level"
-                                             Tag="AbilitySpellLevel"
-                                             Binding="{Binding Ability.SpellLevel, Converter={StaticResource EnumToStringConverter}}"
-                                             CanUserSort="True"/>
-                <controls:DataGridTextColumn Header="Damage Type"
-                                             Tag="AbilityDamageType"
-                                             Binding="{Binding Ability.DamageTypes, Converter={StaticResource EnumToStringConverter}}"
-                                             CanUserSort="True"/>
-                <controls:DataGridTextColumn Header="Resolution Type"
-                                             Tag="AbilityResolutionType"
-                                             Binding="{Binding Ability.Resolution, Converter={StaticResource EnumToStringConverter}}"
-                                             CanUserSort="True"/>
-            </controls:DataGrid.Columns>
-        </controls:DataGrid>
-        <Button Command="{x:Bind ViewModel.AddAbilityCommand}"
-                Grid.Row="2"
-                VerticalAlignment="Bottom"
-                Margin="5"
-                KeyboardAcceleratorPlacementMode="Auto"
-                ToolTipService.ToolTip="Add a new Spell">
-            <Button.KeyboardAccelerators>
-                <KeyboardAccelerator Modifiers="Control" Key="N"/>
-            </Button.KeyboardAccelerators>
-            <FontIcon Glyph="&#xF8AA;"></FontIcon>
-        </Button>
-    </Grid>-->
 </Page>

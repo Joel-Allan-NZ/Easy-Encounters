@@ -155,23 +155,29 @@ public partial class ConditionTypesViewModel : ObservableRecipient
         EnumString = ConditionTypes.ToString();
     }
 
-    private void HandleFlag(bool value, [CallerMemberName] string name = null)
+    private void HandleFlag(bool value, [CallerMemberName] string? name = null)
     {
-        var flagged = Flagged(name);
-        if (flagged != value)
+        if (name != null)
         {
+            var flagged = Flagged(name);
+            if (flagged != value)
+            {
 
-            if (flagged)
-                RemoveFlag(name);
-            else
-                AddFlag(name);
+                if (flagged)
+                    RemoveFlag(name);
+                else
+                    AddFlag(name);
+            }
+            EnumString = ConditionTypes.ToString();
         }
-        EnumString = ConditionTypes.ToString();
     }
 
-    private bool Flagged([CallerMemberName] string name = null)
+    private bool Flagged([CallerMemberName] string? name = null)
     {
-        return ConditionTypes.HasFlag((Condition)Enum.Parse(typeof(Condition), name));
+        if (name != null)
+            return ConditionTypes.HasFlag((Condition)Enum.Parse(typeof(Condition), name));
+        else
+            throw new ArgumentException("Null is a not a valid Flag Property Name");
     }
 
     private void AddFlag(string name)

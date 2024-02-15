@@ -20,18 +20,18 @@ public partial class AbilityEditViewModel : ObservableRecipient, INavigationAwar
     private readonly INavigationService _navigationService;
     private readonly IDataService _dataService;
     private readonly IAbilityService _abilityService;
-    private Ability _ability;
+    private Ability? _ability;
 
     //todo: find better way to do this.
-    private IList<SpellLevel> _spellLevels = Enum.GetValues(typeof(SpellLevel)).Cast<SpellLevel>().ToList();
-    private IList<CreatureAttributeType> _creatureAttributeTypes = Enum.GetValues(typeof(CreatureAttributeType)).Cast<CreatureAttributeType>().ToList();
-    private IList<TargetAreaType> _targetAreaTypes = Enum.GetValues(typeof(TargetAreaType)).Cast<TargetAreaType>().ToList();
-    private IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
-    private IList<ResolutionType> _resolutionTypes = Enum.GetValues(typeof(ResolutionType)).Cast<ResolutionType>().ToList();
-    private IList<ActionSpeed> _actionSpeeds = Enum.GetValues(typeof(ActionSpeed)).Cast<ActionSpeed>().ToList();
-    private IList<ActionRangeType> _actionRanges = Enum.GetValues(typeof(ActionRangeType)).Cast<ActionRangeType>().ToList();
-    private IList<MagicSchool> _magicSchools = Enum.GetValues(typeof(MagicSchool)).Cast<MagicSchool>().ToList();
-    private IList<TimeDuration> _timeDurations = Enum.GetValues(typeof(TimeDuration)).Cast<TimeDuration>().ToList();
+    private readonly IList<SpellLevel> _spellLevels = Enum.GetValues(typeof(SpellLevel)).Cast<SpellLevel>().ToList();
+    private readonly IList<CreatureAttributeType> _creatureAttributeTypes = Enum.GetValues(typeof(CreatureAttributeType)).Cast<CreatureAttributeType>().ToList();
+    private readonly IList<TargetAreaType> _targetAreaTypes = Enum.GetValues(typeof(TargetAreaType)).Cast<TargetAreaType>().ToList();
+    private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
+    private readonly IList<ResolutionType> _resolutionTypes = Enum.GetValues(typeof(ResolutionType)).Cast<ResolutionType>().ToList();
+    private readonly IList<ActionSpeed> _actionSpeeds = Enum.GetValues(typeof(ActionSpeed)).Cast<ActionSpeed>().ToList();
+    private readonly IList<ActionRangeType> _actionRanges = Enum.GetValues(typeof(ActionRangeType)).Cast<ActionRangeType>().ToList();
+    private readonly IList<MagicSchool> _magicSchools = Enum.GetValues(typeof(MagicSchool)).Cast<MagicSchool>().ToList();
+    private readonly IList<TimeDuration> _timeDurations = Enum.GetValues(typeof(TimeDuration)).Cast<TimeDuration>().ToList();
 
 
     [ObservableProperty]
@@ -80,14 +80,15 @@ public partial class AbilityEditViewModel : ObservableRecipient, INavigationAwar
 
     partial void OnSelectedDamageTypeChanged(DamageType value)
     {
-        ObservableAbility.DamageType = value;
+        if(ObservableAbility != null)
+            ObservableAbility.DamageType = value;
     } 
 
     [ObservableProperty]
-    private ObservableAbility _observableAbility;
+    private ObservableAbility? _observableAbility;
 
     [RelayCommand]
-    private async void CommitChanges(object obj)
+    private async Task CommitChanges(object obj)
     {
         ObservableAbility.SpellCastComponents = SpellCastComponents;
         if(ObservableAbility.SpellLevel != SpellLevel.NotASpell)

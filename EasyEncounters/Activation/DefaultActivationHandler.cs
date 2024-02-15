@@ -36,7 +36,7 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
     private bool RequireRedirect()
     {
         AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
-        bool isRedirect = false;
+        var isRedirect = false;
         //get version info to use as appinstance registery key
         Version version = Assembly.GetExecutingAssembly().GetName().Version!;
         //Discover if already running

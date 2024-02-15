@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -8,13 +9,19 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using EasyEncounters.Contracts.Services;
+using EasyEncounters.Contracts.ViewModels;
+using EasyEncounters.Core.Models;
+using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Helpers;
+using EasyEncounters.Models;
+using EasyEncounters.ViewModels;
 using Microsoft.AppCenter.Channel;
+using SQLitePCL;
 using Windows.Networking.NetworkOperators;
 using Windows.Security.ExchangeActiveSyncProvisioning;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace EasyEncounters.Services;
+namespace EasyEncounters.Services.Filter;
 public class FilteringService : IFilteringService
 {
     //private Dictionary<object, Dictionary<string, >>
@@ -42,7 +49,7 @@ public class FilteringService : IFilteringService
         var matches = new List<T>();
         foreach (var item in toFilter)
         {
-            if(MatchARange(item, expression, minimum, maximum))
+            if (MatchARange(item, expression, minimum, maximum))
                 matches.Add(item);
         }
         return matches;
@@ -51,13 +58,72 @@ public class FilteringService : IFilteringService
     public ICollection<T> Filter<T>(ICollection<T> toFilter, Expression<Func<T, string>> expression, string subString)
     {
         var matches = new List<T>();
-        foreach(var item in toFilter)
+        foreach (var item in toFilter)
         {
             if (MatchAString(item, expression, subString))
                 matches.Add(item);
         }
         return matches;
     }
+
+    public FilterValues GetFilterValues<T>()
+    {
+        if (typeof(T) == typeof(AbilityViewModel))
+        {
+            return new AbilityFilter();
+        }
+        else if (typeof(T) == typeof(EncounterData))
+        {
+            return new EncounterFilter();
+        }
+        else if (typeof(T) == typeof(CreatureViewModel))
+        {
+            return new CreatureFilter();
+        }
+        //default:
+        throw new ArgumentException($"{nameof(T)} is not a supported FilterValue<T> type");
+
+        //todo: something more robust, but this will meet requirements for now
+    }
+
+    public ICollection<T> Filter<T>(ICollection<T> toFilter, FilterValues filterValues, string text)
+    {
+        //FilterValues should contain, or generate, a filtercriteria set
+        //an issue here is that this means filtervalues must be typed
+        //which is very messy with subtypes - AbilityFilter must effectively be AbilityFilter<T>  where T : AbilityViewModel
+        //likely a better approach to this, TODO: investigate better approaches
+        ICollection<FilterCriteria<T>> filterCriteria;
+        ICollection<T> filtered = new List<T>();
+
+        if (typeof(T) == typeof(AbilityViewModel))
+        {
+            var abilityFilterValues = (AbilityFilter)filterValues;
+            filterCriteria = (ICollection<FilterCriteria<T>>)abilityFilterValues.GenerateFilterCriteria(text);
+            filtered = Filter(toFilter, filterCriteria);
+
+            abilityFilterValues.SearchSuggestions = (List<AbilityViewModel>)filtered;
+        }
+        else if (typeof(T) == typeof(CreatureViewModel))
+        {
+            var creatureFilterValues = (CreatureFilter)filterValues;
+            filterCriteria = (ICollection<FilterCriteria<T>>)creatureFilterValues.GenerateFilterCriteria(text);
+            filtered = Filter(toFilter, filterCriteria);
+
+            creatureFilterValues.SearchSuggestions = (List<CreatureViewModel>)filtered;
+        }
+        else if (typeof(T) == typeof(EncounterData))
+        {
+            var encounterFilterValues = (EncounterFilter)filterValues;
+            filterCriteria = (ICollection<FilterCriteria<T>>)encounterFilterValues.GenerateFilterCriteria(text);
+            filtered = Filter(toFilter, filterCriteria);
+
+            encounterFilterValues.SearchSuggestions = (List<EncounterData>)filtered;
+        }
+
+
+        return filtered;
+    }
+
 
     private bool MatchARange<T>(T item, Expression<Func<T, IComparable>> expression, IComparable minimum, IComparable maximum)
     {
@@ -92,14 +158,14 @@ public class FilteringService : IFilteringService
     private void ApplyFilter<T>(ICollection<T> toFilter, FilterCriteria<T> filter)
     {
         var noMatch = new List<T>();
-        foreach(var item in toFilter)
+        foreach (var item in toFilter)
         {
             if (!filter.IsMatch(item))
             {
                 noMatch.Add(item);
             }
         }
-        foreach(var nonMatch in noMatch)
+        foreach (var nonMatch in noMatch)
         {
             toFilter.Remove(nonMatch);
         }
@@ -158,7 +224,7 @@ public class FilterCriteria<T>
 
     public bool IsMatch(T item)
     {
-        if(item != null)
+        if (item != null)
         {
             if (MatchString != null)
                 return MatchAString(item);

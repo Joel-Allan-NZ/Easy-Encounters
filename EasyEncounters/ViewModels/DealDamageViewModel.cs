@@ -83,7 +83,7 @@ namespace EasyEncounters.ViewModels
             {
                 foreach(var target in damage.Targets)
                 {
-                    damageInstances.Add(new DamageInstance(target.ActiveEncounterCreatureViewModel.Creature, SourceCreature.Creature, damage.SelectedDamageType, target.SelectedDamageVolume, damage.DamageValue));
+                    damageInstances.Add(new DamageInstance(target.ActiveEncounterCreatureViewModel.Creature, SourceCreature?.Creature, damage.SelectedDamageType, target.SelectedDamageVolume, damage.DamageValue));
                 }
             }
             return damageInstances;

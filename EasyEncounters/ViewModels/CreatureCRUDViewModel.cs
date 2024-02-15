@@ -14,7 +14,7 @@ using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Messages;
-using EasyEncounters.Services;
+using EasyEncounters.Services.Filter;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.Search.Core;
@@ -27,7 +27,7 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
     private readonly IDataService _dataService;
     private readonly IFilteringService _filteringService;
 
-    private IList<CreatureViewModel> _creatureCache;
+    private IList<CreatureViewModel>? _creatureCache;
 
     public ObservableCollection<CreatureViewModel> Creatures
     {
@@ -41,7 +41,7 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
     private double _maximumCRFilter;
 
     [ObservableProperty]
-    private List<CreatureViewModel> searchSuggestions;
+    private List<CreatureViewModel>? searchSuggestions;
 
     //private DispatcherQueueTimer _filterTimer;
 
@@ -51,18 +51,7 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
         _navigationService = navigationService;
         _filteringService = filteringService;
 
-        WeakReferenceMessenger.Default.Register<CreatureCopyRequestMessage>(this, (r, m) =>
-        {
-            CopyCreature(m.Parameter.Creature);
-        });
-        WeakReferenceMessenger.Default.Register<CreatureDeleteRequestMessage>(this, (r, m) =>
-        {
-            DeleteCreature(m.Parameter.Creature);
-        });
-        WeakReferenceMessenger.Default.Register<CreatureEditRequestMessage>(this, (r, m) =>
-        {
-            EditCreature(m.Parameter);
-        });
+
 
         //var dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
         //_filterTimer = dispatcherQueue.CreateTimer();
@@ -82,31 +71,31 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
     }
 
     [RelayCommand]
-    private async void AddNewCreature()
+    private async Task AddNewCreature()
     {
         var creature = new Creature();
         var vm = new CreatureViewModel(creature);
         Creatures.Add(vm);
-        _creatureCache.Add(vm);
+        _creatureCache?.Add(vm);
         await _dataService.SaveAddAsync(creature);
         _navigationService.NavigateTo(typeof(CreatureEditViewModel).FullName!, creature);
     }
 
     [RelayCommand]
-    private async void DeleteCreature(object parameter)
+    private async Task DeleteCreature(object parameter)
     {
         if (parameter != null && parameter is Creature)
         {
             var creature = (Creature)parameter;
             var creatureVM = Creatures.First(x => x.Creature == creature);
             Creatures.Remove(creatureVM);
-            _creatureCache.Remove(creatureVM);
+            _creatureCache?.Remove(creatureVM);
             await _dataService.DeleteAsync(creature);
         }
     }
 
     [RelayCommand]
-    private async void CopyCreature(object parameter)
+    private async Task CopyCreature(object parameter)
     {
         if(parameter != null && parameter is Creature)
         {
@@ -115,24 +104,22 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
             {
                 var creature = new CreatureViewModel(copied);
                 Creatures.Add(creature);
-                _creatureCache.Add(creature);
+                _creatureCache?.Add(creature);
             }
 
         }
     }
 
-    public event EventHandler<DataGridColumnEventArgs> Sorting;
+    public event EventHandler<DataGridColumnEventArgs>? Sorting;
     protected virtual void OnSorting(DataGridColumnEventArgs e)
     {
-        EventHandler<DataGridColumnEventArgs> handler = Sorting;
-        if (handler != null)
-            handler(this, e);
+        Sorting?.Invoke(this, e);
     }
 
     [RelayCommand]
     private void SearchTextChange(string text)
     {
-        if (String.IsNullOrEmpty(text))
+        if (String.IsNullOrEmpty(text) && _creatureCache != null)
         {
             var filtered = _filteringService.Filter(_creatureCache, x => x.Creature.LevelOrCR, MinimumCRFilter, MaximumCRFilter);
             Creatures.Clear();
@@ -145,16 +132,19 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
     [RelayCommand]
     private void CreatureFilter(string text)
     {
-        List<FilterCriteria<CreatureViewModel>> criteria = new List<FilterCriteria<CreatureViewModel>>()
+        if (_creatureCache != null)
         {
-            new FilterCriteria<CreatureViewModel>(x => x.Creature.LevelOrCR, MinimumCRFilter, MaximumCRFilter),
-            new FilterCriteria<CreatureViewModel>(x => x.Creature.Name, text)
+            List<FilterCriteria<CreatureViewModel>> criteria = new List<FilterCriteria<CreatureViewModel>>()
+        {
+            new(x => x.Creature.LevelOrCR, MinimumCRFilter, MaximumCRFilter),
+            new(x => x.Creature.Name, text)
         };
 
-        var filtered = _filteringService.Filter(_creatureCache, criteria);
-        Creatures.Clear();
-        foreach (var creature in filtered)
-            Creatures.Add(creature);
+            var filtered = _filteringService.Filter(_creatureCache, criteria);
+            Creatures.Clear();
+            foreach (var creature in filtered)
+                Creatures.Add(creature);
+        }
     }
 
     [RelayCommand]
@@ -222,6 +212,19 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
     }
     public async void OnNavigatedTo(object parameter)
     {
+        WeakReferenceMessenger.Default.Register<CreatureCopyRequestMessage>(this, (r, m) =>
+        {
+            _ = CopyCreature(m.Parameter.Creature);
+        });
+        WeakReferenceMessenger.Default.Register<CreatureDeleteRequestMessage>(this, (r, m) =>
+        {
+            DeleteCreature(m.Parameter.Creature);
+        });
+        WeakReferenceMessenger.Default.Register<CreatureEditRequestMessage>(this, (r, m) =>
+        {
+            EditCreature(m.Parameter);
+        });
+
         Creatures.Clear();
         foreach (var creature in await _dataService.GetAllCreaturesAsync())
             Creatures.Add(new CreatureViewModel(creature));

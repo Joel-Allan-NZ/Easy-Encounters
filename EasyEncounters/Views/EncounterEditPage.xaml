@@ -150,7 +150,7 @@
                                 </StackPanel>
                                 <StackPanel Orientation="Vertical">
                                     <StackPanel Orientation="Horizontal">
-                                        <NumberBox Value="{x:Bind ViewModel.MinimumCRFilter, Mode=TwoWay}"
+                                        <NumberBox Value="{x:Bind ViewModel.CreatureFilterValues.MinimumCRFilter, Mode=TwoWay}"
                                                        HorizontalAlignment="Left"
                                                        Minimum="0"
                                                        Maximum="30"
@@ -159,7 +159,7 @@
                                         <TextBlock Text="-"
                                                        Margin="2"
                                                        VerticalAlignment="Center"/>
-                                        <NumberBox Value="{x:Bind ViewModel.MaximumCRFilter, Mode=TwoWay}"
+                                        <NumberBox Value="{x:Bind ViewModel.CreatureFilterValues.MaximumCRFilter, Mode=TwoWay}"
                                                        HorizontalAlignment="Left"
                                                        AcceptsExpression="True"
                                                        Minimum="0"
@@ -177,7 +177,7 @@
                             MinWidth="200"
                             QueryIcon="Find"
                             VerticalAlignment="Center"
-                            ItemsSource="{x:Bind ViewModel.SearchSuggestions, Mode=OneWay}"
+                            ItemsSource="{x:Bind ViewModel.CreatureFilterValues.SearchSuggestions, Mode=OneWay}"
                             TextMemberPath="Creature.Name"
                             DisplayMemberPath="Creature.Name"
                             FontSize="20"

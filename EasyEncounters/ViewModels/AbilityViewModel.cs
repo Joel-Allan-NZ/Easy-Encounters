@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Messages;
 

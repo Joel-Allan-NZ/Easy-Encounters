@@ -15,10 +15,11 @@ using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
-using EasyEncounters.Services;
+using EasyEncounters.Services.Filter;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Media.Playback;
 using Windows.Security.ExchangeActiveSyncProvisioning;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EasyEncounters.ViewModels;
 public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
@@ -27,31 +28,34 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
     private readonly INavigationService _navigationService;
     private readonly IActiveEncounterService _activeEncounterService;
     private readonly IFilteringService _filteringService;
-    private readonly IList<EncounterDifficulty> _difficulties = Enum.GetValues(typeof(EncounterDifficulty)).Cast<EncounterDifficulty>().ToList();
+    //private readonly IList<EncounterDifficulty> _difficulties = Enum.GetValues(typeof(EncounterDifficulty)).Cast<EncounterDifficulty>().ToList();
 
     private IList<EncounterData> _encounters;
 
+    [ObservableProperty]
+    private EncounterFilter _encounterFilterValues;
+
     //private Dictionary<string, FilterCriteria<EncounterData>> _filterCriteria;
 
-    public IList<EncounterDifficulty> Difficulties => _difficulties;
+    //public IList<EncounterDifficulty> Difficulties => _difficulties;
 
 
     public ObservableCollection<EncounterData> EncounterData { get; private set; } = new ObservableCollection<EncounterData>();
 
-    [ObservableProperty]
-    private List<EncounterData> searchSuggestions;
+    //[ObservableProperty]
+    //private List<EncounterData> searchSuggestions;
 
-    [ObservableProperty]
-    private EncounterDifficulty _minimumDifficulty;
+    //[ObservableProperty]
+    //private EncounterDifficulty _minimumDifficulty;
 
-    [ObservableProperty]
-    private EncounterDifficulty _maximumDifficulty;
+    //[ObservableProperty]
+    //private EncounterDifficulty _maximumDifficulty;
 
-    [ObservableProperty]
-    private int _minimumEnemiesFilter;
+    //[ObservableProperty]
+    //private int _minimumEnemiesFilter;
 
-    [ObservableProperty]
-    private int _maximumEnemiesFilter;
+    //[ObservableProperty]
+    //private int _maximumEnemiesFilter;
 
     public RunSessionViewModel(IDataService dataService, INavigationService navigationService, IActiveEncounterService encounterService, IFilteringService filteringService)
     {
@@ -82,15 +86,13 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
                 _encounters.Add(item);
                 EncounterData.Add(item);
             }
-            MaximumEnemiesFilter = 1000;
-            MaximumDifficulty = EncounterDifficulty.VeryDeadly;
-            SearchSuggestions = new List<EncounterData>(EncounterData);
+            EncounterFilterValues = (EncounterFilter)_filteringService.GetFilterValues<EncounterData>();
         }
         
     }
 
     [RelayCommand]
-    private async void EncounterSelected(EncounterData parameter)
+    private async Task EncounterSelected(EncounterData parameter)
     {
 
         if (parameter != null)
@@ -99,40 +101,25 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
             var active = await _activeEncounterService.CreateActiveEncounterAsync(parameter.Encounter, parameter.Party);
             _navigationService.NavigateTo(typeof(EncounterTabViewModel).FullName!, active);
         }
-
     }
 
-    [RelayCommand]
+[RelayCommand]
     private void SearchTextChange(string text)
     {
-        if (text == "")
+        var filtered = _filteringService.Filter(_encounters, EncounterFilterValues, text);
+
+        if (String.IsNullOrEmpty(text))
         {
-            List<FilterCriteria<EncounterData>> criteriaList = new List<FilterCriteria<EncounterData>>()
-            {
-                new FilterCriteria<EncounterData>(x => x.DifficultyDescription, MinimumDifficulty, MaximumDifficulty),
-                new FilterCriteria<EncounterData>(x => x.Encounter.Creatures.Count, MinimumEnemiesFilter, MaximumEnemiesFilter)
-            };
-            var filtered = _filteringService.Filter(_encounters, criteriaList);
             EncounterData.Clear();
             foreach (var encounter in filtered)
                 EncounterData.Add(encounter);
-
         }
-        SearchSuggestions = _filteringService.Filter(EncounterData, new FilterCriteria<EncounterData>(x => x.Encounter.Name, text)).ToList();
     }
 
     [RelayCommand]
     private void EncounterFilter(string text)
     {
-        //conscious choice not to add the text to current filtering rules, but worth observing in future to see
-        //if it makes more sense to do so and then clear the filter when text changes
-        List<FilterCriteria<EncounterData>> criteriaList = new List<FilterCriteria<EncounterData>>()
-        {
-            new FilterCriteria<EncounterData>(x => x.Encounter.Name, text),
-            new FilterCriteria<EncounterData>(x => x.DifficultyDescription, MinimumDifficulty, MaximumDifficulty),
-            new FilterCriteria<EncounterData>(x => x.Encounter.Creatures.Count, MinimumEnemiesFilter, MaximumEnemiesFilter)
-        };
-        var filtered = _filteringService.Filter(_encounters, criteriaList);
+        var filtered = _filteringService.Filter(_encounters, EncounterFilterValues, text);
         EncounterData.Clear();
         foreach (var encounter in filtered)
             EncounterData.Add(encounter);

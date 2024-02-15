@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EasyEncounters.Core.Models.Enums;
+#nullable enable
 
 namespace EasyEncounters.Core.Models;
 public class ActiveEncounter : Encounter

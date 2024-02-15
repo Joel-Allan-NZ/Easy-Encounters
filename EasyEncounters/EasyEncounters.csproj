@@ -21,7 +21,6 @@
     <None Remove="Views\ActiveEncounterPage.xaml" />
     <None Remove="Views\CampaignCRUDPage.xaml" />
     <None Remove="Views\CampaignSplashPage.xaml" />
-    <None Remove="Views\CreatureAbilityPage.xaml" />
     <None Remove="Views\CreatureCRUDPage.xaml" />
     <None Remove="Views\CreatureDisplayTabPage.xaml" />
     <None Remove="Views\CreatureEditPage.xaml" />
@@ -77,9 +76,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\CreatureDisplayTabPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\CreatureAbilityPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\AbilityCRUDPage.xaml">
@@ -149,6 +145,10 @@
   
   <ItemGroup>
     <Resource Remove="Views\SpellGrid.xaml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="SourceGenerators\" />
   </ItemGroup>
 
 </Project>

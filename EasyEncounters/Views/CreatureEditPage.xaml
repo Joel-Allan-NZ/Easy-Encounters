@@ -590,18 +590,18 @@
                           Margin="5">
                     <Expander.Content>
                         <local:SpellGrid
-                            FilterSpellLevelSource="{x:Bind ViewModel.SpellLevels}"
-                            FilterMinimumSpellLevel="{x:Bind ViewModel.MinimumSpellLeveLFilter, Mode=TwoWay}"
-                            FilterMaximumSpellLevel="{x:Bind ViewModel.MaximumSpellLevelFilter, Mode=TwoWay}"
-                            FilterSpellSchoolSource="{x:Bind ViewModel.MagicSchools}"
-                            FilterSpellSchoolSelected="{x:Bind ViewModel.SpellSchoolFilterSelected, Mode=TwoWay}"
-                            FilterConcentrationSource="{x:Bind ViewModel.ConcentrationStates}" 
-                            FilterConcentrationSelected="{x:Bind ViewModel.ConcentrationFilterSelected, Mode=TwoWay}"
-                            FilterResolutionSource="{x:Bind ViewModel.ResolutionTypes}"
-                            FilterResolutionSelected="{x:Bind ViewModel.ResolutionTypeFilterSelected, Mode=TwoWay}"
-                            FilterDamageTypeSource="{x:Bind ViewModel.DamageTypes}"
-                            FilterDamageTypeSelected="{x:Bind ViewModel.DamageTypeFilterSelected, Mode=TwoWay}"
-                            Suggestions="{x:Bind ViewModel.SearchSuggestions, Mode=OneWay}"
+                            FilterSpellLevelSource="{x:Bind ViewModel.AbilityFilterValues.SpellLevels}"
+                            FilterMinimumSpellLevel="{x:Bind ViewModel.AbilityFilterValues.MinimumSpellLevelFilter, Mode=TwoWay}"
+                            FilterMaximumSpellLevel="{x:Bind ViewModel.AbilityFilterValues.MaximumSpellLevelFilter, Mode=TwoWay}"
+                            FilterSpellSchoolSource="{x:Bind ViewModel.AbilityFilterValues.MagicSchools}"
+                            FilterSpellSchoolSelected="{x:Bind ViewModel.AbilityFilterValues.SpellSchoolFilterSelected, Mode=TwoWay}"
+                            FilterConcentrationSource="{x:Bind ViewModel.AbilityFilterValues.ConcentrationStates}" 
+                            FilterConcentrationSelected="{x:Bind ViewModel.AbilityFilterValues.ConcentrationFilterSelected, Mode=TwoWay}"
+                            FilterResolutionSource="{x:Bind ViewModel.AbilityFilterValues.ResolutionTypes}"
+                            FilterResolutionSelected="{x:Bind ViewModel.AbilityFilterValues.ResolutionTypeFilterSelected, Mode=TwoWay}"
+                            FilterDamageTypeSource="{x:Bind ViewModel.AbilityFilterValues.DamageTypes}"
+                            FilterDamageTypeSelected="{x:Bind ViewModel.AbilityFilterValues.DamageTypeFilterSelected, Mode=TwoWay}"
+                            Suggestions="{x:Bind ViewModel.AbilityFilterValues.SearchSuggestions, Mode=OneWay}"
                             FilterCommand="{x:Bind ViewModel.AbilityFilterCommand}"
                             SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
                             GridDataSource="{x:Bind ViewModel.Spells}"
@@ -632,7 +632,6 @@
         </ScrollViewer>
         <Button HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
-                IsEnabled="{x:Bind ViewModel.HasValidFields, Mode=OneWay}"
                 Command="{x:Bind ViewModel.CommitChangesCommand}">
             <FontIcon Glyph="&#xF16C;"></FontIcon>
         </Button>

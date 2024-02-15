@@ -14,7 +14,7 @@ using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Services;
 using EasyEncounters.Messages;
 using EasyEncounters.Models;
-using EasyEncounters.Services;
+using EasyEncounters.Services.Filter;
 
 namespace EasyEncounters.ViewModels;
 public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
@@ -22,7 +22,7 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
     private readonly IDataService _dataService;
     private readonly IFilteringService _filteringService;
 
-    private IList<CreatureViewModel> _creatureCache;
+    private IList<CreatureViewModel>? _creatureCache;
 
     /// <summary>
     /// Additional creatures to add to the active encounter, and their quantities
@@ -46,10 +46,10 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
     private double _maximumCRFilter;
 
     [ObservableProperty]
-    private List<CreatureViewModel> searchSuggestions;
+    private List<CreatureViewModel>? searchSuggestions;
 
     [RelayCommand]
-    private async void CommitChanges(object obj)
+    private void CommitChanges(object obj)
     {
         //foreach(var kvp in EncounterCreaturesByCount)
         //{
@@ -128,7 +128,8 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
             CreatureViewModel toRemove = (CreatureViewModel)obj;
 
             var match = EncounterCreaturesByCount.FirstOrDefault(x => x.Key.Creature.Equals(toRemove.Creature));
-            EncounterCreaturesByCount.Remove(match);
+            if(match != null)
+                EncounterCreaturesByCount.Remove(match);
 
             //EncounterCreatures.Remove(EncounterCreatures.First(x => x.Creature == toRemove.Creature));
             //while (Encounter.Creatures.Contains(toRemove.Creature))
@@ -137,18 +138,16 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
         }
     }
 
-    public event EventHandler<DataGridColumnEventArgs> Sorting;
+    public event EventHandler<DataGridColumnEventArgs>? Sorting;
     protected virtual void OnSorting(DataGridColumnEventArgs e)
     {
-        EventHandler<DataGridColumnEventArgs> handler = Sorting;
-        if (handler != null)
-            handler(this, e);
+        Sorting?.Invoke(this, e);
     }
 
     [RelayCommand]
     private void SearchTextChange(string text)
     {
-        if (String.IsNullOrEmpty(text))
+        if (String.IsNullOrEmpty(text) && _creatureCache != null)
         {
             var filtered = _filteringService.Filter(_creatureCache, x => x.Creature.LevelOrCR, MinimumCRFilter, MaximumCRFilter);
             Creatures.Clear();
@@ -163,14 +162,16 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
     {
         List<FilterCriteria<CreatureViewModel>> criteria = new List<FilterCriteria<CreatureViewModel>>()
         {
-            new FilterCriteria<CreatureViewModel>(x => x.Creature.LevelOrCR, MinimumCRFilter, MaximumCRFilter),
-            new FilterCriteria<CreatureViewModel>(x => x.Creature.Name, text)
+            new(x => x.Creature.LevelOrCR, MinimumCRFilter, MaximumCRFilter),
+            new(x => x.Creature.Name, text)
         };
-
-        var filtered = _filteringService.Filter(_creatureCache, criteria);
-        Creatures.Clear();
-        foreach (var creature in filtered)
-            Creatures.Add(creature);
+        if (_creatureCache != null)
+        {
+            var filtered = _filteringService.Filter(_creatureCache, criteria);
+            Creatures.Clear();
+            foreach (var creature in filtered)
+                Creatures.Add(creature);
+        }
     }
 
     [RelayCommand]

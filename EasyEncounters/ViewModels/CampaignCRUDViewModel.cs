@@ -19,7 +19,7 @@ public partial class CampaignCRUDViewModel : ObservableRecipient, INavigationAwa
     } = new();
 
     [RelayCommand]
-    private async void AddNewCampaign()
+    private async Task AddNewCampaign()
     {
         var campaign = new Campaign();
         await _dataService.SaveAddAsync(campaign);

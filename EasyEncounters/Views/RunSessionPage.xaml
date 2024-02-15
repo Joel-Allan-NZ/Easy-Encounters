@@ -66,18 +66,18 @@
 
                                     <StackPanel Orientation="Vertical">
                                         <StackPanel Orientation="Horizontal">
-                                            <NumberBox Value="{x:Bind ViewModel.MinimumEnemiesFilter, Mode=TwoWay}"
+                                            <NumberBox Value="{x:Bind ViewModel.EncounterFilterValues.MinimumEnemiesFilter, Mode=TwoWay}"
                                                        HorizontalAlignment="Left"
                                                        Margin="2"/>
                                             <TextBlock Text="-" Margin="2"
                                                        VerticalAlignment="Center"/>
-                                            <NumberBox Value="{x:Bind ViewModel.MaximumEnemiesFilter, Mode=TwoWay}"
+                                            <NumberBox Value="{x:Bind ViewModel.EncounterFilterValues.MaximumEnemiesFilter, Mode=TwoWay}"
                                                         Margin="2"/>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal">
                                             <!-- hacky, todo: combobox property to resize to largest content-->
-                                            <ComboBox ItemsSource="{x:Bind ViewModel.Difficulties}"
-                                                      SelectedItem="{x:Bind ViewModel.MinimumDifficulty, Mode=TwoWay}"
+                                            <ComboBox ItemsSource="{x:Bind ViewModel.EncounterFilterValues.Difficulties}"
+                                                      SelectedItem="{x:Bind ViewModel.EncounterFilterValues.MinimumDifficulty, Mode=TwoWay}"
                                                       MinWidth="124" 
                                                       Margin="2">
                                                 <ComboBox.ItemTemplate>
@@ -88,8 +88,8 @@
                                             </ComboBox>
                                             <TextBlock Text="-" Margin="2"
                                                        VerticalAlignment="Center"/>
-                                            <ComboBox ItemsSource="{x:Bind ViewModel.Difficulties}"
-                                                      SelectedItem="{x:Bind ViewModel.MaximumDifficulty, Mode=TwoWay}"
+                                            <ComboBox ItemsSource="{x:Bind ViewModel.EncounterFilterValues.Difficulties}"
+                                                      SelectedItem="{x:Bind ViewModel.EncounterFilterValues.MaximumDifficulty, Mode=TwoWay}"
                                                       MinWidth="124"
                                                       Margin="2">
                                                 <ComboBox.ItemTemplate>
@@ -111,7 +111,7 @@
                             MinWidth="200"
                             QueryIcon="Find"
                             VerticalAlignment="Center"
-                            ItemsSource="{x:Bind ViewModel.SearchSuggestions, Mode=OneWay}"
+                            ItemsSource="{x:Bind ViewModel.EncounterFilterValues.SearchSuggestions, Mode=OneWay}"
                             TextMemberPath="Encounter.Name"
                             DisplayMemberPath="Encounter.Name"
                             FontSize="20"

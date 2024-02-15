@@ -19,9 +19,9 @@ using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Core.Services;
 using EasyEncounters.Messages;
 using EasyEncounters.Models;
-using EasyEncounters.Services;
 using Windows.ApplicationModel.Search.Core;
 using Windows.Devices.WiFi;
+using EasyEncounters.Services.Filter;
 
 namespace EasyEncounters.ViewModels;
 public partial class CreatureEditViewModel : ObservableRecipientWithValidation, INavigationAware
@@ -29,94 +29,34 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     private readonly INavigationService _navigationService;
     private readonly IDataService _dataService;
     private readonly IList<CreatureAttributeType> _creatureAttributeTypes = Enum.GetValues(typeof(CreatureAttributeType)).Cast<CreatureAttributeType>().ToList();
-    private readonly IFilteringService _filteringService;
-    private readonly IList<SpellLevel> _spellLevels = Enum.GetValues(typeof(SpellLevel)).Cast<SpellLevel>().ToList();
-    private readonly IList<MagicSchool> _magicSchools = Enum.GetValues(typeof(MagicSchool)).Cast<MagicSchool>().ToList();
-    private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
-    private readonly IList<ResolutionType> _resolutionTypes = Enum.GetValues(typeof(ResolutionType)).Cast<ResolutionType>().ToList();
-    private readonly IList<ThreeStateBoolean> _concentrationStates = Enum.GetValues(typeof(ThreeStateBoolean)).Cast<ThreeStateBoolean>().ToList();
 
-    public IList<SpellLevel> SpellLevels => _spellLevels;
-    public IList<MagicSchool> MagicSchools => _magicSchools;
-    public IList<DamageType> DamageTypes => _damageTypes;
-    public IList<ResolutionType> ResolutionTypes => _resolutionTypes;
-    public IList<ThreeStateBoolean> ConcentrationStates => _concentrationStates;
+    //TODO: add an object to wrap these filter properties. No reason to have to repeatedly redeclare them in different views.
+    //ideally also have this object handle suggestions and suggestion caches in a cleaner way
+
+    private readonly IFilteringService _filteringService;
 
     [ObservableProperty]
-    private bool _hasValidFields;
+    private AbilityFilter _abilityFilterValues;
 
     private List<AbilityViewModel> _spellCache;
 
     [ObservableProperty]
-    private List<AbilityViewModel> _searchSuggestions;
+    private Creature? _creature;
 
     [ObservableProperty]
-    private SpellLevel _minimumSpellLeveLFilter;
+    private DamageTypesViewModel? _resists;
 
     [ObservableProperty]
-    private SpellLevel _maximumSpellLevelFilter;
+    private DamageTypesViewModel? _immunities;
 
     [ObservableProperty]
-    private MagicSchool _spellSchoolFilterSelected;
+    private DamageTypesViewModel? _vulnerabilities;
 
     [ObservableProperty]
-    private DamageType _damageTypeFilterSelected;
+    private ConditionTypesViewModel? _conditionImmunities;
 
     [ObservableProperty]
-    private ResolutionType _resolutionTypeFilterSelected;
-
-    [ObservableProperty]
-    private ThreeStateBoolean _concentrationFilterSelected;
-
-    [ObservableProperty]
-    private Creature _creature;
-
-    [ObservableProperty]
-    private DamageTypesViewModel _resists;
-
-    [ObservableProperty]
-    private DamageTypesViewModel _immunities;
-
-    [ObservableProperty]
-    private DamageTypesViewModel _vulnerabilities;
-
-    [ObservableProperty]
-    private ConditionTypesViewModel _conditionImmunities;
-
-    [ObservableProperty]
-    private SpellSlotViewModel _spellSlots;
-
-    //[Obser]
-
-    //public string MaxHPString
-    //{
-    //    get => Creature.MaxHPString;
-    //    set
-    //    {
-    //        TrySetProperty(Creature.MaxHPString, value, Creature, (v, m) => v.MaxHPString = m, out IReadOnlyCollection<ValidationResult> errs);
-    //    }
-    //}
-    
-    //[Required]
-    //public double LevelCR
-    //{
-    //    get => Creature.LevelOrCR;
-    //    set
-    //    {
-    //        TrySetProperty(Creature.LevelOrCR, value, Creature, (v, m) => v.LevelOrCR = m, out IReadOnlyCollection<ValidationResult> errs);
-    //    }
-    //}
-    //private int ac;
-    //[Required]
-    //[Range(1, 50)]
-    //public int AC
-    //{
-    //    get => Creature.AC;
-    //    set
-    //    {
-    //        TrySetProperty(Creature.AC, value, Creature, (v, m) => v.AC = m, out IReadOnlyCollection<ValidationResult> errs);
-    //    }
-    //}
+    private SpellSlotViewModel? _spellSlots;
    
     public IList<CreatureAttributeType> StatTypes => _creatureAttributeTypes;
 
@@ -132,20 +72,19 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     } =new();
 
     [RelayCommand]
-    private async void CommitChanges(object obj)
+    private async Task CommitChanges(object obj)
     {
-        //check validation
-        //ValidateAllProperties();
 
         if (!HasErrors)
         {
-
-            Creature.Resistance = Resists.DamageTypes;
-            Creature.Immunity = Immunities.DamageTypes;
-            Creature.Vulnerability = Vulnerabilities.DamageTypes;
-            Creature.ConditionImmunities = ConditionImmunities.ConditionTypes;
-            Creature.Abilities = CreatureAbilities.Select(x => x.Ability).ToList();
-            //Creature.AC = AC;
+            if (Creature != null)
+            {
+                Creature.Resistance = Resists?.DamageTypes ?? DamageType.None;
+                Creature.Immunity = Immunities?.DamageTypes ?? DamageType.None;
+                Creature.Vulnerability = Vulnerabilities?.DamageTypes ?? DamageType.None;
+                Creature.ConditionImmunities = ConditionImmunities?.ConditionTypes ?? Condition.None; 
+                Creature.Abilities = CreatureAbilities.Select(x => x.Ability).ToList();
+            }
 
             await _dataService.SaveAddAsync(Creature);
 
@@ -159,10 +98,10 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     }
 
     [RelayCommand]
-    private async void AddCreatureAbility()
+    private async Task AddCreatureAbility()
     {
         var ability = new Ability();
-        Creature.Abilities.Add(ability);
+        Creature?.Abilities.Add(ability);
         await _dataService.SaveAddAsync(Creature);
 
         _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
@@ -174,6 +113,8 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
         _navigationService = navigationService;
         _filteringService = filterService;
         _dataService = dataService;
+        _spellCache = new();
+        //_searchSuggestions = new();
     }
 
     public void OnNavigatedFrom()
@@ -226,15 +167,7 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
             }
 
             _spellCache = new List<AbilityViewModel>(Spells);
-            MaximumSpellLevelFilter = SpellLevel.LevelNine;
-            ConcentrationFilterSelected = ThreeStateBoolean.Either;
-            MinimumSpellLeveLFilter = SpellLevel.Cantrip;
-            DamageTypeFilterSelected = DamageType.Untyped;
-            ResolutionTypeFilterSelected = ResolutionType.Undefined;
-            SpellSchoolFilterSelected = MagicSchool.None;
-
-            HasValidFields = true;//todo: proper validation.
-            // ac = Creature.AC;
+            AbilityFilterValues = (AbilityFilter)_filteringService.GetFilterValues<AbilityViewModel>();
         }
     }
 
@@ -269,33 +202,33 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     }
 
     [RelayCommand]
-    private async void EditAbility(object ability)
+    private async Task EditAbility(object ability)
     {
         if (ability != null && ability is Ability)
         {
             //save current state rather than discarding changes
-            CommitChanges(true);
+            await CommitChanges(true);
 
             _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
         }
         else if (ability != null && ability is AbilityViewModel)
         {
-            CommitChanges(true);
+            await CommitChanges(true);
             _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ((AbilityViewModel)ability).Ability);
         }
     }
 
     [RelayCommand]
-    private async void AddAbility()
+    private async Task AddAbility()
     {
         var ability = new Ability();
         Spells.Add(new AbilityViewModel(ability));
         await _dataService.SaveAddAsync(ability);
-        EditAbility(ability);
+        await EditAbility(ability);
     }
 
     [RelayCommand]
-    private async void AddSelectedSpell(object ability)
+    private void AddSelectedSpell(object ability)
     {
         if (ability is AbilityViewModel)
         {
@@ -307,24 +240,8 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     [RelayCommand]
     private void AbilityFilter(string text)
     {
-        List<FilterCriteria<AbilityViewModel>> criteria = new()
-        {
-            new FilterCriteria<AbilityViewModel>(x => x.Ability.SpellLevel, MinimumSpellLeveLFilter, MaximumSpellLevelFilter),
-            new FilterCriteria<AbilityViewModel>(x => x.Ability.Name, text),
-        };
-        if (ConcentrationFilterSelected == ThreeStateBoolean.False)
-            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.Concentration, false, false));
-        if (ConcentrationFilterSelected == ThreeStateBoolean.True)
-            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.Concentration, true, true));
-        if (ResolutionTypeFilterSelected != ResolutionType.Undefined)
-            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.Resolution, ResolutionTypeFilterSelected, ResolutionTypeFilterSelected));
-        if (SpellSchoolFilterSelected != MagicSchool.None)
-            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.MagicSchool, SpellSchoolFilterSelected, SpellSchoolFilterSelected));
-        if (DamageTypeFilterSelected != DamageType.Untyped)
-            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.DamageTypes, DamageTypeFilterSelected, DamageTypeFilterSelected));
-
-        var filtered = _filteringService.Filter(_spellCache, criteria);
-        Spells.Clear();
+        var filtered = _filteringService.Filter(_spellCache, AbilityFilterValues, text);
+        Spells.Clear();       
         foreach (var ability in filtered)
             Spells.Add(ability);
     }
@@ -336,10 +253,6 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
         if (e.Column.Tag.ToString() == "AbilityName")
         {
             SortByPredicate(Spells, x => x.Ability.Name, e.Column.SortDirection == DataGridSortDirection.Ascending);
-            //if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
-            //    SortAbilitiesByName(false);
-            //else
-            //    SortAbilitiesByName(true);
         }
         else if (e.Column.Tag.ToString() == "AbilityLevel")
         {
@@ -390,14 +303,13 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
     [RelayCommand]
     private void SearchTextChange(string text)
     {
+        var filtered = _filteringService.Filter(_spellCache, AbilityFilterValues, text);
         if (String.IsNullOrEmpty(text))
         {
-            var filtered = _filteringService.Filter(_spellCache, x => x.Ability.SpellLevel, MinimumSpellLeveLFilter, MaximumSpellLevelFilter);
             Spells.Clear();
             foreach (var ability in filtered)
                 Spells.Add(ability);
         }
-        SearchSuggestions = _filteringService.Filter(Spells, x => x.Ability.Name, text).ToList();
     }
 
 

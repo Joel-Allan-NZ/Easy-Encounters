@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using EasyEncounters.Core.Models.Enums;
+#nullable enable
 
 namespace EasyEncounters.Core.Models;
 public class Creature : Persistable 
@@ -239,7 +240,7 @@ public class Creature : Persistable
         int legActions = 0, int legRes = 0, string attackDescription = "", Condition conditionImmunities = Condition.None,
         int strength = 10, int strengthSave = 0, int dexterity = 10, int dexteritySave =0, int constitution = 10, int constitutionSave = 0,
         int intelligence = 10, int intelligenceSave = 0, int wisdom = 10, int wisdomSave = 0, int charisma = 10, int charismaSave = 0, 
-        Dictionary<int, int> spellSlots = null, int proficiencyBonus = 0, CreatureAttributeType spellStat = CreatureAttributeType.None, 
+        Dictionary<int, int>? spellSlots = null, int proficiencyBonus = 0, CreatureAttributeType spellStat = CreatureAttributeType.None, 
         string features = "", string movement = "")
     {
         Name = name;

@@ -17,7 +17,7 @@ using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Messages;
 using EasyEncounters.Models;
-using EasyEncounters.Services;
+using EasyEncounters.Services.Filter;
 using Microsoft.UI.Dispatching;
 using Microsoft.UI.Xaml.Controls;
 using Windows.Media.Playback;
@@ -28,92 +28,28 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
     private readonly IFilteringService _filteringService;
-    private readonly IList<SpellLevel> _spellLevels = Enum.GetValues(typeof(SpellLevel)).Cast<SpellLevel>().ToList();
-    private readonly IList<MagicSchool> _magicSchools = Enum.GetValues(typeof(MagicSchool)).Cast<MagicSchool>().ToList();
-    private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
-    private readonly IList<ResolutionType> _resolutionTypes = Enum.GetValues(typeof(ResolutionType)).Cast<ResolutionType>().ToList();
-    private readonly IList<ThreeStateBoolean> _concentrationStates = Enum.GetValues(typeof(ThreeStateBoolean)).Cast<ThreeStateBoolean>().ToList();
 
-
-    public IList<SpellLevel> SpellLevels => _spellLevels;
-
-    public IList<MagicSchool> MagicSchools => _magicSchools;
-
-    public IList<DamageType> DamageTypes => _damageTypes;
-
-    public IList<ResolutionType> ResolutionTypes => _resolutionTypes;
-
-    public IList<ThreeStateBoolean> ConcentrationStates => _concentrationStates;
+    [ObservableProperty]
+    private AbilityFilter _abilityFilterValues;
 
     private List<AbilityViewModel> _abilityCache;
-
-    [ObservableProperty]
-    private List<AbilityViewModel> _searchSuggestions;
-
-    [ObservableProperty]
-    private SpellLevel _minimumSpellLeveLFilter;
-
-    [ObservableProperty]
-    private SpellLevel _maximumSpellLevelFilter;
-
-    [ObservableProperty]
-    private MagicSchool _spellSchoolFilterSelected;
-
-    [ObservableProperty]
-    private DamageType _damageTypeFilterSelected;
-
-    [ObservableProperty]
-    private ResolutionType _resolutionTypeFilterSelected;
-
-    [ObservableProperty]
-    private ThreeStateBoolean _concentrationFilterSelected;
-
-
-
-
-
-
-    //public event EventHandler<DataGridColumnEventArgs> Sorting;
-    //protected virtual void OnSorting(DataGridColumnEventArgs e)
-    //{
-    //    EventHandler<DataGridColumnEventArgs> handler = Sorting;
-    //    if (handler != null)
-    //        handler(this, e);
-    //}
 
     [RelayCommand]
     private void SearchTextChange(string text)
     {
+        var filtered = _filteringService.Filter(_abilityCache, AbilityFilterValues, text);
         if (String.IsNullOrEmpty(text))
         {
-            var filtered = _filteringService.Filter(_abilityCache, x => x.Ability.SpellLevel, MinimumSpellLeveLFilter, MaximumSpellLevelFilter);
             Abilities.Clear();
-            foreach(var ability in filtered)
+            foreach (var ability in filtered)
                 Abilities.Add(ability);
         }
-        SearchSuggestions = _filteringService.Filter(Abilities, x => x.Ability.Name, text).ToList();
     }
 
     [RelayCommand]
     private void AbilityFilter(string text)
     {
-        List<FilterCriteria<AbilityViewModel>> criteria = new()
-        {
-            new FilterCriteria<AbilityViewModel>(x => x.Ability.SpellLevel, MinimumSpellLeveLFilter, MaximumSpellLevelFilter),
-            new FilterCriteria<AbilityViewModel>(x => x.Ability.Name, text),
-        };
-        if (ConcentrationFilterSelected == ThreeStateBoolean.False)
-            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.Concentration, false, false));
-        if (ConcentrationFilterSelected == ThreeStateBoolean.True)
-            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.Concentration, true, true));
-        if (ResolutionTypeFilterSelected != ResolutionType.Undefined)
-            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.Resolution, ResolutionTypeFilterSelected, ResolutionTypeFilterSelected));
-        if (SpellSchoolFilterSelected != MagicSchool.None)
-            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.MagicSchool, SpellSchoolFilterSelected, SpellSchoolFilterSelected));
-        if (DamageTypeFilterSelected != DamageType.Untyped)
-            criteria.Add(new FilterCriteria<AbilityViewModel>(x => x.Ability.DamageTypes, DamageTypeFilterSelected, DamageTypeFilterSelected));
-
-        var filtered = _filteringService.Filter(_abilityCache, criteria);
+        var filtered = _filteringService.Filter(_abilityCache, AbilityFilterValues, text);
         Abilities.Clear();
         foreach (var ability in filtered)
             Abilities.Add(ability);
@@ -182,8 +118,8 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         get; set;
     } = new();
 
-    [RelayCommand]
-    private async void DeleteAbility(object parameter)
+    [RelayCommand]  
+    private async Task DeleteAbility(object parameter)
     {
         if (parameter != null && parameter is Ability)
         {
@@ -194,7 +130,7 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
     }
 
     [RelayCommand]
-    private async void EditAbility(object ability)
+    private void EditAbility(object ability)
     {
         if(ability != null && ability is Ability)
         {
@@ -207,17 +143,18 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
     }
 
     [RelayCommand]
-    private async void CopyAbility(object ability)
+    private async Task CopyAbility(object ability)
     {
         if(ability != null && ability is Ability)
         {
             var copied = await _dataService.CopyAsync(ability as Ability);
-            Abilities.Add(new AbilityViewModel(copied));
+            if(copied != null)
+                Abilities.Add(new AbilityViewModel(copied));
         }
     }
 
     [RelayCommand]
-    private async void AddAbility()
+    private async Task AddAbility()
     {
         var ability = new Ability();
         Abilities.Add(new AbilityViewModel(ability));
@@ -251,15 +188,16 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         foreach (var ability in await _dataService.GetAllSpellsAsync())
             Abilities.Add(new AbilityViewModel(ability));
 
+        AbilityFilterValues = (AbilityFilter)_filteringService.GetFilterValues<AbilityViewModel>();
 
         _abilityCache = new List<AbilityViewModel>(Abilities);
-        SearchSuggestions = new(Abilities);
-        MaximumSpellLevelFilter = SpellLevel.LevelNine;
-        ConcentrationFilterSelected = ThreeStateBoolean.Either;
-        MinimumSpellLeveLFilter = SpellLevel.Cantrip;
-        DamageTypeFilterSelected = DamageType.Untyped;
-        ResolutionTypeFilterSelected = ResolutionType.Undefined;
-        SpellSchoolFilterSelected = MagicSchool.None;
+        //SearchSuggestions = new(Abilities);
+        //MaximumSpellLevelFilter = SpellLevel.LevelNine;
+        //ConcentrationFilterSelected = ThreeStateBoolean.Either;
+        //MinimumSpellLeveLFilter = SpellLevel.Cantrip;
+        //DamageTypeFilterSelected = DamageType.Untyped;
+        //ResolutionTypeFilterSelected = ResolutionType.Undefined;
+        //SpellSchoolFilterSelected = MagicSchool.None;
         
     }
 

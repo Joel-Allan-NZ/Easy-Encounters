@@ -5,6 +5,7 @@ using EasyEncounters.Core.Services;
 using EasyEncounters.Helpers;
 using EasyEncounters.Models;
 using EasyEncounters.Services;
+using EasyEncounters.Services.Filter;
 using EasyEncounters.ViewModels;
 using EasyEncounters.Views;
 
