@@ -34,7 +34,7 @@ public sealed partial class CreatureCRUDPage : Page
         ViewModel.Sorting += Sorting;
         this.InitializeComponent();
     }
-    private void Sorting(object sender, DataGridColumnEventArgs e)
+    private void Sorting(object? sender, DataGridColumnEventArgs e)
     {
         foreach (var dgColumn in CreatureListDG.Columns)
         {

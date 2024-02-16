@@ -28,34 +28,14 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
     private readonly INavigationService _navigationService;
     private readonly IActiveEncounterService _activeEncounterService;
     private readonly IFilteringService _filteringService;
-    //private readonly IList<EncounterDifficulty> _difficulties = Enum.GetValues(typeof(EncounterDifficulty)).Cast<EncounterDifficulty>().ToList();
 
-    private IList<EncounterData> _encounters;
+    private readonly IList<EncounterData> _encounters;
 
     [ObservableProperty]
     private EncounterFilter _encounterFilterValues;
 
-    //private Dictionary<string, FilterCriteria<EncounterData>> _filterCriteria;
-
-    //public IList<EncounterDifficulty> Difficulties => _difficulties;
-
 
     public ObservableCollection<EncounterData> EncounterData { get; private set; } = new ObservableCollection<EncounterData>();
-
-    //[ObservableProperty]
-    //private List<EncounterData> searchSuggestions;
-
-    //[ObservableProperty]
-    //private EncounterDifficulty _minimumDifficulty;
-
-    //[ObservableProperty]
-    //private EncounterDifficulty _maximumDifficulty;
-
-    //[ObservableProperty]
-    //private int _minimumEnemiesFilter;
-
-    //[ObservableProperty]
-    //private int _maximumEnemiesFilter;
 
     public RunSessionViewModel(IDataService dataService, INavigationService navigationService, IActiveEncounterService encounterService, IFilteringService filteringService)
     {
@@ -63,8 +43,8 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
         _activeEncounterService = encounterService;
         _navigationService = navigationService;
         _filteringService = filteringService;
-        //_filterCriteria = new Dictionary<string, FilterCriteria<EncounterData>>();
         _encounters = new List<EncounterData>();
+        _encounterFilterValues = (EncounterFilter)_filteringService.GetFilterValues<EncounterData>();
     }
 
     public void OnNavigatedFrom()
@@ -134,13 +114,11 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
     }
 
 
-    public event EventHandler<DataGridColumnEventArgs> Sorting;
+    public event EventHandler<DataGridColumnEventArgs>? Sorting;
 
     protected virtual void OnSorting(DataGridColumnEventArgs e)
     {
-        EventHandler<DataGridColumnEventArgs> handler = Sorting;
-        if(handler!=null)
-            handler(this, e);
+        Sorting?.Invoke(this, e);
     }
 
     [RelayCommand]

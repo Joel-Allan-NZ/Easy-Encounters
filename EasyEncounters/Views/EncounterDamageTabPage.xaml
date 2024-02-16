@@ -101,7 +101,7 @@
                   SelectionMode="Multiple">
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="SelectionChanged">
-                    <Core:InvokeCommandAction Command="{x:Bind ViewModel.SelectionChangedCommand}" CommandParameter="{x:Bind SelectableTargets.SelectedItems, Mode=OneWay}"/>
+                    <Core:InvokeCommandAction Command="{x:Bind ViewModel.SelectionChangedCommand}" CommandParameter="{x:Bind SelectableTargets.SelectedItems}"/>
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
             <ListView.ItemTemplate>

@@ -20,7 +20,7 @@ public class LogTabViewModel : ObservableRecipientTab
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);
     }
-    public override void OnTabOpened(object parameter)
+    public override void OnTabOpened(object? parameter)
     {
         WeakReferenceMessenger.Default.Register<LogMessageLogged>(this, (r, m) =>
         {

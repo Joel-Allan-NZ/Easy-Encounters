@@ -20,19 +20,19 @@ namespace EasyEncounters.ViewModels;
 public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
 {
     [ObservableProperty]
-    private Party _party;
+    private Party? _party;
 
     [ObservableProperty]
-    private Campaign _selectedCampaign;
+    private Campaign? _selectedCampaign;
 
     public ObservableCollection<CreatureViewModel> PartyMembers
     {
         get; private set;
     } = new();
 
-    partial void OnSelectedCampaignChanged(Campaign value)
+    partial void OnSelectedCampaignChanged(Campaign? value)
     {
-        if(Party.Campaign != value)
+        if(Party?.Campaign != value && Party != null)
             Party.Campaign = value;
     }
 
@@ -53,7 +53,7 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
         {
             var creature = (Creature)parameter;
             PartyMembers.Add(new CreatureViewModel(creature));
-            Party.Members.Add(creature);
+            Party?.Members.Add(creature);
 
         }
         else if (parameter != null && parameter is CreatureViewModel)
@@ -61,7 +61,7 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
             var creatureViewModel = (CreatureViewModel)parameter;
 
             PartyMembers.Add(new CreatureViewModel(creatureViewModel.Creature));
-            Party.Members.Add(creatureViewModel.Creature);
+            Party?.Members.Add(creatureViewModel.Creature);
         }
     }
 
@@ -73,13 +73,13 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
             var toRemove = (Creature)parameter;
 
             PartyMembers.Remove(PartyMembers.First(x => x.Creature == toRemove));
-            Party.Members.Remove(toRemove);
+            Party?.Members.Remove(toRemove);
         }
     }
 
 
     [RelayCommand]
-    private async void CommitChanges(object obj)
+    private async Task CommitChanges(object obj)
     {
         await _dataService.SaveAddAsync(Party);
         if (_navigationService.CanGoBack)
@@ -87,7 +87,7 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private async void Filter(object parameter)
+    private async Task Filter(object parameter)
     {
         _filterTimer.Debounce(async () =>
         {
@@ -109,7 +109,7 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
             List<CreatureViewModel> noMatch = new();
 
 
-            for (int i = Creatures.Count - 1; i >= 0; i--)
+            for (var i = Creatures.Count - 1; i >= 0; i--)
             {
                 var item = Creatures[i];
                 if (!matched.Contains(item))

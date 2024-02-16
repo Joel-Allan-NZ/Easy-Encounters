@@ -36,7 +36,7 @@ public sealed partial class RunSessionPage : Page
         InitializeComponent();
     }
 
-    private void Sorting(object sender, DataGridColumnEventArgs e)
+    private void Sorting(object? sender, DataGridColumnEventArgs e)
     {
         foreach (var dgColumn in EncounterList.Columns)
         {

@@ -7,35 +7,34 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using EasyEncounters.Contracts.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 
-namespace EasyEncounters.Models
+namespace EasyEncounters.Models;
+
+public abstract partial class ObservableRecipientTab : ObservableRecipient, ITabAware
 {
-    public abstract partial class ObservableRecipientTab : ObservableRecipient, ITabAware
-    {
-        [ObservableProperty]
-        private Page? _content;
+    [ObservableProperty]
+    private Page? _content;
 
-        [ObservableProperty]
-        private string? _tabName;
+    [ObservableProperty]
+    private string? _tabName;
 
-        [ObservableProperty]
-        private bool _isClosable;
+    [ObservableProperty]
+    private bool _isClosable;
 
-        //public Page? Content
-        //{
-        //    get; set;
-        //}
+    //public Page? Content
+    //{
+    //    get; set;
+    //}
 
-        //public string? TabName
-        //{
-        //    get; set;
-        //}
-        
-        //public bool IsClosable
-        //{
-        //    get; set;
-        //}
+    //public string? TabName
+    //{
+    //    get; set;
+    //}
+    
+    //public bool IsClosable
+    //{
+    //    get; set;
+    //}
 
-        public abstract void OnTabClosed();
-        public abstract void OnTabOpened(object parameter);
-    }
+    public abstract void OnTabClosed();
+    public abstract void OnTabOpened(object? parameter);
 }

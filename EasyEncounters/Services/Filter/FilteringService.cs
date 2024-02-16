@@ -176,9 +176,9 @@ public class FilteringService : IFilteringService
 public class FilterCriteria<T>
 {
     internal Expression<Func<T, IComparable>> Expression;
-    internal IComparable Minimum;
-    internal IComparable Maximum;
-    internal string MatchString;
+    internal IComparable? Minimum;
+    internal IComparable? Maximum;
+    internal string? MatchString;
 
     public FilterCriteria(Expression<Func<T, IComparable>> expression, IComparable minimum, IComparable maximum)
     {
@@ -195,6 +195,11 @@ public class FilterCriteria<T>
 
     private bool MatchAString(T item)
     {
+        if (String.IsNullOrEmpty(MatchString))
+        {
+            return true;
+        }
+        
         if (Expression is LambdaExpression lambdaBody)
         {
             var compiled = lambdaBody.Compile();

@@ -81,7 +81,7 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
         WeakReferenceMessenger.Default.UnregisterAll(this);
     }
 
-    public async override void OnTabOpened(object parameter)
+    public async override void OnTabOpened(object? parameter)
     {
         if(parameter != null && parameter is ActiveEncounter)
         {

@@ -24,7 +24,7 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
 
     protected async override Task HandleInternalAsync(LaunchActivatedEventArgs args)
     {
-        if (RequireRedirect())
+        if (await RequireRedirect())
         {
 
             _navigationService.NavigateTo(typeof(MainViewModel).FullName!, args.Arguments);
@@ -33,7 +33,7 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
         }
     }
 
-    private bool RequireRedirect()
+    private async Task<bool> RequireRedirect()
     {
         AppActivationArguments args = AppInstance.GetCurrent().GetActivatedEventArgs();
         var isRedirect = false;
@@ -51,7 +51,7 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
         {
             isRedirect = true;
 
-            keyInstance.RedirectActivationToAsync(args);
+            await keyInstance.RedirectActivationToAsync(args);
 
             App.Current.Exit();
         }

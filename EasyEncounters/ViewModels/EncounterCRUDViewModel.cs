@@ -29,7 +29,7 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
     
 
     [RelayCommand]
-    private async void DeleteEncounter(object parameter)
+    private async Task DeleteEncounter(object parameter)
     {
         if (parameter != null && parameter is Encounter)
         {
@@ -53,17 +53,19 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
     }
 
     [RelayCommand]
-    private async void CopyEncounter(object parameter)
+    private async Task CopyEncounter(object parameter)
     {
         if (parameter != null && parameter is Encounter)
         {
             var copied = await _dataService.CopyAsync(parameter as Encounter);
-            Encounters.Add(new EncounterViewModel(copied));
+
+            if(copied != null)
+                Encounters.Add(new EncounterViewModel(copied));
         }
     }
 
     [RelayCommand]
-    private async void AddEncounter()
+    private async Task AddEncounter()
     {
         var encounter = new Encounter();
         Encounters.Add(new EncounterViewModel(encounter));
@@ -73,7 +75,7 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
     }
 
     [RelayCommand]
-    private async void Filter(object parameter)
+    private async Task Filter(object parameter)
     {
         _filterTimer.Debounce(async () =>
         {
@@ -121,11 +123,11 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
 
         WeakReferenceMessenger.Default.Register<EncounterCopyRequestMessage>(this, (r, m) =>
         {
-            CopyEncounter(m.Parameter.Encounter);
+            _ = CopyEncounter(m.Parameter.Encounter);
         });
         WeakReferenceMessenger.Default.Register<EncounterDeleteRequestMessage>(this, (r, m) =>
         {
-            DeleteEncounter(m.Parameter.Encounter);
+            _ = DeleteEncounter(m.Parameter.Encounter);
         });
         WeakReferenceMessenger.Default.Register<EncounterEditRequestMessage>(this, (r, m) =>
         {

@@ -24,7 +24,7 @@ public partial class PartyCRUDViewModel : ObservableRecipient, INavigationAware
     } = new();
 
     [RelayCommand]
-    private async void AddNewParty()
+    private async Task AddNewParty()
     {
         var party = new Party();
         Parties.Add(new PartyViewModel(party));
@@ -32,7 +32,7 @@ public partial class PartyCRUDViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private async void DeleteParty(object parameter)
+    private async Task DeleteParty(object parameter)
     {
         if (parameter != null && parameter is Party)
         {
@@ -43,7 +43,7 @@ public partial class PartyCRUDViewModel : ObservableRecipient, INavigationAware
     }
 
     [RelayCommand]
-    private async void CopyParty(object parameter)
+    private async Task CopyParty(object parameter)
     {
         if (parameter != null && parameter is Party)
         {
@@ -76,11 +76,11 @@ public partial class PartyCRUDViewModel : ObservableRecipient, INavigationAware
 
         WeakReferenceMessenger.Default.Register<PartyCopyRequestMessage>(this, (r, m) =>
         {
-            CopyParty(m.Parameter.Party);
+            _ = CopyParty(m.Parameter.Party);
         });
         WeakReferenceMessenger.Default.Register<PartyDeleteRequestMessage>(this, (r, m) =>
         {
-            DeleteParty(m.Parameter.Party);
+            _ = DeleteParty(m.Parameter.Party);
         });
         WeakReferenceMessenger.Default.Register<PartyEditRequestMessage>(this, (r, m) =>
         {

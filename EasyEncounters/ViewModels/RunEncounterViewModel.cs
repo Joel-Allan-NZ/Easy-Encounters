@@ -23,7 +23,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
     private readonly IDataService _dataService;
     private readonly IActiveEncounterService _activeEncounterService;
     private ActiveEncounter? _activeEncounter;
-    private List<ActiveEncounterCreatureViewModel> _targeted;
+    private readonly List<ActiveEncounterCreatureViewModel> _targeted;
 
     [ObservableProperty]
     private bool _initRolled;
@@ -56,18 +56,18 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
     [RelayCommand]
     private void DealDamage(ActiveEncounterCreatureViewModel sourceCreature)
     {
-        //var targets = ;
+        if(_activeEncounter == null) 
+            return;
 
-        //old:
-        //_navigationService.NavigateTo(typeof(DealDamageViewModel).FullName!, new DealDamageTargetting(_activeEncounter, sourceCreature, _targeted), clearNavigation:true);
-
-        //test:
         _navigationService.NavigateTo(typeof(TargetedDamageViewModel).FullName!, new DealDamageTargetting(_activeEncounter, sourceCreature, Creatures), clearNavigation: true);
     }
 
     [RelayCommand]
-    private async void RollInitiative()
+    private async Task RollInitiative()
     {
+        if (_activeEncounter == null)
+            return;
+
         if (InitNotRolled)
         {
             await _activeEncounterService.UpdateInitiativeOrder(_activeEncounter);
@@ -86,8 +86,11 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
     }
 
     [RelayCommand]
-    private async void NextTurn()
+    private async Task NextTurn()
     {
+        if (_activeEncounter == null)
+            return;
+
         await _activeEncounterService.EndCurrentTurnAsync(_activeEncounter);
 
         //show current turn order and remove inactive creatures:
@@ -117,7 +120,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
     }
 
     [RelayCommand]
-    private async void EndEncounter()
+    private async Task EndEncounter()
     {
        await _activeEncounterService.EndEncounterAsync(_activeEncounter);
         if (_navigationService.CanGoBack)
@@ -161,11 +164,11 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
 
             var correctTurn = _activeEncounter.ActiveTurn;
             while (_activeEncounter.CreatureTurns.Peek() != correctTurn)
-                NextTurn();
+                await NextTurn();
 
             //encounter in progress
             while (_activeEncounter.ActiveTurn.Dead)
-                NextTurn();
+                await NextTurn();
             
         }
     }

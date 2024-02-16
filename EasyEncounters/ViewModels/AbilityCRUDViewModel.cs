@@ -32,11 +32,14 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
     [ObservableProperty]
     private AbilityFilter _abilityFilterValues;
 
-    private List<AbilityViewModel> _abilityCache;
+    private List<AbilityViewModel>? _abilityCache;
 
     [RelayCommand]
     private void SearchTextChange(string text)
     {
+        if (_abilityCache == null)
+            return;
+
         var filtered = _filteringService.Filter(_abilityCache, AbilityFilterValues, text);
         if (String.IsNullOrEmpty(text))
         {
@@ -49,6 +52,9 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
     [RelayCommand]
     private void AbilityFilter(string text)
     {
+        if (_abilityCache == null)
+            return;
+
         var filtered = _filteringService.Filter(_abilityCache, AbilityFilterValues, text);
         Abilities.Clear();
         foreach (var ability in filtered)
@@ -167,13 +173,11 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         _dataService = dataService;
         _navigationService = navigationService;
         _filteringService = filteringService;
-
-        //var dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
-        //_filterTimer = dispatcherQueue.CreateTimer();
+        _abilityFilterValues = (AbilityFilter)filteringService.GetFilterValues<AbilityViewModel>();
 
         WeakReferenceMessenger.Default.Register<AbilityCRUDRequestMessage>(this, (r, m) =>
         {
-            HandleCRUDRequest(m.Parameter.Ability, m.RequestType);
+            _ = HandleCRUDRequest(m.Parameter.Ability, m.RequestType);
         });
 
     }
@@ -191,21 +195,13 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         AbilityFilterValues = (AbilityFilter)_filteringService.GetFilterValues<AbilityViewModel>();
 
         _abilityCache = new List<AbilityViewModel>(Abilities);
-        //SearchSuggestions = new(Abilities);
-        //MaximumSpellLevelFilter = SpellLevel.LevelNine;
-        //ConcentrationFilterSelected = ThreeStateBoolean.Either;
-        //MinimumSpellLeveLFilter = SpellLevel.Cantrip;
-        //DamageTypeFilterSelected = DamageType.Untyped;
-        //ResolutionTypeFilterSelected = ResolutionType.Undefined;
-        //SpellSchoolFilterSelected = MagicSchool.None;
-        
     }
 
-    private void HandleCRUDRequest(Ability ability, CRUDRequestType requestType)
+    private async Task HandleCRUDRequest(Ability ability, CRUDRequestType requestType)
     {
         if (requestType == CRUDRequestType.Delete)
         {
-            DeleteAbility(ability);
+            await DeleteAbility(ability);
         }
         else if (requestType == CRUDRequestType.Edit)
         {
@@ -213,7 +209,7 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         }
         else if (requestType == CRUDRequestType.Copy)
         {
-            CopyAbility(ability);
+            await CopyAbility(ability);
         }
     }
 

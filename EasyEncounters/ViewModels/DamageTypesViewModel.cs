@@ -115,7 +115,7 @@ public partial class DamageTypesViewModel: ObservableRecipient
         EnumString = DamageTypes.ToString();
     }
 
-    private void HandleFlag(bool value, [CallerMemberName] string name = null)
+    private void HandleFlag(bool value, [CallerMemberName] string name = "")
     {
         var flagged = Flagged(name);
         if (flagged != value)
@@ -127,7 +127,7 @@ public partial class DamageTypesViewModel: ObservableRecipient
         }
         EnumString = DamageTypes.ToString();
     }
-    private bool Flagged([CallerMemberName] string name = null)
+    private bool Flagged([CallerMemberName] string name = "")
     {
         return DamageTypes.HasFlag((DamageType)Enum.Parse(typeof(DamageType), name));
     }

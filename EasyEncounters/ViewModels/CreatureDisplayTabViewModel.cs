@@ -21,7 +21,7 @@ public partial class CreatureDisplayTabViewModel : ObservableRecipientTab
     private ActiveEncounterCreature? _creature;
 
     [ObservableProperty]
-    private ActiveEncounterCreatureViewModel _creatureVM;
+    private ActiveEncounterCreatureViewModel? _creatureVM;
 
     public ObservableCollection<ObservableActiveAbility> Abilities
     {
@@ -34,7 +34,7 @@ public partial class CreatureDisplayTabViewModel : ObservableRecipientTab
     {
         WeakReferenceMessenger.Default.Register<UseAbilityRequestMessage>(this, (r, m) =>
         {
-            if(Abilities.Contains(m.Parameter))
+            if(Abilities.Contains(m.Parameter) && CreatureVM != null)
                 WeakReferenceMessenger.Default.Send(new AbilityDamageRequestMessage(m.Parameter, CreatureVM));
         });
         
@@ -43,26 +43,24 @@ public partial class CreatureDisplayTabViewModel : ObservableRecipientTab
     [RelayCommand]
     private void RequestDamage()
     {
-        WeakReferenceMessenger.Default.Send(new AbilityDamageRequestMessage(null, CreatureVM));
+        if(CreatureVM != null)
+            WeakReferenceMessenger.Default.Send(new AbilityDamageRequestMessage(null, CreatureVM));
     }
 
     public override void OnTabClosed()
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);
     }
-    public override void OnTabOpened(object parameter)
+    public override void OnTabOpened(object? parameter)
     {
-        if (parameter != null && parameter is ActiveEncounterCreatureViewModel)
+        if (parameter is not null and ActiveEncounterCreatureViewModel creatureVM)
         {
-            //var vm = parameter as ActiveEncounterCreature;
-            CreatureVM = (ActiveEncounterCreatureViewModel)parameter;
+            CreatureVM = creatureVM;
             Creature = CreatureVM.Creature; //parameter as ActiveEncounterCreature;
 
             Abilities.Clear();
             foreach (var activeAbility in Creature.ActiveAbilities)
                 Abilities.Add(new ObservableActiveAbility(activeAbility));
-
-            //Conditions = new ConditionTypesViewModel(Creature.ActiveConditions);
         }
     }
 }

@@ -26,7 +26,7 @@ public partial class EncounterDamageTabViewModel : ObservableRecipientTab //Obse
     private readonly IActiveEncounterService _activeEncounterService;
 
     [ObservableProperty]
-    private ObservableActiveAbility _selectedAbility;
+    private ObservableActiveAbility? _selectedAbility;
 
     [ObservableProperty]
     private int _damage;
@@ -59,10 +59,10 @@ public partial class EncounterDamageTabViewModel : ObservableRecipientTab //Obse
     }
 
     [ObservableProperty]
-    private ActiveEncounter _encounter;
+    private ActiveEncounter? _encounter;
 
     [ObservableProperty]
-    private ActiveEncounterCreatureViewModel _sourceCreature;
+    private ActiveEncounterCreatureViewModel? _sourceCreature;
 
     public ObservableCollection<DamageCreatureViewModel> Targets
     {
@@ -90,11 +90,10 @@ public partial class EncounterDamageTabViewModel : ObservableRecipientTab //Obse
         WeakReferenceMessenger.Default.UnregisterAll(this);
     }
 
-    public override void OnTabOpened(object parameter)
+    public override void OnTabOpened(object? parameter)
     {
-        if (parameter != null && parameter is EncounterDamageTabData)
+        if (parameter != null && parameter is EncounterDamageTabData data)
         {
-            var data = (EncounterDamageTabData)parameter;
             SelectableCreatures.Clear();
             foreach (var creature in data.Targets)
                 SelectableCreatures.Add(creature);
@@ -136,7 +135,14 @@ public partial class EncounterDamageTabViewModel : ObservableRecipientTab //Obse
     [RelayCommand]
     private void SelectionChanged(object s)
     {
-        IList<object> items = s as IList<object>;
+        //IList<object>? items = s as IList<object>;
+        //if (s == null)
+        //    return;
+
+        if (s is not IList<object> items)
+            return;
+
+
         SelectedCreatures.Clear();
         var existingTargets = Targets.Select(x => x.ActiveEncounterCreatureViewModel);
         var castSelection = new List<ActiveEncounterCreatureViewModel>();
@@ -172,18 +178,8 @@ public partial class EncounterDamageTabViewModel : ObservableRecipientTab //Obse
     [RelayCommand]
     private void DealDamage()
     {
-        WeakReferenceMessenger.Default.Send(new DealDamageRequestMessage(Targets.ToList(), SourceCreature.Creature, Damage, SelectedDamageType));
-        //var msg = new List<string>();
-        //foreach(var target in Targets)
-        //{
-        //    msg.Add(_activeEncounterService.DealDamageAsync(Encounter, new DamageInstance(target.ActiveEncounterCreatureViewModel.Creature, SourceCreature.Creature, SelectedDamageType,
-        //        target.SelectedDamageVolume, Damage)));
-        //    //msg.Add(_activeEncounterService.DealDamage(Encounter, SourceCreature.Creature, target.ActiveEncounterCreatureViewModel.Creature, SelectedDamageType, Damage));
-        //    target.ActiveEncounterCreatureViewModel.CurrentHP = target.ActiveEncounterCreatureViewModel.Creature.CurrentHP; //hax. TODO: better.
-            
-        //}
-        
-        //WeakReferenceMessenger.Default.Send(new LogMessageLogged(msg));
+        if(SourceCreature != null)
+            WeakReferenceMessenger.Default.Send(new DealDamageRequestMessage(Targets.ToList(), SourceCreature.Creature, Damage, SelectedDamageType));
     }
 
     [RelayCommand]

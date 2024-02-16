@@ -218,7 +218,7 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
         });
         WeakReferenceMessenger.Default.Register<CreatureDeleteRequestMessage>(this, (r, m) =>
         {
-            DeleteCreature(m.Parameter.Creature);
+            _ = DeleteCreature(m.Parameter.Creature);
         });
         WeakReferenceMessenger.Default.Register<CreatureEditRequestMessage>(this, (r, m) =>
         {

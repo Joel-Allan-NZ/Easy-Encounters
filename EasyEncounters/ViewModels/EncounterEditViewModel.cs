@@ -228,6 +228,7 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
         });
         _filteringService = filteringService;
         _creatureCache = new List<CreatureViewModel>();
+        _creatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<EncounterData>();
     }
 
 

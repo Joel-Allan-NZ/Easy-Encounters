@@ -114,6 +114,7 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
         _filteringService = filterService;
         _dataService = dataService;
         _spellCache = new();
+        _abilityFilterValues = (AbilityFilter)_filteringService.GetFilterValues<AbilityViewModel>();
         //_searchSuggestions = new();
     }
 

@@ -90,6 +90,10 @@ public partial class AbilityEditViewModel : ObservableRecipient, INavigationAwar
     [RelayCommand]
     private async Task CommitChanges(object obj)
     {
+        if (ObservableAbility == null || _ability == null)
+        {
+            return;
+        }
         ObservableAbility.SpellCastComponents = SpellCastComponents;
         if(ObservableAbility.SpellLevel != SpellLevel.NotASpell)
             await _dataService.SaveAddAsync(_ability);
