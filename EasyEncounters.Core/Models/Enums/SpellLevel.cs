@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace EasyEncounters.Core.Models.Enums;
 
-namespace EasyEncounters.Core.Models.Enums;
 public enum SpellLevel
 {
-    NotASpell =0,
+    NotASpell = 0,
     Cantrip = 1,
     LevelOne = 2,
     LevelTwo = 3,

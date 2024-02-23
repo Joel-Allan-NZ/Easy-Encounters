@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EasyEncounters.Core.Models.Enums;
 
 namespace EasyEncounters.ViewModels;
+
 public partial class ConditionTypesViewModel : ObservableRecipient
 {
-    [ObservableProperty]
-    private string _enumString;
-
     [ObservableProperty]
     private string _blindTooltip = "- Can't see and fails ability checks that require sight.\n- Attack Rolls have disadvantage, and attack rolls against the creature have advantage.";
 
@@ -22,6 +15,9 @@ public partial class ConditionTypesViewModel : ObservableRecipient
 
     [ObservableProperty]
     private string _deafTooltip = "- A deafened creature can't hear, and automatically fails any ability check that requires hearing.";
+
+    [ObservableProperty]
+    private string _enumString;
 
     [ObservableProperty]
     private string _exhaustionTooltip = "- Level 1: Disadvantage on ability checks\n- Level 2: Speed halved.\n- Level 3: Disadvantage on attack rolls and saves. " +
@@ -69,9 +65,10 @@ public partial class ConditionTypesViewModel : ObservableRecipient
         "The creature drops whatever it was holding and falls prone.\n- The creature fails Strength and Dexterity saves.\n- Attack rolls have " +
         "advantage.\n- Attacks from within 5 ft that hit are critical strikes.";
 
-    public Condition ConditionTypes
+    public ConditionTypesViewModel(Condition condition)
     {
-        get; set;
+        ConditionTypes = condition;
+        EnumString = ConditionTypes.ToString();
     }
 
     public bool Blinded
@@ -85,36 +82,54 @@ public partial class ConditionTypesViewModel : ObservableRecipient
         get => Flagged();
         set => HandleFlag(value);
     }
+
+    public Condition ConditionTypes
+    {
+        get; set;
+    }
+
     public bool Deafened
     {
         get => Flagged();
         set => HandleFlag(value);
     }
+
+    public bool Exhausted
+    {
+        get => Flagged();
+        set => HandleFlag(value);
+    }
+
     public bool Frightened
     {
         get => Flagged();
         set => HandleFlag(value);
     }
+
     public bool Grappled
     {
         get => Flagged();
         set => HandleFlag(value);
     }
+
     public bool Incapacitated
     {
         get => Flagged();
         set => HandleFlag(value);
     }
+
     public bool Paralyzed
     {
         get => Flagged();
         set => HandleFlag(value);
     }
+
     public bool Petrified
     {
         get => Flagged();
         set => HandleFlag(value);
     }
+
     public bool Poisoned
     {
         get => Flagged();
@@ -132,44 +147,22 @@ public partial class ConditionTypesViewModel : ObservableRecipient
         get => Flagged();
         set => HandleFlag(value);
     }
+
     public bool Stunned
     {
         get => Flagged();
         set => HandleFlag(value);
     }
+
     public bool Unconscious
     {
         get => Flagged();
         set => HandleFlag(value);
     }
 
-    public bool Exhausted
+    private void AddFlag(string name)
     {
-        get => Flagged();
-        set => HandleFlag(value);
-    }
-
-    public ConditionTypesViewModel(Condition condition)
-    {
-        ConditionTypes = condition;
-        EnumString = ConditionTypes.ToString();
-    }
-
-    private void HandleFlag(bool value, [CallerMemberName] string? name = null)
-    {
-        if (name != null)
-        {
-            var flagged = Flagged(name);
-            if (flagged != value)
-            {
-
-                if (flagged)
-                    RemoveFlag(name);
-                else
-                    AddFlag(name);
-            }
-            EnumString = ConditionTypes.ToString();
-        }
+        ConditionTypes |= (Condition)Enum.Parse(typeof(Condition), name);
     }
 
     private bool Flagged([CallerMemberName] string? name = null)
@@ -180,9 +173,20 @@ public partial class ConditionTypesViewModel : ObservableRecipient
             throw new ArgumentException("Null is a not a valid Flag Property Name");
     }
 
-    private void AddFlag(string name)
+    private void HandleFlag(bool value, [CallerMemberName] string? name = null)
     {
-        ConditionTypes |= (Condition)Enum.Parse(typeof(Condition), name);
+        if (name != null)
+        {
+            var flagged = Flagged(name);
+            if (flagged != value)
+            {
+                if (flagged)
+                    RemoveFlag(name);
+                else
+                    AddFlag(name);
+            }
+            EnumString = ConditionTypes.ToString();
+        }
     }
 
     private void RemoveFlag(string name)

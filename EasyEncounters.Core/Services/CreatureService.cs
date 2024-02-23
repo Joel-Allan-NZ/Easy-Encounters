@@ -1,41 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using EasyEncounters.Core.Contracts.Services;
+﻿using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
 
 namespace EasyEncounters.Core.Services;
+
 public class CreatureService : ICreatureService
 {
     private const int _baseStatZeroBonusValue = 10;
     private IAbilityService _abilityService;
+
     public CreatureService(IAbilityService abilityService)
     {
         _abilityService = abilityService;
-    }
-    public int GetAttributeTypeValue(Creature creature, CreatureAttributeType creatureAttributeType) 
-    {
-        return creatureAttributeType switch
-        {
-            CreatureAttributeType.Strength => creature.Strength,
-            CreatureAttributeType.Dexterity => creature.Dexterity,
-            CreatureAttributeType.Constitution => creature.Constitution,
-            CreatureAttributeType.Intelligence => creature.Intelligence,
-            CreatureAttributeType.Wisdom => creature.Wisdom,
-            CreatureAttributeType.Charisma => creature.Charisma,
-            _ => 0
-            //CreatureAttributeType.None => throw new ArgumentException("CreatureAttributeType must not be None"),
-            //_ => throw new ArgumentException($"Invalid CreatureAttributeType: {creatureAttributeType}")
-        };
-    }
-
-    public int GetAttributeBonusValue(Creature creature, CreatureAttributeType creatureAttributeType)
-    {
-        return (GetAttributeTypeValue(creature, creatureAttributeType) - _baseStatZeroBonusValue)/2;
     }
 
     public void CopyTo(Creature target, Creature source)
@@ -45,7 +21,7 @@ public class CreatureService : ICreatureService
 
         target.Abilities.Clear();
 
-        foreach (Ability ability in  placeHolder)
+        foreach (Ability ability in placeHolder)
         {
             //copy spells as is, but clone other abilities
             if (ability.SpellLevel != SpellLevel.NotASpell)
@@ -100,6 +76,26 @@ public class CreatureService : ICreatureService
                 target.SpellSlots.Add(kvp.Key, kvp.Value);
             }
         }
-        
+    }
+
+    public int GetAttributeBonusValue(Creature creature, CreatureAttributeType creatureAttributeType)
+    {
+        return (GetAttributeTypeValue(creature, creatureAttributeType) - _baseStatZeroBonusValue) / 2;
+    }
+
+    public int GetAttributeTypeValue(Creature creature, CreatureAttributeType creatureAttributeType)
+    {
+        return creatureAttributeType switch
+        {
+            CreatureAttributeType.Strength => creature.Strength,
+            CreatureAttributeType.Dexterity => creature.Dexterity,
+            CreatureAttributeType.Constitution => creature.Constitution,
+            CreatureAttributeType.Intelligence => creature.Intelligence,
+            CreatureAttributeType.Wisdom => creature.Wisdom,
+            CreatureAttributeType.Charisma => creature.Charisma,
+            _ => 0
+            //CreatureAttributeType.None => throw new ArgumentException("CreatureAttributeType must not be None"),
+            //_ => throw new ArgumentException($"Invalid CreatureAttributeType: {creatureAttributeType}")
+        };
     }
 }

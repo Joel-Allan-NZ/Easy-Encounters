@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EasyEncounters.ViewModels;
+﻿using EasyEncounters.ViewModels;
 
-namespace EasyEncounters.Messages
+namespace EasyEncounters.Messages;
+
+public class InspectRequestMessage
 {
-    public class InspectRequestMessage
+    public InspectRequestMessage(ActiveEncounterCreatureViewModel creature)
     {
-        public ActiveEncounterCreatureViewModel Parameter
-        {
-            get; private set;
-        }
-        public InspectRequestMessage(ActiveEncounterCreatureViewModel creature)
-        {
-            Parameter = creature;
-        }
+        Parameter = creature;
+    }
+
+    public ActiveEncounterCreatureViewModel Parameter
+    {
+        get; private set;
     }
 }

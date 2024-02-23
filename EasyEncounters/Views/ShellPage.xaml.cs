@@ -14,11 +14,6 @@ namespace EasyEncounters.Views;
 // TODO: Update NavigationViewItem titles and icons in ShellPage.xaml.
 public sealed partial class ShellPage : Page
 {
-    public ShellViewModel ViewModel
-    {
-        get;
-    }
-
     public ShellPage(ShellViewModel viewModel)
     {
         ViewModel = viewModel;
@@ -36,31 +31,9 @@ public sealed partial class ShellPage : Page
         AppTitleBarText.Text = "AppDisplayName".GetLocalized();
     }
 
-    private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    public ShellViewModel ViewModel
     {
-        TitleBarHelper.UpdateTitleBar(RequestedTheme);
-
-        KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
-        KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
-    }
-
-    private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
-    {
-        var resource = args.WindowActivationState == WindowActivationState.Deactivated ? "WindowCaptionForegroundDisabled" : "WindowCaptionForeground";
-
-        AppTitleBarText.Foreground = (SolidColorBrush)App.Current.Resources[resource];
-        App.AppTitlebar = AppTitleBarText as UIElement;
-    }
-
-    private void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
-    {
-        AppTitleBar.Margin = new Thickness()
-        {
-            Left = sender.CompactPaneLength * (sender.DisplayMode == NavigationViewDisplayMode.Minimal ? 2 : 1),
-            Top = AppTitleBar.Margin.Top,
-            Right = AppTitleBar.Margin.Right,
-            Bottom = AppTitleBar.Margin.Bottom
-        };
+        get;
     }
 
     private static KeyboardAccelerator BuildKeyboardAccelerator(VirtualKey key, VirtualKeyModifiers? modifiers = null)
@@ -84,5 +57,32 @@ public sealed partial class ShellPage : Page
         var result = navigationService.GoBack();
 
         args.Handled = result;
+    }
+
+    private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
+    {
+        var resource = args.WindowActivationState == WindowActivationState.Deactivated ? "WindowCaptionForegroundDisabled" : "WindowCaptionForeground";
+
+        AppTitleBarText.Foreground = (SolidColorBrush)App.Current.Resources[resource];
+        App.AppTitlebar = AppTitleBarText as UIElement;
+    }
+
+    private void NavigationViewControl_DisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args)
+    {
+        AppTitleBar.Margin = new Thickness()
+        {
+            Left = sender.CompactPaneLength * (sender.DisplayMode == NavigationViewDisplayMode.Minimal ? 2 : 1),
+            Top = AppTitleBar.Margin.Top,
+            Right = AppTitleBar.Margin.Right,
+            Bottom = AppTitleBar.Margin.Bottom
+        };
+    }
+
+    private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        TitleBarHelper.UpdateTitleBar(RequestedTheme);
+
+        KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.Left, VirtualKeyModifiers.Menu));
+        KeyboardAccelerators.Add(BuildKeyboardAccelerator(VirtualKey.GoBack));
     }
 }

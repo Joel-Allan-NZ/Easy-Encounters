@@ -1,58 +1,55 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using EasyEncounters.Contracts.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Models;
 using EasyEncounters.ViewModels;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace EasyEncounters.Services.Filter;
+
 /// <summary>
 /// Wrapper for Ability Properties of interest for filtering, including convenience lists of enum values
 /// </summary>
 public partial class AbilityFilter : FilterValues
 {
-    readonly IList<SpellLevel> _spellLevels = Enum.GetValues(typeof(SpellLevel)).Cast<SpellLevel>().ToList();
-    readonly IList<MagicSchool> _magicSchools = Enum.GetValues(typeof(MagicSchool)).Cast<MagicSchool>().ToList();
-    readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
-    readonly IList<ResolutionType> _resolutionTypes = Enum.GetValues(typeof(ResolutionType)).Cast<ResolutionType>().ToList();
-    readonly IList<ThreeStateBoolean> _concentrationStates = Enum.GetValues(typeof(ThreeStateBoolean)).Cast<ThreeStateBoolean>().ToList();
-
-    public IList<SpellLevel> SpellLevels => _spellLevels;
-    public IList<MagicSchool> MagicSchools => _magicSchools;
-    public IList<DamageType> DamageTypes => _damageTypes;
-    public IList<ResolutionType> ResolutionTypes => _resolutionTypes;
-    public IList<ThreeStateBoolean> ConcentrationStates => _concentrationStates;
-
-    [ObservableProperty]
-    private SpellLevel _minimumSpellLevelFilter;
-
-    [ObservableProperty]
-    private SpellLevel _maximumSpellLevelFilter;
-
-    [ObservableProperty]
-    private MagicSchool _spellSchoolFilterSelected;
-
-    [ObservableProperty]
-    private DamageType _damageTypeFilterSelected;
-
-    [ObservableProperty]
-    private ResolutionType _resolutionTypeFilterSelected;
+    private readonly IList<ThreeStateBoolean> _concentrationStates = Enum.GetValues(typeof(ThreeStateBoolean)).Cast<ThreeStateBoolean>().ToList();
+    private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
+    private readonly IList<MagicSchool> _magicSchools = Enum.GetValues(typeof(MagicSchool)).Cast<MagicSchool>().ToList();
+    private readonly IList<ResolutionType> _resolutionTypes = Enum.GetValues(typeof(ResolutionType)).Cast<ResolutionType>().ToList();
+    private readonly IList<SpellLevel> _spellLevels = Enum.GetValues(typeof(SpellLevel)).Cast<SpellLevel>().ToList();
 
     [ObservableProperty]
     private ThreeStateBoolean _concentrationFilterSelected;
 
     [ObservableProperty]
+    private DamageType _damageTypeFilterSelected;
+
+    [ObservableProperty]
+    private SpellLevel _maximumSpellLevelFilter;
+
+    [ObservableProperty]
+    private SpellLevel _minimumSpellLevelFilter;
+
+    [ObservableProperty]
+    private ResolutionType _resolutionTypeFilterSelected;
+
+    [ObservableProperty]
     private List<AbilityViewModel> _searchSuggestions = new();
+
+    [ObservableProperty]
+    private MagicSchool _spellSchoolFilterSelected;
+
+    public AbilityFilter()
+    {
+        ResetFilter();
+    }
+
+    public IList<ThreeStateBoolean> ConcentrationStates => _concentrationStates;
+    public IList<DamageType> DamageTypes => _damageTypes;
+    public IList<MagicSchool> MagicSchools => _magicSchools;
+    public IList<ResolutionType> ResolutionTypes => _resolutionTypes;
+    public IList<SpellLevel> SpellLevels => _spellLevels;
 
     public ICollection<FilterCriteria<AbilityViewModel>> GenerateFilterCriteria(string text)
     {
-
         List<FilterCriteria<AbilityViewModel>> criteria = new()
             {
             new FilterCriteria<AbilityViewModel>(x => x.Ability.SpellLevel, MinimumSpellLevelFilter, MaximumSpellLevelFilter),
@@ -82,10 +79,5 @@ public partial class AbilityFilter : FilterValues
         DamageTypeFilterSelected = DamageType.Untyped;
         ResolutionTypeFilterSelected = ResolutionType.Undefined;
         SpellSchoolFilterSelected = MagicSchool.None;
-    }
-
-    public AbilityFilter()
-    {
-        ResetFilter();
     }
 }

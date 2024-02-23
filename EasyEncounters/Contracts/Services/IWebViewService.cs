@@ -5,10 +5,7 @@ namespace EasyEncounters.Contracts.Services;
 
 public interface IWebViewService
 {
-    Uri? Source
-    {
-        get;
-    }
+    event EventHandler<CoreWebView2WebErrorStatus>? NavigationCompleted;
 
     bool CanGoBack
     {
@@ -20,13 +17,16 @@ public interface IWebViewService
         get;
     }
 
-    event EventHandler<CoreWebView2WebErrorStatus>? NavigationCompleted;
-
-    void Initialize(WebView2 webView);
+    Uri? Source
+    {
+        get;
+    }
 
     void GoBack();
 
     void GoForward();
+
+    void Initialize(WebView2 webView);
 
     void Reload();
 

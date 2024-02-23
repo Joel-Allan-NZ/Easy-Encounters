@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Messaging;
 using EasyEncounters.Messages;
 using EasyEncounters.Models;
 
 namespace EasyEncounters.ViewModels;
+
 public class LogTabViewModel : ObservableRecipientTab
 {
     public ObservableCollection<string> CombatLog
@@ -20,6 +16,7 @@ public class LogTabViewModel : ObservableRecipientTab
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);
     }
+
     public override void OnTabOpened(object? parameter)
     {
         WeakReferenceMessenger.Default.Register<LogMessageLogged>(this, (r, m) =>
@@ -27,7 +24,6 @@ public class LogTabViewModel : ObservableRecipientTab
             DamageLogged(m.LogMessages);
         });
     }
-
 
     private void DamageLogged(IList<string> toLog)
     {

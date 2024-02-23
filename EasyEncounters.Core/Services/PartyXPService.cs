@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EasyEncounters.Core.Contracts.Services;
+﻿using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 
 namespace EasyEncounters.Core.Services;
+
 public class PartyXPService : IPartyXPService
 {
     /// <summary>
@@ -25,8 +21,6 @@ public class PartyXPService : IPartyXPService
         }
         return result;
     }
-
-
 
     /// <summary>
     /// find the xp Thresholds for a single player character.

@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace EasyEncounters.Attributes;
 
-namespace EasyEncounters.Attributes
+public class FilterRangeAttribute : Attribute
 {
-    public class FilterRangeAttribute : Attribute
-    {
-    }
 }

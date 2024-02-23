@@ -1,36 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Messages;
-using Microsoft.UI.Xaml.Controls;
 
 namespace EasyEncounters.ViewModels;
+
 public partial class TargetDamageInstanceViewModel : ObservableRecipient
 {
+    [ObservableProperty]
+    private int _damageAmount;
 
     [ObservableProperty]
     private DamageType _selectedDamageType;
 
-    [ObservableProperty]
-    private int _damageAmount;
-
-    partial void OnSelectedDamageTypeChanged(DamageType value)
+    public TargetDamageInstanceViewModel(int count)
     {
-        WeakReferenceMessenger.Default.Send(new DamageTypeChangedMessage(value));
+        Count = count;
+
+        Name = $"Damage {Count}";
     }
-
-    public ObservableCollection<DamageCreatureViewModel> Targets
-    {
-        get; private set;
-    } = new();
 
     /// <summary>
     /// For naming damage instances uniquely, quickly.
@@ -40,11 +31,15 @@ public partial class TargetDamageInstanceViewModel : ObservableRecipient
         get; set;
     }
 
-
     public string Name
     {
         get; set;
     }
+
+    public ObservableCollection<DamageCreatureViewModel> Targets
+    {
+        get; private set;
+    } = new();
 
     public void AddTarget(DamageCreatureViewModel target)
     {
@@ -70,14 +65,9 @@ public partial class TargetDamageInstanceViewModel : ObservableRecipient
         WeakReferenceMessenger.Default.Send(new TargetedDamageDeleteRequestMessage(this));
     }
 
-
-
-    public TargetDamageInstanceViewModel(int count)
+    partial void OnSelectedDamageTypeChanged(DamageType value)
     {
-        Count = count;
-
-        Name = $"Damage {Count}";
-
+        WeakReferenceMessenger.Default.Send(new DamageTypeChangedMessage(value));
     }
 }
 
@@ -91,12 +81,12 @@ internal class DamageCreatureViewModelComparer : IEqualityComparer<DamageCreatur
         }
         return false;
     }
+
     public int GetHashCode([DisallowNull] DamageCreatureViewModel obj)
     {
         if (obj.ActiveEncounterCreatureViewModel != null)
             return obj.ActiveEncounterCreatureViewModel.Creature.EncounterID.GetHashCode();
         else
             throw new ArgumentNullException(nameof(obj), "This ActiveEncounterCreatureViewModel cannot be null"); //lazy cover. todo: improve
-
     }
 }

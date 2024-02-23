@@ -1,14 +1,6 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EasyEncounters.Contracts.Services;
-using EasyEncounters.Contracts.ViewModels;
+﻿using EasyEncounters.Contracts.Services;
 using EasyEncounters.Models;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Printing;
 
 namespace EasyEncounters.Services;
 
@@ -16,9 +8,15 @@ public class TabService : ITabService
 {
     private const string _viewModelString = "ViewModel";
     private readonly IPageService _pageService;
+
     public TabService(IPageService pageService)
     {
         _pageService = pageService;
+    }
+
+    public void CloseTab(ObservableRecipientTab tab)
+    {
+        tab.OnTabClosed();
     }
 
     public ObservableRecipientTab OpenTab(string tabKey, object? parameter, string? name = null, bool closeable = true) //todo: add closeable boolean, add logtab that isn't closeable.
@@ -45,11 +43,6 @@ public class TabService : ITabService
     }
 
     private object? GetPageViewModel(Page? page) => page?.GetType().GetProperty("ViewModel")?.GetValue(page, null);
-
-    public void CloseTab(ObservableRecipientTab tab)
-    {
-        tab.OnTabClosed();
-    }
 
     //public ITab OpenTab(string tabName, string pageKey, object parameter)
     //{

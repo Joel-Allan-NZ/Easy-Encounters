@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml.Controls;
+﻿using Microsoft.UI.Xaml.Controls;
 
-namespace EasyEncounters.Contracts.ViewModels
+namespace EasyEncounters.Contracts.ViewModels;
+
+public interface ITab
 {
-    public interface ITab
+    Page Content
     {
-        string Name
-        {
-            get;
-        }
+        get;
+    }
 
-        Page Content
-        {
-            get;
-        }
-
-
-
+    string Name
+    {
+        get;
     }
 }

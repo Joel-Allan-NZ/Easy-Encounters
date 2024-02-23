@@ -1,112 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.WinUI.UI;
 using CommunityToolkit.WinUI.UI.Controls;
 using EasyEncounters.Contracts.Services;
 using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
-using EasyEncounters.Core.Services;
 using EasyEncounters.Messages;
 using EasyEncounters.Models;
-using Windows.ApplicationModel.Search.Core;
-using Windows.Devices.WiFi;
 using EasyEncounters.Services.Filter;
 
 namespace EasyEncounters.ViewModels;
+
 public partial class CreatureEditViewModel : ObservableRecipientWithValidation, INavigationAware
 {
-    private readonly INavigationService _navigationService;
-    private readonly IDataService _dataService;
     private readonly IList<CreatureAttributeType> _creatureAttributeTypes = Enum.GetValues(typeof(CreatureAttributeType)).Cast<CreatureAttributeType>().ToList();
+    private readonly IDataService _dataService;
+    private readonly IFilteringService _filteringService;
+    private readonly INavigationService _navigationService;
 
     //TODO: add an object to wrap these filter properties. No reason to have to repeatedly redeclare them in different views.
     //ideally also have this object handle suggestions and suggestion caches in a cleaner way
-
-    private readonly IFilteringService _filteringService;
-
     [ObservableProperty]
     private AbilityFilter _abilityFilterValues;
-
-    private List<AbilityViewModel> _spellCache;
-
-    [ObservableProperty]
-    private Creature? _creature;
-
-    [ObservableProperty]
-    private DamageTypesViewModel? _resists;
-
-    [ObservableProperty]
-    private DamageTypesViewModel? _immunities;
-
-    [ObservableProperty]
-    private DamageTypesViewModel? _vulnerabilities;
 
     [ObservableProperty]
     private ConditionTypesViewModel? _conditionImmunities;
 
     [ObservableProperty]
+    private Creature? _creature;
+
+    [ObservableProperty]
+    private DamageTypesViewModel? _immunities;
+
+    [ObservableProperty]
+    private DamageTypesViewModel? _resists;
+
+    private List<AbilityViewModel> _spellCache;
+
+    [ObservableProperty]
     private SpellSlotViewModel? _spellSlots;
-   
-    public IList<CreatureAttributeType> StatTypes => _creatureAttributeTypes;
 
-    public ObservableCollection<AbilityViewModel> Spells
-    {
-        get; set;
-    } = new();
-
-    public ObservableCollection<AbilityViewModel> CreatureAbilities
-    {
-        get; 
-        private set;
-    } =new();
-
-    [RelayCommand]
-    private async Task CommitChanges(object obj)
-    {
-
-        if (!HasErrors)
-        {
-            if (Creature != null)
-            {
-                Creature.Resistance = Resists?.DamageTypes ?? DamageType.None;
-                Creature.Immunity = Immunities?.DamageTypes ?? DamageType.None;
-                Creature.Vulnerability = Vulnerabilities?.DamageTypes ?? DamageType.None;
-                Creature.ConditionImmunities = ConditionImmunities?.ConditionTypes ?? Condition.None; 
-                Creature.Abilities = CreatureAbilities.Select(x => x.Ability).ToList();
-            }
-
-            await _dataService.SaveAddAsync(Creature);
-
-            if (!(obj is bool && (bool)obj))
-            {
-                if (_navigationService.CanGoBack)
-                    _navigationService.GoBack();
-            }
-        }
-
-    }
-
-    [RelayCommand]
-    private async Task AddCreatureAbility()
-    {
-        var ability = new Ability();
-        Creature?.Abilities.Add(ability);
-        await _dataService.SaveAddAsync(Creature);
-
-        _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
-    }
-
+    [ObservableProperty]
+    private DamageTypesViewModel? _vulnerabilities;
 
     public CreatureEditViewModel(INavigationService navigationService, IDataService dataService, IFilteringService filterService)
     {
@@ -118,13 +56,26 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
         //_searchSuggestions = new();
     }
 
+    public ObservableCollection<AbilityViewModel> CreatureAbilities
+    {
+        get;
+        private set;
+    } = new();
+
+    public ObservableCollection<AbilityViewModel> Spells
+    {
+        get; set;
+    } = new();
+
+    public IList<CreatureAttributeType> StatTypes => _creatureAttributeTypes;
+
     public void OnNavigatedFrom()
     {
         WeakReferenceMessenger.Default.UnregisterAll(this);
     }
+
     public async void OnNavigatedTo(object parameter)
     {
-
         if (parameter is Creature)
         {
             //set
@@ -137,7 +88,7 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
             ConditionImmunities = new ConditionTypesViewModel(Creature.ConditionImmunities);
 
             CreatureAbilities.Clear();
-            foreach(var ability in Creature.Abilities)
+            foreach (var ability in Creature.Abilities)
             {
                 CreatureAbilities.Add(new AbilityViewModel(ability));
             }
@@ -162,7 +113,7 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
 
             var spells = await _dataService.GetAllSpellsAsync();
 
-            foreach(var spell in spells)
+            foreach (var spell in spells)
             {
                 Spells.Add(new AbilityViewModel(spell));
             }
@@ -170,6 +121,34 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
             _spellCache = new List<AbilityViewModel>(Spells);
             AbilityFilterValues = (AbilityFilter)_filteringService.GetFilterValues<AbilityViewModel>();
         }
+    }
+
+    [RelayCommand]
+    private void AbilityFilter(string text)
+    {
+        var filtered = _filteringService.Filter(_spellCache, AbilityFilterValues, text);
+        Spells.Clear();
+        foreach (var ability in filtered)
+            Spells.Add(ability);
+    }
+
+    [RelayCommand]
+    private async Task AddAbility()
+    {
+        var ability = new Ability();
+        Spells.Add(new AbilityViewModel(ability));
+        await _dataService.SaveAddAsync(ability);
+        await EditAbility(ability);
+    }
+
+    [RelayCommand]
+    private async Task AddCreatureAbility()
+    {
+        var ability = new Ability();
+        Creature?.Abilities.Add(ability);
+        await _dataService.SaveAddAsync(Creature);
+
+        _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
     }
 
     private async void AddEditAbility(Ability ability)
@@ -190,44 +169,6 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
         }
     }
 
-    private void HandleAbilityCRUDRequest(AbilityViewModel ability, CRUDRequestType requestType)
-    {
-        if(requestType == CRUDRequestType.Edit)
-        {
-            _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability.Ability);
-        }
-        else if(requestType == CRUDRequestType.Delete)
-        {
-            CreatureAbilities.Remove(ability);
-        }
-    }
-
-    [RelayCommand]
-    private async Task EditAbility(object ability)
-    {
-        if (ability != null && ability is Ability)
-        {
-            //save current state rather than discarding changes
-            await CommitChanges(true);
-
-            _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
-        }
-        else if (ability != null && ability is AbilityViewModel)
-        {
-            await CommitChanges(true);
-            _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ((AbilityViewModel)ability).Ability);
-        }
-    }
-
-    [RelayCommand]
-    private async Task AddAbility()
-    {
-        var ability = new Ability();
-        Spells.Add(new AbilityViewModel(ability));
-        await _dataService.SaveAddAsync(ability);
-        await EditAbility(ability);
-    }
-
     [RelayCommand]
     private void AddSelectedSpell(object ability)
     {
@@ -237,14 +178,28 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
         }
     }
 
-
     [RelayCommand]
-    private void AbilityFilter(string text)
+    private async Task CommitChanges(object obj)
     {
-        var filtered = _filteringService.Filter(_spellCache, AbilityFilterValues, text);
-        Spells.Clear();       
-        foreach (var ability in filtered)
-            Spells.Add(ability);
+        if (!HasErrors)
+        {
+            if (Creature != null)
+            {
+                Creature.Resistance = Resists?.DamageTypes ?? DamageType.None;
+                Creature.Immunity = Immunities?.DamageTypes ?? DamageType.None;
+                Creature.Vulnerability = Vulnerabilities?.DamageTypes ?? DamageType.None;
+                Creature.ConditionImmunities = ConditionImmunities?.ConditionTypes ?? Condition.None;
+                Creature.Abilities = CreatureAbilities.Select(x => x.Ability).ToList();
+            }
+
+            await _dataService.SaveAddAsync(Creature);
+
+            if (!(obj is bool && (bool)obj))
+            {
+                if (_navigationService.CanGoBack)
+                    _navigationService.GoBack();
+            }
+        }
     }
 
     [RelayCommand]
@@ -288,18 +243,36 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
         {
             e.Column.SortDirection = DataGridSortDirection.Descending;
         }
-
     }
 
-    private void SortByPredicate<T, U>(ObservableCollection<T> collection, Func<T, U> expression, bool ascending)
+    [RelayCommand]
+    private async Task EditAbility(object ability)
     {
-        IEnumerable<T> tmp = (ascending) ? collection.OrderBy(expression).ToList() : collection.OrderByDescending(expression).ToList();
+        if (ability != null && ability is Ability)
+        {
+            //save current state rather than discarding changes
+            await CommitChanges(true);
 
-        collection.Clear();
-        foreach (var item in tmp)
-            collection.Add(item);
+            _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
+        }
+        else if (ability != null && ability is AbilityViewModel)
+        {
+            await CommitChanges(true);
+            _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ((AbilityViewModel)ability).Ability);
+        }
     }
 
+    private void HandleAbilityCRUDRequest(AbilityViewModel ability, CRUDRequestType requestType)
+    {
+        if (requestType == CRUDRequestType.Edit)
+        {
+            _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability.Ability);
+        }
+        else if (requestType == CRUDRequestType.Delete)
+        {
+            CreatureAbilities.Remove(ability);
+        }
+    }
 
     [RelayCommand]
     private void SearchTextChange(string text)
@@ -313,6 +286,12 @@ public partial class CreatureEditViewModel : ObservableRecipientWithValidation, 
         }
     }
 
+    private void SortByPredicate<T, U>(ObservableCollection<T> collection, Func<T, U> expression, bool ascending)
+    {
+        IEnumerable<T> tmp = (ascending) ? collection.OrderBy(expression).ToList() : collection.OrderByDescending(expression).ToList();
 
-
+        collection.Clear();
+        foreach (var item in tmp)
+            collection.Add(item);
+    }
 }

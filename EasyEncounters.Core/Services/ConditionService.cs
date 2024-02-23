@@ -1,25 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
 
 namespace EasyEncounters.Core.Services;
+
 public class ConditionService : IConditionService
 {
     public void AddCondition(ActiveEncounterCreature creature, Condition condition)
     {
-        
     }
 
     public string GetConditionDescription(Condition condition)
     {
         //todo: move strings to resources etc.
         return GetDescriptions(condition);
-       
     }
 
     private static string DamageTypeToString(DamageType damage)

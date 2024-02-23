@@ -1,41 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ABI.System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.UI.Controls;
-using EasyEncounters.Attributes;
 using EasyEncounters.Contracts.Services;
 using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
-using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Services.Filter;
-using Microsoft.UI.Xaml.Controls;
-using Windows.Media.Playback;
-using Windows.Security.ExchangeActiveSyncProvisioning;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace EasyEncounters.ViewModels;
+
 public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly IDataService _dataService;
-    private readonly INavigationService _navigationService;
     private readonly IActiveEncounterService _activeEncounterService;
-    private readonly IFilteringService _filteringService;
-
+    private readonly IDataService _dataService;
     private readonly IList<EncounterData> _encounters;
+    private readonly IFilteringService _filteringService;
+    private readonly INavigationService _navigationService;
 
     [ObservableProperty]
     private EncounterFilter _encounterFilterValues;
-
-
-    public ObservableCollection<EncounterData> EncounterData { get; private set; } = new ObservableCollection<EncounterData>();
 
     public RunSessionViewModel(IDataService dataService, INavigationService navigationService, IActiveEncounterService encounterService, IFilteringService filteringService)
     {
@@ -47,17 +31,19 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
         _encounterFilterValues = (EncounterFilter)_filteringService.GetFilterValues<EncounterData>();
     }
 
+    public event EventHandler<DataGridColumnEventArgs>? Sorting;
+
+    public ObservableCollection<EncounterData> EncounterData { get; private set; } = new ObservableCollection<EncounterData>();
+
     public void OnNavigatedFrom()
     {
-
     }
+
     public async void OnNavigatedTo(object parameter)
     {
-
         if (parameter is Party)
         {
-            
-            var party = (Party) parameter;
+            var party = (Party)parameter;
             EncounterData.Clear();
 
             var data = await _dataService.GetAllEncounterDataAsync(party);
@@ -68,57 +54,17 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
             }
             EncounterFilterValues = (EncounterFilter)_filteringService.GetFilterValues<EncounterData>();
         }
-        
     }
 
-    [RelayCommand]
-    private async Task EncounterSelected(EncounterData parameter)
+    protected virtual void OnSorting(DataGridColumnEventArgs e)
     {
-
-        if (parameter != null)
-        {
-
-            var active = await _activeEncounterService.CreateActiveEncounterAsync(parameter.Encounter, parameter.Party);
-            _navigationService.NavigateTo(typeof(EncounterTabViewModel).FullName!, active);
-        }
-    }
-
-[RelayCommand]
-    private void SearchTextChange(string text)
-    {
-        var filtered = _filteringService.Filter(_encounters, EncounterFilterValues, text);
-
-        if (String.IsNullOrEmpty(text))
-        {
-            EncounterData.Clear();
-            foreach (var encounter in filtered)
-                EncounterData.Add(encounter);
-        }
-    }
-
-    [RelayCommand]
-    private void EncounterFilter(string text)
-    {
-        var filtered = _filteringService.Filter(_encounters, EncounterFilterValues, text);
-        EncounterData.Clear();
-        foreach (var encounter in filtered)
-            EncounterData.Add(encounter);
-    
-
+        Sorting?.Invoke(this, e);
     }
 
     [RelayCommand]
     private void AddEncounter()
     {
         _navigationService.NavigateTo(typeof(EncounterEditViewModel).FullName!, null);
-    }
-
-
-    public event EventHandler<DataGridColumnEventArgs>? Sorting;
-
-    protected virtual void OnSorting(DataGridColumnEventArgs e)
-    {
-        Sorting?.Invoke(this, e);
     }
 
     [RelayCommand]
@@ -165,20 +111,48 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
                 e.Column.SortDirection = DataGridSortDirection.Descending;
             }
         }
-
     }
 
-    private void SortEncountersByName(bool ascending)
+    [RelayCommand]
+    private void EncounterFilter(string text)
+    {
+        var filtered = _filteringService.Filter(_encounters, EncounterFilterValues, text);
+        EncounterData.Clear();
+        foreach (var encounter in filtered)
+            EncounterData.Add(encounter);
+    }
+
+    [RelayCommand]
+    private async Task EncounterSelected(EncounterData parameter)
+    {
+        if (parameter != null)
+        {
+            var active = await _activeEncounterService.CreateActiveEncounterAsync(parameter.Encounter, parameter.Party);
+            _navigationService.NavigateTo(typeof(EncounterTabViewModel).FullName!, active);
+        }
+    }
+
+    [RelayCommand]
+    private void SearchTextChange(string text)
+    {
+        var filtered = _filteringService.Filter(_encounters, EncounterFilterValues, text);
+
+        if (String.IsNullOrEmpty(text))
+        {
+            EncounterData.Clear();
+            foreach (var encounter in filtered)
+                EncounterData.Add(encounter);
+        }
+    }
+
+    private void SortEncountersByDifficulty(bool ascending)
     {
         IEnumerable<EncounterData> tmp;
-        if (!ascending)
-        {
-            tmp = EncounterData.OrderBy(x => x.Encounter.Name).ToList();
-        }
+        if (ascending)
+            tmp = EncounterData.OrderByDescending(x => x.DifficultyDescription).ToList();
         else
-        {
-            tmp = EncounterData.OrderByDescending(x => x.Encounter.Name).ToList();
-        }
+            tmp = EncounterData.OrderBy(x => x.DifficultyDescription).ToList();
+
         EncounterData.Clear();
         foreach (var item in tmp)
             EncounterData.Add(item);
@@ -197,14 +171,17 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
             EncounterData.Add(item);
     }
 
-    private void SortEncountersByDifficulty(bool ascending)
+    private void SortEncountersByName(bool ascending)
     {
         IEnumerable<EncounterData> tmp;
-        if (ascending)
-            tmp = EncounterData.OrderByDescending(x => x.DifficultyDescription).ToList();
+        if (!ascending)
+        {
+            tmp = EncounterData.OrderBy(x => x.Encounter.Name).ToList();
+        }
         else
-            tmp = EncounterData.OrderBy(x => x.DifficultyDescription).ToList();
-
+        {
+            tmp = EncounterData.OrderByDescending(x => x.Encounter.Name).ToList();
+        }
         EncounterData.Clear();
         foreach (var item in tmp)
             EncounterData.Add(item);

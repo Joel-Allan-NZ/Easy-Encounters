@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using EasyEncounters.Core.Contracts.Services;
+﻿using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
 
 namespace EasyEncounters.Core.Services;
+
 public class AbilityService : IAbilityService
 {
     private const int _baseAttackBonus = 10;
@@ -16,27 +11,6 @@ public class AbilityService : IAbilityService
 
     public AbilityService()
     {
-    }
-
-    public ActiveAbility CreateActiveAbility(ActiveEncounterCreature creature, Ability ability, int abilityStatValue)
-    {
-        ActiveAbility activeAbility = new ActiveAbility();
-        CopyTo(activeAbility, ability);
-
-        switch (activeAbility.Resolution)
-        {
-            case ResolutionType.Attack:
-                activeAbility.ResolutionValue = abilityStatValue + _baseAttackBonus + creature.ProficiencyBonus;
-                break;
-            case ResolutionType.SavingThrow:
-                activeAbility.ResolutionValue = abilityStatValue + _baseDCBonus + creature.ProficiencyBonus;
-                break;
-            default:
-                activeAbility.ResolutionValue = abilityStatValue;
-                break;
-        }
-
-        return activeAbility;
     }
 
     public void CopyTo(Ability copyTarget, Ability copySource)
@@ -60,6 +34,28 @@ public class AbilityService : IAbilityService
         copyTarget.MagicSchool = copySource.MagicSchool;
         copyTarget.TargetDistanceType = copySource.TargetDistanceType;
         copyTarget.Concentration = copySource.Concentration;
-       
+    }
+
+    public ActiveAbility CreateActiveAbility(ActiveEncounterCreature creature, Ability ability, int abilityStatValue)
+    {
+        ActiveAbility activeAbility = new ActiveAbility();
+        CopyTo(activeAbility, ability);
+
+        switch (activeAbility.Resolution)
+        {
+            case ResolutionType.Attack:
+                activeAbility.ResolutionValue = abilityStatValue + _baseAttackBonus + creature.ProficiencyBonus;
+                break;
+
+            case ResolutionType.SavingThrow:
+                activeAbility.ResolutionValue = abilityStatValue + _baseDCBonus + creature.ProficiencyBonus;
+                break;
+
+            default:
+                activeAbility.ResolutionValue = abilityStatValue;
+                break;
+        }
+
+        return activeAbility;
     }
 }

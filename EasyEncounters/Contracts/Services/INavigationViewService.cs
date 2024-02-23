@@ -14,9 +14,9 @@ public interface INavigationViewService
         get;
     }
 
+    NavigationViewItem? GetSelectedItem(Type pageType);
+
     void Initialize(NavigationView navigationView);
 
     void UnregisterEvents();
-
-    NavigationViewItem? GetSelectedItem(Type pageType);
 }

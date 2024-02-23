@@ -14,11 +14,18 @@ namespace EasyEncounters.Services;
 public class NavigationService : INavigationService
 {
     private readonly IPageService _pageService;
-    private object? _lastParameterUsed;
     private Frame? _frame;
+    private object? _lastParameterUsed;
 
+    public NavigationService(IPageService pageService)
+    {
+        _pageService = pageService;
+    }
 
     public event NavigatedEventHandler? Navigated;
+
+    [MemberNotNullWhen(true, nameof(Frame), nameof(_frame))]
+    public bool CanGoBack => Frame != null && Frame.CanGoBack;
 
     public Frame? Frame
     {
@@ -38,30 +45,6 @@ public class NavigationService : INavigationService
             UnregisterFrameEvents();
             _frame = value;
             RegisterFrameEvents();
-        }
-    }
-
-    [MemberNotNullWhen(true, nameof(Frame), nameof(_frame))]
-    public bool CanGoBack => Frame != null && Frame.CanGoBack;
-
-    public NavigationService(IPageService pageService)
-    {
-        _pageService = pageService;
-    }
-
-    private void RegisterFrameEvents()
-    {
-        if (_frame != null)
-        {
-            _frame.Navigated += OnNavigated;
-        }
-    }
-
-    private void UnregisterFrameEvents()
-    {
-        if (_frame != null)
-        {
-            _frame.Navigated -= OnNavigated;
         }
     }
 
@@ -93,7 +76,7 @@ public class NavigationService : INavigationService
             var navigated = _frame.Navigate(pageType, parameter);
             if (navigated)
             {
-                if(ignoreNavigation)
+                if (ignoreNavigation)
                     _frame.BackStack.RemoveAt(_frame.BackStack.Count - 1);
                 _lastParameterUsed = parameter;
                 if (vmBeforeNavigation is INavigationAware navigationAware)
@@ -124,6 +107,22 @@ public class NavigationService : INavigationService
             }
 
             Navigated?.Invoke(sender, e);
+        }
+    }
+
+    private void RegisterFrameEvents()
+    {
+        if (_frame != null)
+        {
+            _frame.Navigated += OnNavigated;
+        }
+    }
+
+    private void UnregisterFrameEvents()
+    {
+        if (_frame != null)
+        {
+            _frame.Navigated -= OnNavigated;
         }
     }
 }

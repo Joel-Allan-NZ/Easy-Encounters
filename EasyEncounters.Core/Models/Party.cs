@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-#nullable enable
+﻿#nullable enable
 
 namespace EasyEncounters.Core.Models;
+
 /// <summary>
 /// For grouping a party of player characters together - smoother for adding them to active encounters etc.
 /// </summary>
 public class Party : Persistable
 {
-    /// <summary>
-    /// A name for the party... probably not really required, but there's a world with more than one party perhaps?
-    /// </summary>
-    public string Name
+    public Party(Campaign? campaign = null, string name = "party", List<Creature>? members = null)
     {
-        get; set;
+        Campaign = campaign;
+        Name = name;
+        Members = members ?? new List<Creature>();
+        Id = Guid.NewGuid();
     }
 
     /// <summary>
@@ -36,12 +32,12 @@ public class Party : Persistable
         get; set;
     }
 
-    public Party(Campaign? campaign = null, string name = "party", List<Creature>? members = null)
+    /// <summary>
+    /// A name for the party... probably not really required, but there's a world with more than one party perhaps?
+    /// </summary>
+    public string Name
     {
-        Campaign = campaign;
-        Name = name;
-        Members = members ?? new List<Creature>();
-        Id = Guid.NewGuid();
+        get; set;
     }
 
     public override bool Equals(object? obj)

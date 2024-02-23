@@ -1,34 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
-using EasyEncounters.ViewModels;
-using Windows.Storage.AccessCache;
 
 namespace EasyEncounters.Services.Filter;
+
 public partial class EncounterFilter : FilterValues
 {
-    
-    [ObservableProperty]
-    private List<EncounterData> _searchSuggestions = new();
-
-    [ObservableProperty]
-    private EncounterDifficulty _minimumDifficulty;
+    private readonly IList<EncounterDifficulty> _difficulties = Enum.GetValues(typeof(EncounterDifficulty)).Cast<EncounterDifficulty>().ToList();
 
     [ObservableProperty]
     private EncounterDifficulty _maximumDifficulty;
 
     [ObservableProperty]
+    private int _maximumEnemiesFilter;
+
+    [ObservableProperty]
+    private EncounterDifficulty _minimumDifficulty;
+
+    [ObservableProperty]
     private int _minimumEnemiesFilter;
 
     [ObservableProperty]
-    private int _maximumEnemiesFilter;
+    private List<EncounterData> _searchSuggestions = new();
 
-    readonly IList<EncounterDifficulty> _difficulties = Enum.GetValues(typeof(EncounterDifficulty)).Cast<EncounterDifficulty>().ToList();
+    public EncounterFilter()
+    {
+        ResetFilter();
+    }
 
     public IList<EncounterDifficulty> Difficulties => _difficulties;
 
@@ -50,10 +48,5 @@ public partial class EncounterFilter : FilterValues
         MaximumDifficulty = EncounterDifficulty.VeryDeadly;
         MinimumEnemiesFilter = 0;
         MinimumDifficulty = EncounterDifficulty.None;
-    }
-
-    public EncounterFilter()
-    {
-        ResetFilter();
     }
 }

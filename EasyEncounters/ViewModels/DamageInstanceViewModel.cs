@@ -1,55 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models.Enums;
 
-namespace EasyEncounters.ViewModels
+namespace EasyEncounters.ViewModels;
+
+public partial class DamageInstanceViewModel : ObservableRecipient
 {
-    public partial class DamageInstanceViewModel : ObservableRecipient
+    private readonly IActiveEncounterService _activeEncounterService;
+    private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
+
+    [ObservableProperty]
+    private int _damageValue;
+
+    [ObservableProperty]
+    private DamageType _selectedDamageType;
+
+    public DamageInstanceViewModel(IList<DamageCreatureViewModel> targets, IActiveEncounterService activeEncounterService)
     {
-        public ObservableCollection<DamageCreatureViewModel> Targets { get; private set; } = new();
+        _activeEncounterService = activeEncounterService;
 
-
-        partial void OnSelectedDamageTypeChanged(DamageType value)
+        Targets.Clear();
+        foreach (var target in targets)
         {
-            //add damage receive suggestion logic        
-            foreach(var target in Targets)
-            {
-                target.SelectedDamageVolume = _activeEncounterService.GetDamageVolumeSuggestion(target.ActiveEncounterCreatureViewModel.Creature, SelectedDamageType);
-            }
+            if (target.ActiveEncounterCreatureViewModel != null)
+                Targets.Add(new DamageCreatureViewModel(target.ActiveEncounterCreatureViewModel));
         }
+        SelectedDamageType = DamageType.None;
+    }
 
-        [ObservableProperty]
-        private int _damageValue;
+    public IList<DamageType> DamageTypes => _damageTypes;
+    public ObservableCollection<DamageCreatureViewModel> Targets { get; private set; } = new();
 
-        [ObservableProperty]
-        private DamageType _selectedDamageType;
-
-        private IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
-
-        public IList<DamageType> DamageTypes => _damageTypes;
-
-        private readonly IActiveEncounterService _activeEncounterService;
-        public DamageInstanceViewModel(IList<DamageCreatureViewModel> targets, IActiveEncounterService activeEncounterService)
+    partial void OnSelectedDamageTypeChanged(DamageType value)
+    {
+        //add damage receive suggestion logic
+        foreach (var target in Targets)
         {
-            _activeEncounterService = activeEncounterService;
-            
-            Targets.Clear();
-            foreach(var target in targets)
-            {
-                if(target.ActiveEncounterCreatureViewModel != null)
-                    Targets.Add(new DamageCreatureViewModel(target.ActiveEncounterCreatureViewModel));
-            }
-            SelectedDamageType = DamageType.None;
+            target.SelectedDamageVolume = _activeEncounterService.GetDamageVolumeSuggestion(target.ActiveEncounterCreatureViewModel.Creature, SelectedDamageType);
         }
-
-
-
-
     }
 }

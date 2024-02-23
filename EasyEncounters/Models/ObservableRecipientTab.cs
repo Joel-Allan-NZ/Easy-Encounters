@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using EasyEncounters.Contracts.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 
@@ -15,10 +10,10 @@ public abstract partial class ObservableRecipientTab : ObservableRecipient, ITab
     private Page? _content;
 
     [ObservableProperty]
-    private string? _tabName;
+    private bool _isClosable;
 
     [ObservableProperty]
-    private bool _isClosable;
+    private string? _tabName;
 
     //public Page? Content
     //{
@@ -29,12 +24,13 @@ public abstract partial class ObservableRecipientTab : ObservableRecipient, ITab
     //{
     //    get; set;
     //}
-    
+
     //public bool IsClosable
     //{
     //    get; set;
     //}
 
     public abstract void OnTabClosed();
+
     public abstract void OnTabOpened(object? parameter);
 }

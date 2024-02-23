@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EasyEncounters.Core.Models.Enums;
 
 namespace EasyEncounters.ViewModels;
-public partial class DamageTypesViewModel: ObservableRecipient
+
+public partial class DamageTypesViewModel : ObservableRecipient
 {
     [ObservableProperty]
     private string _enumString;
 
-    public DamageType DamageTypes
+    public DamageTypesViewModel(DamageType damageTypes)
     {
-        get; set;
+        DamageTypes = damageTypes;
+        EnumString = DamageTypes.ToString();
     }
 
     public bool Acid
@@ -34,6 +31,11 @@ public partial class DamageTypesViewModel: ObservableRecipient
     {
         get => Flagged();
         set => HandleFlag(value);
+    }
+
+    public DamageType DamageTypes
+    {
+        get; set;
     }
 
     public bool Fire
@@ -55,6 +57,18 @@ public partial class DamageTypesViewModel: ObservableRecipient
     }
 
     public bool Necrotic
+    {
+        get => Flagged();
+        set => HandleFlag(value);
+    }
+
+    public bool NonMagicalPhysical
+    {
+        get => Flagged();
+        set => HandleFlag(value);
+    }
+
+    public bool NonSilveredPhysical
     {
         get => Flagged();
         set => HandleFlag(value);
@@ -96,23 +110,14 @@ public partial class DamageTypesViewModel: ObservableRecipient
         set => HandleFlag(value);
     }
 
-    public bool NonSilveredPhysical
+    private void AddFlag(string name)
     {
-        get => Flagged();
-        set => HandleFlag(value);
+        DamageTypes |= (DamageType)Enum.Parse(typeof(DamageType), name);
     }
 
-    public bool NonMagicalPhysical
+    private bool Flagged([CallerMemberName] string name = "")
     {
-        get => Flagged();
-        set => HandleFlag(value);
-    }
-
-
-    public DamageTypesViewModel(DamageType damageTypes)
-    {
-        DamageTypes = damageTypes;
-        EnumString = DamageTypes.ToString();
+        return DamageTypes.HasFlag((DamageType)Enum.Parse(typeof(DamageType), name));
     }
 
     private void HandleFlag(bool value, [CallerMemberName] string name = "")
@@ -127,19 +132,9 @@ public partial class DamageTypesViewModel: ObservableRecipient
         }
         EnumString = DamageTypes.ToString();
     }
-    private bool Flagged([CallerMemberName] string name = "")
-    {
-        return DamageTypes.HasFlag((DamageType)Enum.Parse(typeof(DamageType), name));
-    }
-
-    private void AddFlag(string name)
-    {
-        DamageTypes |= (DamageType)Enum.Parse(typeof(DamageType), name);
-    }
 
     private void RemoveFlag(string name)
     {
         DamageTypes &= ~(DamageType)Enum.Parse(typeof(DamageType), name);
     }
-
 }

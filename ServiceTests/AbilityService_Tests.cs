@@ -5,22 +5,15 @@ namespace ServiceTests;
 
 public class AbilityService_Tests : IDisposable
 {
-    AbilityService? _abilityService;
-    int attackBaseValue;
-    int saveBaseValue;
+    private AbilityService? _abilityService;
+    private int attackBaseValue;
+    private int saveBaseValue;
 
     public AbilityService_Tests()
     {
         _abilityService = new AbilityService();
         attackBaseValue = 10;
         saveBaseValue = 8;
-    }
-    public void Dispose()
-    {
-        _abilityService = null;
-        attackBaseValue = 0;
-        saveBaseValue = 0;
-
     }
 
     [Fact]
@@ -75,38 +68,18 @@ public class AbilityService_Tests : IDisposable
             Assert.Equal(copied.TimeDurationType, targetAbility.TimeDurationType);
             Assert.Equal(copied.TargetDistanceType, targetAbility.TargetDistanceType);
         });
-
-    }
-
-    [Fact]
-    public void CreateActiveAbility_IsNotNull()
-    {
-        ActiveEncounterCreature creature = new()
-        {
-            ProficiencyBonus = 2,
-        };
-
-        Ability ability = new()
-        {
-            Resolution = EasyEncounters.Core.Models.Enums.ResolutionType.Attack
-        };
-
-        var activeAbility = _abilityService.CreateActiveAbility(creature, ability, 1);
-
-
-        Assert.NotNull(activeAbility);
     }
 
     [Theory]
-    [InlineData(2,2)]
-    [InlineData(0,0)]
-    [InlineData(1,0)]
-    [InlineData(0,1)]
-    [InlineData(100,500)]
-    [InlineData(0,-5)]
+    [InlineData(2, 2)]
+    [InlineData(0, 0)]
+    [InlineData(1, 0)]
+    [InlineData(0, 1)]
+    [InlineData(100, 500)]
+    [InlineData(0, -5)]
     [InlineData(2, -5)]
-    [InlineData(-2,3)]
-    [InlineData(-2,-8)]
+    [InlineData(-2, 3)]
+    [InlineData(-2, -8)]
     public void CreateActiveAbility_CanResolveAttack(int prof, int abilityBonus)
     {
         ActiveEncounterCreature creature = new()
@@ -151,5 +124,28 @@ public class AbilityService_Tests : IDisposable
         Assert.Equal(activeAbility.ResolutionValue, prof + abilityBonus + saveBaseValue);
     }
 
+    [Fact]
+    public void CreateActiveAbility_IsNotNull()
+    {
+        ActiveEncounterCreature creature = new()
+        {
+            ProficiencyBonus = 2,
+        };
 
+        Ability ability = new()
+        {
+            Resolution = EasyEncounters.Core.Models.Enums.ResolutionType.Attack
+        };
+
+        var activeAbility = _abilityService.CreateActiveAbility(creature, ability, 1);
+
+        Assert.NotNull(activeAbility);
+    }
+
+    public void Dispose()
+    {
+        _abilityService = null;
+        attackBaseValue = 0;
+        saveBaseValue = 0;
+    }
 }

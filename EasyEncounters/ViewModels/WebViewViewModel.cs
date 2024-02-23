@@ -14,53 +14,35 @@ namespace EasyEncounters.ViewModels;
 // https://docs.microsoft.com/microsoft-edge/webview2/concepts/distribution
 public partial class WebViewViewModel : ObservableRecipient, INavigationAware
 {
-    // TODO: Set the default URL to display.
     [ObservableProperty]
-    private Uri source = new("https://docs.microsoft.com/windows/apps/");
+    private bool hasFailures;
 
     [ObservableProperty]
     private bool isLoading = true;
 
+    // TODO: Set the default URL to display.
     [ObservableProperty]
-    private bool hasFailures;
-
-    public IWebViewService WebViewService
-    {
-        get;
-    }
+    private Uri source = new("https://docs.microsoft.com/windows/apps/");
 
     public WebViewViewModel(IWebViewService webViewService)
     {
         WebViewService = webViewService;
     }
 
-    [RelayCommand]
-    private async Task OpenInBrowser()
+    public IWebViewService WebViewService
     {
-        if (WebViewService.Source != null)
-        {
-            await Windows.System.Launcher.LaunchUriAsync(WebViewService.Source);
-        }
+        get;
     }
 
-    [RelayCommand]
-    private void Reload()
+    public void OnNavigatedFrom()
     {
-        WebViewService.Reload();
+        WebViewService.UnregisterEvents();
+        WebViewService.NavigationCompleted -= OnNavigationCompleted;
     }
 
-    [RelayCommand(CanExecute = nameof(BrowserCanGoForward))]
-    private void BrowserForward()
+    public void OnNavigatedTo(object parameter)
     {
-        if (WebViewService.CanGoForward)
-        {
-            WebViewService.GoForward();
-        }
-    }
-
-    private bool BrowserCanGoForward()
-    {
-        return WebViewService.CanGoForward;
+        WebViewService.NavigationCompleted += OnNavigationCompleted;
     }
 
     [RelayCommand(CanExecute = nameof(BrowserCanGoBack))]
@@ -77,15 +59,18 @@ public partial class WebViewViewModel : ObservableRecipient, INavigationAware
         return WebViewService.CanGoBack;
     }
 
-    public void OnNavigatedTo(object parameter)
+    private bool BrowserCanGoForward()
     {
-        WebViewService.NavigationCompleted += OnNavigationCompleted;
+        return WebViewService.CanGoForward;
     }
 
-    public void OnNavigatedFrom()
+    [RelayCommand(CanExecute = nameof(BrowserCanGoForward))]
+    private void BrowserForward()
     {
-        WebViewService.UnregisterEvents();
-        WebViewService.NavigationCompleted -= OnNavigationCompleted;
+        if (WebViewService.CanGoForward)
+        {
+            WebViewService.GoForward();
+        }
     }
 
     private void OnNavigationCompleted(object? sender, CoreWebView2WebErrorStatus webErrorStatus)
@@ -106,5 +91,20 @@ public partial class WebViewViewModel : ObservableRecipient, INavigationAware
         HasFailures = false;
         IsLoading = true;
         WebViewService?.Reload();
+    }
+
+    [RelayCommand]
+    private async Task OpenInBrowser()
+    {
+        if (WebViewService.Source != null)
+        {
+            await Windows.System.Launcher.LaunchUriAsync(WebViewService.Source);
+        }
+    }
+
+    [RelayCommand]
+    private void Reload()
+    {
+        WebViewService.Reload();
     }
 }

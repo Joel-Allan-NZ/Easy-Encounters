@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml.Data;
+﻿using Microsoft.UI.Xaml.Data;
 
 namespace EasyEncounters.Helpers;
+
 public class EnumToStringConverter : IValueConverter
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="value">The type of enumeration</param>
     /// <param name="targetType"></param>
@@ -18,7 +14,6 @@ public class EnumToStringConverter : IValueConverter
     /// <returns></returns>
     public object Convert(object value, Type targetType, object parameter, string language)
     { //converting to string: should be trivial
-
         try
         {
             if (value is Enum enumvalue)
@@ -31,7 +26,6 @@ public class EnumToStringConverter : IValueConverter
             return "Unknown Value";
         }
         throw new ArgumentException($"{value} is not a supported type.");
-
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

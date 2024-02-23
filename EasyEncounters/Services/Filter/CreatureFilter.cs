@@ -1,25 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using EasyEncounters.Core.Models;
-using EasyEncounters.Core.Models.Enums;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using EasyEncounters.ViewModels;
 
 namespace EasyEncounters.Services.Filter;
+
 public partial class CreatureFilter : FilterValues
 {
-
     [ObservableProperty]
-    private List<CreatureViewModel> _searchSuggestions = new();
+    private double _maximumCRFilter;
 
     [ObservableProperty]
     private double _minimumCRFilter;
 
     [ObservableProperty]
-    private double _maximumCRFilter;
+    private List<CreatureViewModel> _searchSuggestions = new();
 
     public ICollection<FilterCriteria<CreatureViewModel>> GenerateFilterCriteria(string text)
     {
@@ -37,5 +30,4 @@ public partial class CreatureFilter : FilterValues
         MaximumCRFilter = 30; //that's as high as she goes cap'n
         MinimumCRFilter = 0;
     }
-
 }

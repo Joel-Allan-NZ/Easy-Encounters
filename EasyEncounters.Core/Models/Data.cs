@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EasyEncounters.Core.Models;
+﻿namespace EasyEncounters.Core.Models;
 #nullable enable
+
 internal class Data
 {
-    public List<Party> Parties
+    /// <summary>
+    /// Laziest way to manage persistence
+    /// </summary>
+    public Data()
     {
-        get; set;
+        Parties = new List<Party>();
+        Creatures = new List<Creature>();
+        Encounters = new List<Encounter>();
+        Campaigns = new List<Campaign>();
+        Abilities = new List<Ability>();
+        DamageInstancesDone = new Dictionary<Creature, List<int>>();
     }
 
-    public List<Encounter> Encounters
-    {
-        get; set;
-    }
-
-    public List<Creature> Creatures
+    public List<Ability> Abilities
     {
         get; set;
     }
@@ -33,7 +31,7 @@ internal class Data
         get; set;
     }
 
-    public List<Ability> Abilities
+    public List<Creature> Creatures
     {
         get; set;
     }
@@ -42,16 +40,14 @@ internal class Data
     {
         get; set;
     }
-    /// <summary>
-    /// Laziest way to manage persistence
-    /// </summary>
-    public Data()
+
+    public List<Encounter> Encounters
     {
-        Parties = new List<Party>();
-        Creatures = new List<Creature>();
-        Encounters = new List<Encounter>();
-        Campaigns = new List<Campaign>();
-        Abilities = new List<Ability>();
-        DamageInstancesDone = new Dictionary<Creature, List<int>>();
+        get; set;
+    }
+
+    public List<Party> Parties
+    {
+        get; set;
     }
 }

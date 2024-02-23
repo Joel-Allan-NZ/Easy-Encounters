@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EasyEncounters.Core.Models;
-using EasyEncounters.Models;
+﻿using EasyEncounters.Core.Models;
 
-namespace EasyEncounters.Messages
+namespace EasyEncounters.Messages;
+
+public class AbilityChangeCommitMessage
 {
-    public class AbilityChangeCommitMessage
+    public AbilityChangeCommitMessage(Ability ability)
     {
-        public Ability Ability
-        {
-            get; private set;
-        }
+        Ability = ability;
+    }
 
-        public AbilityChangeCommitMessage(Ability ability)
-        {
-            Ability = ability;
-        }
+    public Ability Ability
+    {
+        get; private set;
     }
 }

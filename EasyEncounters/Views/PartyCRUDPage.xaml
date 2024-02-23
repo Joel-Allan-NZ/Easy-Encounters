@@ -2,51 +2,50 @@
 <Page
     x:Class="EasyEncounters.Views.PartyCRUDPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:EasyEncounters.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
         <ScrollViewer HorizontalScrollMode="Disabled">
-             <ListView ItemsSource="{x:Bind ViewModel.Parties, Mode=OneWay}"
+            <ListView ItemsSource="{x:Bind ViewModel.Parties, Mode=OneWay}"
                        x:Name="PartiesListView"
                                Margin="0,10,0,0"
                                HorizontalContentAlignment="Stretch"
                                HorizontalAlignment="Stretch">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="DoubleTapped">
-                        <Core:InvokeCommandAction Command="{x:Bind ViewModel.EditPartyCommand}" CommandParameter="{x:Bind PartiesListView.SelectedItem, Mode=OneWay}"/>
+                        <Core:InvokeCommandAction Command="{x:Bind ViewModel.EditPartyCommand}" CommandParameter="{x:Bind PartiesListView.SelectedItem, Mode=OneWay}" />
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     </Style>
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid 
+                        <Grid
                                HorizontalAlignment="Stretch">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="4*"/>
-                                <ColumnDefinition Width="2*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="4*"/>
+                                <ColumnDefinition Width="4*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="4*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="2*"/>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="2*" />
                             </Grid.RowDefinitions>
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
-                                    <MenuFlyoutItem Text="Edit" Command="{Binding RequestEditPartyCommand}"/>
-                                    <MenuFlyoutItem Text="Copy" Command="{Binding RequestCopyPartyCommand}"/>
-                                    <MenuFlyoutItem Text="Delete" Command="{Binding RequestDeletePartyCommand}"/>
+                                    <MenuFlyoutItem Text="Edit" Command="{Binding RequestEditPartyCommand}" />
+                                    <MenuFlyoutItem Text="Copy" Command="{Binding RequestCopyPartyCommand}" />
+                                    <MenuFlyoutItem Text="Delete" Command="{Binding RequestDeletePartyCommand}" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
                             <TextBlock Text="{Binding Party.Name}"
@@ -55,49 +54,48 @@
                                        Grid.RowSpan="2"
                                        VerticalAlignment="Center"
                                        FontSize="16"
-                                       Margin="5,5,5,5"/>
+                                       Margin="5,5,5,5" />
                             <TextBlock Text="Campaign"
                                         FontSize="8"
                                         Grid.Column="1"
                                         Grid.Row="0"
-                                        Margin="5,5,5,5"/>
+                                        Margin="5,5,5,5" />
                             <TextBlock Text="{Binding Party.Campaign.Name}"
                                            VerticalAlignment="Center"
                                            Grid.Column="1"
                                            Grid.Row="1"
-                                           Margin="5,5,5,5"/>
-                            <TextBlock Text="Members" 
-                                           FontSize="8" 
+                                           Margin="5,5,5,5" />
+                            <TextBlock Text="Members"
+                                           FontSize="8"
                                            Margin="5,5,5,5"
                                            Grid.Column="2"
-                                           Grid.Row="0"/>
+                                           Grid.Row="0" />
                             <TextBlock Text="{Binding Party.Members.Count}"
                                        Margin="5,5,5,5"
                                         Grid.Column="2"
-                                       Grid.Row="1"/>
+                                       Grid.Row="1" />
                             <TextBlock Text="Campaign Description"
                                            Grid.Column="3"
                                            Grid.Row="0"
-                                           FontSize="8" 
-                                           Margin="5,5,5,5"/>
-                                <TextBlock Text="{Binding Party.Campaign.Description}"
+                                           FontSize="8"
+                                           Margin="5,5,5,5" />
+                            <TextBlock Text="{Binding Party.Campaign.Description}"
                                             Margin="5,5,5,5"
                                             Grid.Column="3"
-                                           Grid.Row="1"/>
-
+                                           Grid.Row="1" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
         </ScrollViewer>
 
-        <Button Command="{x:Bind ViewModel.AddNewPartyCommand}" 
-                VerticalAlignment="Bottom" 
+        <Button Command="{x:Bind ViewModel.AddNewPartyCommand}"
+                VerticalAlignment="Bottom"
                 Margin="5,5,5,5"
                 KeyboardAcceleratorPlacementMode="Auto"
                 ToolTipService.ToolTip="Add a new party">
             <Button.KeyboardAccelerators>
-                <KeyboardAccelerator Modifiers="Control" Key="N"/>
+                <KeyboardAccelerator Modifiers="Control" Key="N" />
             </Button.KeyboardAccelerators>
             <FontIcon Glyph="&#xF8AA;"></FontIcon>
         </Button>

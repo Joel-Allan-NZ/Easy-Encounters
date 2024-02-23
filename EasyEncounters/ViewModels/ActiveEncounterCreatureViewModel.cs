@@ -1,11 +1,4 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -13,55 +6,83 @@ using EasyEncounters.Core.Models;
 using EasyEncounters.Messages;
 using EasyEncounters.Models;
 using Microsoft.UI.Xaml;
-using Newtonsoft.Json.Linq;
 
 namespace EasyEncounters.ViewModels;
+
 public partial class ActiveEncounterCreatureViewModel : ObservableRecipient //todo: wrapper proxies for health etc, so tabs can show them accurately.
 {
     [ObservableProperty]
-    private ActiveEncounterCreature creature;
-
-    [ObservableProperty]
-    private Thickness targetVisibility;
-
-    [ObservableProperty]
-    private bool targeted;
-
-    [ObservableProperty]
-    private SpellSlotViewModel _spellSlots;
+    private ConditionTypesViewModel _conditions;
 
     [ObservableProperty]
     private int _currentHP;
 
     [ObservableProperty]
-    private ConditionTypesViewModel _conditions;
+    private SpellSlotViewModel _spellSlots;
+
+    [ObservableProperty]
+    private ActiveEncounterCreature creature;
+
+    [ObservableProperty]
+    private bool targeted;
+
+    [ObservableProperty]
+    private Thickness targetVisibility;
+
+    public ActiveEncounterCreatureViewModel(ActiveEncounterCreature creature)
+    {
+        this.Creature = creature;
+        TargetVisibility = new Thickness(0);
+        CurrentHP = creature.CurrentHP;
+
+        foreach (var activeAbility in creature.ActiveAbilities)
+            Abilities.Add(new ObservableActiveAbility(activeAbility));
+
+        SpellSlots = new SpellSlotViewModel(creature.SpellSlots);
+        Conditions = new ConditionTypesViewModel(creature.ActiveConditions);
+    }
+
+    public ObservableCollection<ObservableActiveAbility> Abilities
+    {
+        get; private set;
+    } = new();
+
+    //set => SetProperty(_ability.Concentration, value, _ability, (m, v) => m.Concentration = v);
+    public bool Concentrating
+    {
+        get => Creature.Concentrating;
+        set => SetProperty(Creature.Concentrating, value, Creature, (m, v) => m.Concentrating = v);
+    }
+
+    public bool Dead
+    {
+        get => this.Creature.Dead;
+        set
+        {
+            if (this.Creature.Dead != value)
+            {
+                this.Creature.Dead = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public bool HasConditionImmunities => this.Creature.ConditionImmunities > Core.Models.Enums.Condition.None;
+
+    public bool HasFeatures => this.Creature.Features.Length > 1;
+
+    public bool HasImmunities => this.Creature.Immunity > Core.Models.Enums.DamageType.None;
+
+    public bool HasResists => this.Creature.Resistance > Core.Models.Enums.DamageType.None;
+
+    public bool HasSpellSlots => this.Creature.SpellSlots.Any(x => x.Value > 0);
+
+    public bool HasVulnerabilities => this.Creature.Vulnerability > Core.Models.Enums.DamageType.None;
 
     public int Initiative
     {
         get => Creature.Initiative;
         set => SetProperty(Creature.Initiative, value, Creature, (m, v) => m.Initiative = v);
-    }
-
-    public bool HasResists => this.Creature.Resistance > Core.Models.Enums.DamageType.None;
-
-    public bool HasImmunities => this.Creature.Immunity > Core.Models.Enums.DamageType.None;
-
-    public bool HasVulnerabilities => this.Creature.Vulnerability > Core.Models.Enums.DamageType.None;
-
-    public bool HasFeatures => this.Creature.Features.Length > 1;
-
-    public bool HasConditionImmunities => this.Creature.ConditionImmunities > Core.Models.Enums.Condition.None;
-
-    public bool HasSpellSlots => this.Creature.SpellSlots.Any(x => x.Value > 0);
-
-    partial void OnTargetedChanged(bool value)
-    {
-        if (value)
-        {
-            TargetVisibility = new Thickness(2);
-        }
-        else
-            TargetVisibility = new Thickness(0);
     }
 
     public string Notes
@@ -71,19 +92,6 @@ public partial class ActiveEncounterCreatureViewModel : ObservableRecipient //to
         {
             this.Creature.Notes = value;
             OnPropertyChanged();
-        }
-    }
-
-    public bool Dead
-    {
-        get => this.Creature.Dead;
-        set
-        {
-            if(this.Creature.Dead != value)
-            {
-                this.Creature.Dead = value;
-                OnPropertyChanged();
-            }
         }
     }
 
@@ -99,68 +107,6 @@ public partial class ActiveEncounterCreatureViewModel : ObservableRecipient //to
             }
         }
     }
-    //set => SetProperty(_ability.Concentration, value, _ability, (m, v) => m.Concentration = v);
-    public bool Concentrating
-    {
-        get => Creature.Concentrating;
-        set => SetProperty(Creature.Concentrating, value, Creature, (m, v) => m.Concentrating = v);
-    }
-
-    public ObservableCollection<ObservableActiveAbility> Abilities
-    {
-        get; private set;
-    } = new();
-
-    [RelayCommand]
-    private void ToggleTarget()
-    {
-        Targeted = !Targeted;
-    }
-
-    [RelayCommand]
-    private void DamageRequested()
-    {
-        WeakReferenceMessenger.Default.Send(new DamageSourceSelectedMessage(this));
-    }
-
-    [RelayCommand]
-    private void AddTargetRequested()
-    {
-        WeakReferenceMessenger.Default.Send(new AddTargetCreatureRequestMessage(this));
-    }
-
-    [RelayCommand]
-    private void InspectRequested()
-    {
-        WeakReferenceMessenger.Default.Send(new InspectRequestMessage(this));
-    }
-
-    /// <summary>
-    /// Helper to check equality between this ActiveEncounterCreature's Creature property and the given parameter creature.
-    /// </summary>
-    /// <param name="creature"></param>
-    /// <returns></returns>
-    public bool IsWrapperFor(ActiveEncounterCreature creature)
-    {
-        
-        return (this.Creature.Equals(creature));
-        
-    }
-
-
-
-    public ActiveEncounterCreatureViewModel(ActiveEncounterCreature creature)
-    {
-        this.Creature = creature;
-        TargetVisibility = new Thickness(0);
-        CurrentHP = creature.CurrentHP;
-
-        foreach (var activeAbility in creature.ActiveAbilities)
-            Abilities.Add(new ObservableActiveAbility(activeAbility));
-
-        SpellSlots = new SpellSlotViewModel(creature.SpellSlots);
-        Conditions = new ConditionTypesViewModel(creature.ActiveConditions);
-    }
 
     public override bool Equals(object? obj)
     {
@@ -173,7 +119,49 @@ public partial class ActiveEncounterCreatureViewModel : ObservableRecipient //to
         return false;
     }
 
-    public override int GetHashCode() => Creature.GetHashCode();    
+    public override int GetHashCode() => Creature.GetHashCode();
+
+    /// <summary>
+    /// Helper to check equality between this ActiveEncounterCreature's Creature property and the given parameter creature.
+    /// </summary>
+    /// <param name="creature"></param>
+    /// <returns></returns>
+    public bool IsWrapperFor(ActiveEncounterCreature creature)
+    {
+        return (this.Creature.Equals(creature));
+    }
+
+    [RelayCommand]
+    private void AddTargetRequested()
+    {
+        WeakReferenceMessenger.Default.Send(new AddTargetCreatureRequestMessage(this));
+    }
+
+    [RelayCommand]
+    private void DamageRequested()
+    {
+        WeakReferenceMessenger.Default.Send(new DamageSourceSelectedMessage(this));
+    }
+
+    [RelayCommand]
+    private void InspectRequested()
+    {
+        WeakReferenceMessenger.Default.Send(new InspectRequestMessage(this));
+    }
+
+    partial void OnTargetedChanged(bool value)
+    {
+        if (value)
+        {
+            TargetVisibility = new Thickness(2);
+        }
+        else
+            TargetVisibility = new Thickness(0);
+    }
+
+    [RelayCommand]
+    private void ToggleTarget()
+    {
+        Targeted = !Targeted;
+    }
 }
-
-

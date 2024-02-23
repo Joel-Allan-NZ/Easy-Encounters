@@ -15,6 +15,13 @@ public partial class ShellViewModel : ObservableRecipient
     [ObservableProperty]
     private object? selected;
 
+    public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService)
+    {
+        NavigationService = navigationService;
+        NavigationService.Navigated += OnNavigated;
+        NavigationViewService = navigationViewService;
+    }
+
     public INavigationService NavigationService
     {
         get;
@@ -23,13 +30,6 @@ public partial class ShellViewModel : ObservableRecipient
     public INavigationViewService NavigationViewService
     {
         get;
-    }
-
-    public ShellViewModel(INavigationService navigationService, INavigationViewService navigationViewService)
-    {
-        NavigationService = navigationService;
-        NavigationService.Navigated += OnNavigated;
-        NavigationViewService = navigationViewService;
     }
 
     private void OnNavigated(object sender, NavigationEventArgs e)

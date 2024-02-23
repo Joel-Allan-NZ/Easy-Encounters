@@ -2,34 +2,34 @@
 <UserControl
     x:Class="EasyEncounters.Views.SpellGrid"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:EasyEncounters.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls" 
-    xmlns:Core="using:Microsoft.Xaml.Interactions.Core" xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:helpers="using:EasyEncounters.Helpers"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <helpers:EnumToStringConverter x:Key="EnumToStringConverter"/>
+        <helpers:EnumToStringConverter x:Key="EnumToStringConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.Resources>
             <ResourceDictionary>
-                <SolidColorBrush x:Key="DataGridCellFocusVisualPrimaryBrush" Color="Transparent"/>
-                <SolidColorBrush x:Key="DataGridCellFocusVisualSecondaryBrush" Color="Transparent"/>
+                <SolidColorBrush x:Key="DataGridCellFocusVisualPrimaryBrush" Color="Transparent" />
+                <SolidColorBrush x:Key="DataGridCellFocusVisualSecondaryBrush" Color="Transparent" />
                 <DataTemplate x:Key="RowDetailsTemplate">
                     <StackPanel>
                         <TextBlock Text="{Binding Ability.EffectDescription}"
-                           TextWrapping="Wrap"/>
+                           TextWrapping="Wrap" />
                     </StackPanel>
                 </DataTemplate>
             </ResourceDictionary>
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="10*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="10*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Name="DataGridFilterBox"
                 Orientation="Horizontal"
@@ -47,7 +47,7 @@
                         <Flyout>
                             <StackPanel Orientation="Vertical">
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="Spell Level:"/>
+                                    <TextBlock Text="Spell Level:" />
                                     <StackPanel Orientation="Horizontal">
                                         <ComboBox ItemsSource="{x:Bind FilterSpellLevelSource}"
                                                   SelectedItem="{x:Bind FilterMinimumSpellLevel, Mode=TwoWay}"
@@ -55,73 +55,73 @@
                                                   Margin="2">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
-                                                    <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                                                    <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
                                         </ComboBox>
                                         <TextBlock Text="-"
                                                        Margin="2"
-                                                       VerticalAlignment="Center"/>
+                                                       VerticalAlignment="Center" />
                                         <ComboBox ItemsSource="{x:Bind FilterSpellLevelSource}"
                                                   SelectedItem="{x:Bind FilterMaximumSpellLevel, Mode=TwoWay}"
                                                   MinWidth="124"
                                                   Margin="2">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate>
-                                                    <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                                                    <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
                                         </ComboBox>
                                     </StackPanel>
                                 </StackPanel>
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="Spell School:"/>
+                                    <TextBlock Text="Spell School:" />
                                     <ComboBox ItemsSource="{x:Bind FilterSpellSchoolSource}"
                                               SelectedItem="{x:Bind FilterSpellSchoolSelected, Mode=TwoWay}"
                                               MinWidth="124"
                                               Margin="2">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                                                <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="Concentration:"/>
+                                    <TextBlock Text="Concentration:" />
                                     <ComboBox ItemsSource="{x:Bind FilterConcentrationSource}"
                                               SelectedItem="{x:Bind FilterConcentrationSelected, Mode=TwoWay}"
                                               MinWidth="124"
                                               Margin="2">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                                                <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="Damage Type:"/>
+                                    <TextBlock Text="Damage Type:" />
                                     <ComboBox ItemsSource="{x:Bind FilterDamageTypeSource}"
                                               SelectedItem="{x:Bind FilterDamageTypeSelected, Mode=TwoWay}"
                                               MinWidth="124"
                                               Margin="2">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                                                <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="Resolution Type:"/>
+                                    <TextBlock Text="Resolution Type:" />
                                     <ComboBox ItemsSource="{x:Bind FilterResolutionSource}"
                                               SelectedItem="{x:Bind FilterResolutionSelected, Mode=TwoWay}"
                                               MinWidth="124"
                                               Margin="2">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                                                <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
@@ -131,7 +131,7 @@
                     </AppBarButton.Flyout>
                 </AppBarButton>
             </CommandBar>
-            <AutoSuggestBox x:Name="SearchBox"                            
+            <AutoSuggestBox x:Name="SearchBox"
                         HorizontalAlignment="Stretch"
                         MinWidth="200"
                         QueryIcon="Find"
@@ -144,12 +144,12 @@
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="QuerySubmitted">
                         <Core:EventTriggerBehavior.Actions>
-                            <Core:InvokeCommandAction Command="{x:Bind FilterCommand}" CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}"/>
+                            <Core:InvokeCommandAction Command="{x:Bind FilterCommand}" CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}" />
                         </Core:EventTriggerBehavior.Actions>
                     </Core:EventTriggerBehavior>
                     <Core:EventTriggerBehavior EventName="TextChanged">
                         <Core:EventTriggerBehavior.Actions>
-                            <Core:InvokeCommandAction Command="{x:Bind SearchTextChangeCommand}" CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}"/>
+                            <Core:InvokeCommandAction Command="{x:Bind SearchTextChangeCommand}" CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}" />
                         </Core:EventTriggerBehavior.Actions>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
@@ -158,9 +158,9 @@
                     Background="Transparent"
                     VerticalAlignment="Center"
                     Margin="0,0,8,0">
-                <AppBarButton Label="Search"                      
+                <AppBarButton Label="Search"
                           Command="{x:Bind FilterCommand}"
-                          CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}"/>
+                          CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}" />
             </CommandBar>
         </StackPanel>
         <controls:DataGrid Grid.Row="1"
@@ -175,10 +175,10 @@
                        AutoGenerateColumns="False">
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="Sorting">
-                    <Core:InvokeCommandAction Command="{x:Bind SortCommand}"/>
+                    <Core:InvokeCommandAction Command="{x:Bind SortCommand}" />
                 </Core:EventTriggerBehavior>
                 <Core:EventTriggerBehavior EventName="DoubleTapped">
-                    <Core:InvokeCommandAction Command="{x:Bind SelectSpellCommand}" CommandParameter="{x:Bind SpellDG.SelectedItem, Mode=OneWay}"/>
+                    <Core:InvokeCommandAction Command="{x:Bind SelectSpellCommand}" CommandParameter="{x:Bind SpellDG.SelectedItem, Mode=OneWay}" />
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
             <controls:DataGrid.RowStyle>
@@ -186,9 +186,9 @@
                     <Setter Property="controls:DataGridRow.ContextFlyout">
                         <Setter.Value>
                             <MenuFlyout>
-                                <MenuFlyoutItem Text="Edit" Command="{Binding EditAbilityRequestedCommand}"/>
-                                <MenuFlyoutItem Text="Copy" Command="{Binding CopyAbilityRequestedCommand}"/>
-                                <MenuFlyoutItem Text="Delete" Command="{Binding DeleteAbilityRequestedCommand}"/>
+                                <MenuFlyoutItem Text="Edit" Command="{Binding EditAbilityRequestedCommand}" />
+                                <MenuFlyoutItem Text="Copy" Command="{Binding CopyAbilityRequestedCommand}" />
+                                <MenuFlyoutItem Text="Delete" Command="{Binding DeleteAbilityRequestedCommand}" />
                             </MenuFlyout>
                         </Setter.Value>
                     </Setter>
@@ -198,41 +198,41 @@
                 <controls:DataGridTextColumn Header="Name"
                                              Tag="AbilityName"
                                              Binding="{Binding Ability.Name}"
-                                             CanUserSort="True"/>
+                                             CanUserSort="True" />
                 <controls:DataGridTextColumn Header="Spell Level"
                                              Tag="AbilityLevel"
                                              Binding="{Binding Ability.SpellLevel, Converter={StaticResource EnumToStringConverter}}"
-                                             CanUserSort="True"/>
+                                             CanUserSort="True" />
                 <controls:DataGridTextColumn Header="Spell School"
                                              Tag="AbilitySchool"
                                              Binding="{Binding Ability.MagicSchool, Converter={StaticResource EnumToStringConverter}}"
-                                             CanUserSort="True"/>
+                                             CanUserSort="True" />
                 <controls:DataGridTextColumn Header="Resolution Type"
                                              Tag="AbilityResolutionType"
                                              Binding="{Binding Ability.Resolution, Converter={StaticResource EnumToStringConverter}}"
-                                             CanUserSort="True"/>
+                                             CanUserSort="True" />
                 <controls:DataGridTextColumn Header="Save Type"
                                              Tag="AbilityResolutionStat"
                                              Binding="{Binding Ability.SaveType, Converter={StaticResource EnumToStringConverter}}"
-                                             CanUserSort="True"/>
+                                             CanUserSort="True" />
                 <controls:DataGridTextColumn Header="Damage Type"
                                              Tag="AbilityDamageType"
                                              Binding="{Binding Ability.DamageTypes, Converter={StaticResource EnumToStringConverter}}"
-                                             CanUserSort="True"/>
+                                             CanUserSort="True" />
                 <controls:DataGridTextColumn Header="Concentration"
                                              Tag="AbilityConcentration"
                                              Binding="{Binding Ability.Concentration}"
-                                             CanUserSort="True"/>
+                                             CanUserSort="True" />
             </controls:DataGrid.Columns>
         </controls:DataGrid>
         <Button Command="{x:Bind AddSpellCommand}"
             Grid.Row="2"
-                VerticalAlignment="Bottom" 
+                VerticalAlignment="Bottom"
                 Margin="5,5,5,5"
                 KeyboardAcceleratorPlacementMode="Auto"
                 ToolTipService.ToolTip="Add a new creature">
             <Button.KeyboardAccelerators>
-                <KeyboardAccelerator Modifiers="Control" Key="N"/>
+                <KeyboardAccelerator Modifiers="Control" Key="N" />
             </Button.KeyboardAccelerators>
             <FontIcon Glyph="&#xF8AA;"></FontIcon>
         </Button>

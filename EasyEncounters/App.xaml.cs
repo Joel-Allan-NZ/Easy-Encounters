@@ -2,14 +2,11 @@
 using EasyEncounters.Contracts.Services;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Services;
-using EasyEncounters.Helpers;
 using EasyEncounters.Models;
 using EasyEncounters.Services;
 using EasyEncounters.Services.Filter;
 using EasyEncounters.ViewModels;
 using EasyEncounters.Views;
-
-
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,31 +17,6 @@ namespace EasyEncounters;
 // To learn more about WinUI 3, see https://docs.microsoft.com/windows/apps/winui/winui3/.
 public partial class App : Application
 {
-    // The .NET Generic Host provides dependency injection, configuration, logging, and other services.
-    // https://docs.microsoft.com/dotnet/core/extensions/generic-host
-    // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
-    // https://docs.microsoft.com/dotnet/core/extensions/configuration
-    // https://docs.microsoft.com/dotnet/core/extensions/logging
-    public IHost Host
-    {
-        get;
-    }
-
-    public static T GetService<T>()
-        where T : class
-    {
-        if ((App.Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
-        {
-            throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
-        }
-
-        return service;
-    }
-
-    public static WindowEx MainWindow { get; } = new MainWindow();
-
-    public static UIElement? AppTitlebar { get; set; }
-
     public App()
     {
         InitializeComponent();
@@ -75,9 +47,6 @@ public partial class App : Application
             services.AddSingleton<IConditionService, ConditionService>();
             services.AddSingleton<IFilteringService, FilteringService>();
 
-
-
-
             // Core Services
             //services.AddSingleton<ISampleDataService, SampleDataService>();
             services.AddSingleton<IFileService, FileService>();
@@ -88,7 +57,6 @@ public partial class App : Application
             services.AddSingleton<IPartyXPService, PartyXPService>();
             services.AddSingleton<IDiceService, DiceService>();
             services.AddSingleton<ILogService, LogService>();
-            
 
             // Views and ViewModels
             services.AddTransient<SettingsViewModel>();
@@ -156,6 +124,41 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
     }
 
+    public static UIElement? AppTitlebar
+    {
+        get; set;
+    }
+
+    public static WindowEx MainWindow { get; } = new MainWindow();
+
+    // The .NET Generic Host provides dependency injection, configuration, logging, and other services.
+    // https://docs.microsoft.com/dotnet/core/extensions/generic-host
+    // https://docs.microsoft.com/dotnet/core/extensions/dependency-injection
+    // https://docs.microsoft.com/dotnet/core/extensions/configuration
+    // https://docs.microsoft.com/dotnet/core/extensions/logging
+    public IHost Host
+    {
+        get;
+    }
+
+    public static T GetService<T>()
+        where T : class
+    {
+        if ((App.Current as App)!.Host.Services.GetService(typeof(T)) is not T service)
+        {
+            throw new ArgumentException($"{typeof(T)} needs to be registered in ConfigureServices within App.xaml.cs.");
+        }
+
+        return service;
+    }
+
+    protected async override void OnLaunched(LaunchActivatedEventArgs args)
+    {
+        base.OnLaunched(args);
+
+        await App.GetService<IActivationService>().ActivateAsync(args);
+    }
+
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         var a = App.GetService<ILogService>();
@@ -172,12 +175,5 @@ public partial class App : Application
         //    hasHandledUnhandledException = true;
         //    throw e.Exception;
         //}
-    }
-
-    protected async override void OnLaunched(LaunchActivatedEventArgs args)
-    {
-        base.OnLaunched(args);
-
-        await App.GetService<IActivationService>().ActivateAsync(args);
     }
 }

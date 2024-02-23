@@ -17,7 +17,7 @@ public interface INavigationService
         get; set;
     }
 
-    bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false, bool ignoreNavigation = false);
-
     bool GoBack();
+
+    bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false, bool ignoreNavigation = false);
 }

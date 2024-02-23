@@ -42,7 +42,6 @@ public class PageService : IPageService
 
         //experimental:
         Configure<EncounterAddCreaturesTabViewModel, EncounterAddCreaturesTabPage>();
-
     }
 
     public Type GetPageType(string key)

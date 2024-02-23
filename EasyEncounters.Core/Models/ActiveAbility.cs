@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace EasyEncounters.Core.Models;
 
-namespace EasyEncounters.Core.Models;
 /// <summary>
-/// An ActiveAbilty is an Ability that belongs to an ActiveEncounterCreature, with to hit/save DC etc 
+/// An ActiveAbilty is an Ability that belongs to an ActiveEncounterCreature, with to hit/save DC etc
 /// adjusted to reflect that ActiveEncounterCreature. Main use case is Spells
 /// </summary>
 public class ActiveAbility : Ability

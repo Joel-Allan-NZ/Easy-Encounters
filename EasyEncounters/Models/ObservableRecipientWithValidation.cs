@@ -1,28 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 
-namespace EasyEncounters.Models
+namespace EasyEncounters.Models;
+
+public abstract class ObservableRecipientWithValidation : ObservableValidator
 {
-    public abstract class ObservableRecipientWithValidation : ObservableValidator
+    protected ObservableRecipientWithValidation()
+        : this(WeakReferenceMessenger.Default)
     {
-        protected ObservableRecipientWithValidation()
-            : this(WeakReferenceMessenger.Default)
-        {
-        }
+    }
 
-        protected ObservableRecipientWithValidation(IMessenger messenger)
-        {
-            Messenger = messenger;
-        }
+    protected ObservableRecipientWithValidation(IMessenger messenger)
+    {
+        Messenger = messenger;
+    }
 
-        protected IMessenger Messenger
-        {
-            get;
-        }
+    protected IMessenger Messenger
+    {
+        get;
     }
 }

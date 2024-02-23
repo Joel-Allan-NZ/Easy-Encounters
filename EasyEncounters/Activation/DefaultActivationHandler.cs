@@ -26,11 +26,15 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
     {
         if (await RequireRedirect())
         {
-
             _navigationService.NavigateTo(typeof(MainViewModel).FullName!, args.Arguments);
 
             await Task.CompletedTask;
         }
+    }
+
+    private void OnActivated(object? sender, AppActivationArguments e)
+    {
+        App.MainWindow.BringToFront();
     }
 
     private async Task<bool> RequireRedirect()
@@ -56,13 +60,6 @@ public class DefaultActivationHandler : ActivationHandler<LaunchActivatedEventAr
             App.Current.Exit();
         }
 
-
         return isRedirect;
     }
-
-    private void OnActivated(object? sender, AppActivationArguments e)
-    {
-        App.MainWindow.BringToFront();
-    }
-
 }

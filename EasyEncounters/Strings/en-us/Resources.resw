@@ -654,4 +654,7 @@
   <data name="CreatureType_Undead" xml:space="preserve">
     <value>Undead</value>
   </data>
+  <data name="ActionSpeed_Legendary" xml:space="preserve">
+    <value>Legendary Action</value>
+  </data>
 </root>

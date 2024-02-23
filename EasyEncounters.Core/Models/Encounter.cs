@@ -1,17 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-#nullable enable
+﻿#nullable enable
 
 namespace EasyEncounters.Core.Models;
+
 public class Encounter : Persistable
 {
+    public Encounter(string name = "default", List<Creature>? creatures = null, string description = "", double adjustedEncounterXP = -1, Campaign? campaign = null)
+    {
+        Creatures = creatures ?? new List<Creature>();
+        Name = name;
+        Id = Guid.NewGuid();
+        Description = description ?? "";
+        AdjustedEncounterXP = adjustedEncounterXP;
+        Campaign = campaign;
+    }
+
     /// <summary>
-    /// The name of the encounter, for differentiation/preparing encounter groups ahead of time.
+    /// The effective total monster XP from the encounter, following DMG rules. Useful for measuring the difficulty
+    /// of the encounter
     /// </summary>
-    public string Name
+    public double AdjustedEncounterXP
+    {
+        get; set;
+    }
+
+    /// <summary>
+    /// The Campaign this encounter was designed for, if any
+    /// </summary>
+    public Campaign? Campaign
     {
         get; set;
     }
@@ -33,30 +48,11 @@ public class Encounter : Persistable
     }
 
     /// <summary>
-    /// The effective total monster XP from the encounter, following DMG rules. Useful for measuring the difficulty
-    /// of the encounter
+    /// The name of the encounter, for differentiation/preparing encounter groups ahead of time.
     /// </summary>
-    public double AdjustedEncounterXP
+    public string Name
     {
         get; set;
-    }
-
-    /// <summary>
-    /// The Campaign this encounter was designed for, if any
-    /// </summary>
-    public Campaign? Campaign
-    {
-        get; set;
-    }
-
-    public Encounter(string name = "default", List<Creature>? creatures = null, string description = "", double adjustedEncounterXP = -1, Campaign? campaign = null)
-    {
-        Creatures = creatures ?? new List<Creature>();
-        Name = name;
-        Id = Guid.NewGuid();
-        Description = description ?? "";
-        AdjustedEncounterXP = adjustedEncounterXP;
-        Campaign = campaign;
     }
 
     public override bool Equals(object? obj)

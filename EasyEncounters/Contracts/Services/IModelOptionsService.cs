@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace EasyEncounters.Contracts.Services;
 
-namespace EasyEncounters.Contracts.Services;
 public interface IModelOptionsService
 {
     bool RollHP

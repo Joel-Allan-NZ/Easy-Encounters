@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -13,7 +8,6 @@ using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Messages;
-using Windows.ApplicationModel.UserDataTasks;
 
 namespace EasyEncounters.ViewModels;
 
@@ -22,40 +16,20 @@ namespace EasyEncounters.ViewModels;
 
 public partial class ActiveEncounterViewModel : ObservableRecipient, INavigationAware
 {
-    private readonly INavigationService _navigationService;
-    private readonly IDataService _dataService;
     private readonly IActiveEncounterService _activeEncounterService;
+    private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
+    private readonly IDataService _dataService;
+    private readonly INavigationService _navigationService;
     private ActiveEncounter? _activeEncounter;
 
-    private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
-    public IList<DamageType> DamageTypes => _damageTypes;
-
     [ObservableProperty]
-    private TargetDamageInstanceViewModel? _selectedTargetDamageInstance;
+    private ActiveEncounterCreatureViewModel? _damageSourceCreature;
 
     [ObservableProperty]
     private ActiveEncounterCreatureViewModel? _selectedCreature;
 
     [ObservableProperty]
-    private ActiveEncounterCreatureViewModel? _damageSourceCreature;
-
-    public ObservableCollection<ActiveEncounterCreatureViewModel> Creatures
-    {
-        get; private set;
-    } = new();
-
-    public ObservableCollection<string> CombatLog
-    {
-        get; private set;
-    } = new();
-
-    public ObservableCollection<TargetDamageInstanceViewModel> DamageInstances
-    {
-        get; private set;
-    } = new();
-
-
-
+    private TargetDamageInstanceViewModel? _selectedTargetDamageInstance;
 
     public ActiveEncounterViewModel(INavigationService navigationService, IDataService dataService, IActiveEncounterService activeEncounterService)
     {
@@ -95,6 +69,48 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
         });
     }
 
+    public ObservableCollection<string> CombatLog
+    {
+        get; private set;
+    } = new();
+
+    public ObservableCollection<ActiveEncounterCreatureViewModel> Creatures
+    {
+        get; private set;
+    } = new();
+
+    public ObservableCollection<TargetDamageInstanceViewModel> DamageInstances
+    {
+        get; private set;
+    } = new();
+
+    public IList<DamageType> DamageTypes => _damageTypes;
+
+    public void OnNavigatedFrom()
+    {
+        WeakReferenceMessenger.Default.UnregisterAll(this);
+    }
+
+    public async void OnNavigatedTo(object parameter)
+    {
+        if (parameter is ActiveEncounter && parameter != null)
+        {
+            _activeEncounter = (ActiveEncounter)parameter;
+        }
+        else
+        {
+            _activeEncounter = await _dataService.GetActiveEncounterAsync();
+        }
+
+        Creatures.Clear();
+
+        foreach (var creature in _activeEncounter.CreatureTurns)
+            Creatures.Add(new ActiveEncounterCreatureViewModel(creature));
+
+        foreach (var combatLogString in _activeEncounter.Log.Reverse<string>())
+            CombatLog.Add(combatLogString);
+    }
+
     [RelayCommand]
     private void AddDamage()
     {
@@ -114,7 +130,6 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
     {
         if (SelectedTargetDamageInstance != null)
         {
-
             var contains = false;
             foreach (var target in SelectedTargetDamageInstance.Targets)
             {
@@ -129,13 +144,40 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
         }
     }
 
+    private void CopyDamage(TargetDamageInstanceViewModel damageInstance)
+    {
+        AddDamage();
+        var last = DamageInstances.Last();
+        foreach (var target in damageInstance.Targets)
+        {
+            last.Targets.Add(new DamageCreatureViewModel(target.ActiveEncounterCreatureViewModel!));
+        }
+    }
+
+    private void DamageSourceChangeRequested(ActiveEncounterCreatureViewModel creature)
+    {
+        DamageSourceCreature = creature;
+        DamageInstances.Clear();
+        DamageInstances.Add(new TargetDamageInstanceViewModel(1));
+        SelectedTargetDamageInstance = DamageInstances.First();
+    }
+
+    private void DamageTypeChanged(DamageType damageType)
+    {
+        if (SelectedTargetDamageInstance != null)
+        {
+            foreach (var target in SelectedTargetDamageInstance.Targets)
+            {
+                target.SelectedDamageVolume = _activeEncounterService.GetDamageVolumeSuggestion(target.ActiveEncounterCreatureViewModel!.Creature, damageType);
+            }
+        }
+    }
+
     [RelayCommand]
     private void DealDamage()
     {
         if (_activeEncounter != null)
         {
-
-
             var instances = GetInstancesOfDamage();
             foreach (var instance in instances)
             {
@@ -143,39 +185,38 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
                 CombatLog.Insert(0, _activeEncounter.Log.Last());
             }
 
-
-
-
             SelectedTargetDamageInstance?.Targets.Clear();
             SelectedTargetDamageInstance = null;
             DamageInstances.Clear();
         }
-       
     }
 
-
     [RelayCommand]
-    private async Task RollInitiative()
+    private async Task EndEncounter()
     {
+        await _activeEncounterService.EndEncounterAsync(_activeEncounter);
+        if (_navigationService.CanGoBack)
+            _navigationService.GoBack();
+        else
+            _navigationService.NavigateTo(typeof(CampaignSplashViewModel).FullName!, clearNavigation: true);
+    }
 
-        var orderedInitiative = await _activeEncounterService.UpdateInitiativeOrder(_activeEncounter);
+    private IEnumerable<DamageInstance> GetInstancesOfDamage()
+    {
+        List<DamageInstance> instances = new List<DamageInstance>();
 
-        var tempAECreatureList = new List<ActiveEncounterCreatureViewModel>(Creatures);
-        Creatures.Clear();
-
-        foreach(var orderedCreature in orderedInitiative)
+        foreach (var targetedDamage in DamageInstances)
         {
-            foreach(var creature in tempAECreatureList)
+            foreach (var target in targetedDamage.Targets)
             {
-                if (creature.IsWrapperFor(orderedCreature))
-                {
-                    Creatures.Add(creature);
-                    break;
-                }
+                instances.Add(new DamageInstance(target.ActiveEncounterCreatureViewModel!.Creature,
+                                                    DamageSourceCreature!.Creature,
+                                                    targetedDamage.SelectedDamageType,
+                                                    target.SelectedDamageVolume,
+                                                    targetedDamage.DamageAmount));
             }
         }
-
-        await _dataService.SaveAddAsync(_activeEncounter);
+        return instances;
     }
 
     [RelayCommand]
@@ -198,10 +239,7 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
         //}
         if (_activeEncounter != null)
         {
-
             await _activeEncounterService.EndCurrentTurnAsync(_activeEncounter);
-
-
 
             if (_activeEncounter.CreatureTurns.Count != Creatures.Count)
             {
@@ -239,53 +277,6 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
         }
     }
 
-    [RelayCommand]
-    private async Task EndEncounter()
-    {
-        await _activeEncounterService.EndEncounterAsync(_activeEncounter);
-        if (_navigationService.CanGoBack)
-            _navigationService.GoBack();
-        else
-            _navigationService.NavigateTo(typeof(CampaignSplashViewModel).FullName!, clearNavigation: true);
-    }
-
-    public async void OnNavigatedTo(object parameter) 
-    {
-        if(parameter is ActiveEncounter && parameter != null)
-        {
-            _activeEncounter = (ActiveEncounter)parameter;
-        }
-        else
-        {
-            _activeEncounter = await _dataService.GetActiveEncounterAsync();
-        }
-
-        Creatures.Clear();
-
-        foreach (var creature in _activeEncounter.CreatureTurns)
-            Creatures.Add(new ActiveEncounterCreatureViewModel(creature));
-
-        foreach (var combatLogString in _activeEncounter.Log.Reverse<string>())
-            CombatLog.Add(combatLogString);
-
-    }
-
-    public void OnNavigatedFrom()
-    {
-        WeakReferenceMessenger.Default.UnregisterAll(this);
-    }
-
-    private void CopyDamage(TargetDamageInstanceViewModel damageInstance)
-    {
-        AddDamage();
-        var last = DamageInstances.Last();
-        foreach (var target in damageInstance.Targets)
-        {
-            last.Targets.Add(new DamageCreatureViewModel(target.ActiveEncounterCreatureViewModel!));
-        }
-
-    }
-
     private void RemoveDamage(TargetDamageInstanceViewModel damageInstance)
     {
         if (DamageInstances.Count < 1)
@@ -310,15 +301,6 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
             else
                 DamageInstances.RemoveAt(index);
         }
-
-    }
-
-    private void DamageSourceChangeRequested(ActiveEncounterCreatureViewModel creature)
-    {
-        DamageSourceCreature = creature;
-        DamageInstances.Clear();
-        DamageInstances.Add(new TargetDamageInstanceViewModel(1));
-        SelectedTargetDamageInstance = DamageInstances.First();
     }
 
     private void RemoveTarget(DamageCreatureViewModel creature)
@@ -340,36 +322,26 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
         }
     }
 
-
-
-    private void DamageTypeChanged(DamageType damageType)
+    [RelayCommand]
+    private async Task RollInitiative()
     {
-        if (SelectedTargetDamageInstance != null)
+        var orderedInitiative = await _activeEncounterService.UpdateInitiativeOrder(_activeEncounter);
+
+        var tempAECreatureList = new List<ActiveEncounterCreatureViewModel>(Creatures);
+        Creatures.Clear();
+
+        foreach (var orderedCreature in orderedInitiative)
         {
-            foreach (var target in SelectedTargetDamageInstance.Targets)
+            foreach (var creature in tempAECreatureList)
             {
-                target.SelectedDamageVolume = _activeEncounterService.GetDamageVolumeSuggestion(target.ActiveEncounterCreatureViewModel!.Creature, damageType);
+                if (creature.IsWrapperFor(orderedCreature))
+                {
+                    Creatures.Add(creature);
+                    break;
+                }
             }
         }
-    }
 
-
-
-    private IEnumerable<DamageInstance> GetInstancesOfDamage()
-    {
-        List<DamageInstance> instances = new List<DamageInstance>();
-
-        foreach (var targetedDamage in DamageInstances)
-        {
-            foreach (var target in targetedDamage.Targets)
-            {
-                instances.Add(new DamageInstance(target.ActiveEncounterCreatureViewModel!.Creature,
-                                                    DamageSourceCreature!.Creature,
-                                                    targetedDamage.SelectedDamageType,
-                                                    target.SelectedDamageVolume,
-                                                    targetedDamage.DamageAmount));
-            }
-        }
-        return instances;
+        await _dataService.SaveAddAsync(_activeEncounter);
     }
 }

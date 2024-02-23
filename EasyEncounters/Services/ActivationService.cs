@@ -1,25 +1,22 @@
 ﻿using EasyEncounters.Activation;
 using EasyEncounters.Contracts.Services;
-using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Views;
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-using Microsoft.Windows.AppLifecycle;
-
 namespace EasyEncounters.Services;
 
 public class ActivationService : IActivationService
 {
-    private readonly ActivationHandler<LaunchActivatedEventArgs> _defaultHandler;
     private readonly IEnumerable<IActivationHandler> _activationHandlers;
-    private readonly IThemeSelectorService _themeSelectorService;
+    private readonly ActivationHandler<LaunchActivatedEventArgs> _defaultHandler;
     private readonly ILocalSettingsService _localSettingsService;
     private readonly IModelOptionsService _modelOptionsService;
+    private readonly IThemeSelectorService _themeSelectorService;
     private UIElement? _shell = null;
 
-    public ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler, IEnumerable<IActivationHandler> activationHandlers, 
+    public ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler, IEnumerable<IActivationHandler> activationHandlers,
             IThemeSelectorService themeSelectorService, ILocalSettingsService localSettingsService, IModelOptionsService modelOptionsService)
     {
         _defaultHandler = defaultHandler;
@@ -27,10 +24,7 @@ public class ActivationService : IActivationService
         _themeSelectorService = themeSelectorService;
         _localSettingsService = localSettingsService;
         _modelOptionsService = modelOptionsService;
-
-
     }
-
 
     public async Task ActivateAsync(object activationArgs)
     {

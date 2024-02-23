@@ -1,27 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 using EasyEncounters.Contracts.Services;
-using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Models;
-using EasyEncounters.Core.Models.Enums;
-using EasyEncounters.Helpers;
-using EasyEncounters.Models;
 using EasyEncounters.ViewModels;
-using Microsoft.AppCenter.Channel;
-using SQLitePCL;
-using Windows.Networking.NetworkOperators;
-using Windows.Security.ExchangeActiveSyncProvisioning;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace EasyEncounters.Services.Filter;
+
 public class FilteringService : IFilteringService
 {
     //private Dictionary<object, Dictionary<string, >>
@@ -66,26 +49,6 @@ public class FilteringService : IFilteringService
         return matches;
     }
 
-    public FilterValues GetFilterValues<T>()
-    {
-        if (typeof(T) == typeof(AbilityViewModel))
-        {
-            return new AbilityFilter();
-        }
-        else if (typeof(T) == typeof(EncounterData))
-        {
-            return new EncounterFilter();
-        }
-        else if (typeof(T) == typeof(CreatureViewModel))
-        {
-            return new CreatureFilter();
-        }
-        //default:
-        throw new ArgumentException($"{nameof(T)} is not a supported FilterValue<T> type");
-
-        //todo: something more robust, but this will meet requirements for now
-    }
-
     public ICollection<T> Filter<T>(ICollection<T> toFilter, FilterValues filterValues, string text)
     {
         //FilterValues should contain, or generate, a filtercriteria set
@@ -120,10 +83,44 @@ public class FilteringService : IFilteringService
             encounterFilterValues.SearchSuggestions = (List<EncounterData>)filtered;
         }
 
-
         return filtered;
     }
 
+    public FilterValues GetFilterValues<T>()
+    {
+        if (typeof(T) == typeof(AbilityViewModel))
+        {
+            return new AbilityFilter();
+        }
+        else if (typeof(T) == typeof(EncounterData))
+        {
+            return new EncounterFilter();
+        }
+        else if (typeof(T) == typeof(CreatureViewModel))
+        {
+            return new CreatureFilter();
+        }
+        //default:
+        throw new ArgumentException($"{nameof(T)} is not a supported FilterValue<T> type");
+
+        //todo: something more robust, but this will meet requirements for now
+    }
+
+    private void ApplyFilter<T>(ICollection<T> toFilter, FilterCriteria<T> filter)
+    {
+        var noMatch = new List<T>();
+        foreach (var item in toFilter)
+        {
+            if (!filter.IsMatch(item))
+            {
+                noMatch.Add(item);
+            }
+        }
+        foreach (var nonMatch in noMatch)
+        {
+            toFilter.Remove(nonMatch);
+        }
+    }
 
     private bool MatchARange<T>(T item, Expression<Func<T, IComparable>> expression, IComparable minimum, IComparable maximum)
     {
@@ -154,31 +151,15 @@ public class FilteringService : IFilteringService
         }
         return false;
     }
-
-    private void ApplyFilter<T>(ICollection<T> toFilter, FilterCriteria<T> filter)
-    {
-        var noMatch = new List<T>();
-        foreach (var item in toFilter)
-        {
-            if (!filter.IsMatch(item))
-            {
-                noMatch.Add(item);
-            }
-        }
-        foreach (var nonMatch in noMatch)
-        {
-            toFilter.Remove(nonMatch);
-        }
-    }
 }
 
 //todo: abstract class with subclasses
 public class FilterCriteria<T>
 {
     internal Expression<Func<T, IComparable>> Expression;
-    internal IComparable? Minimum;
-    internal IComparable? Maximum;
     internal string? MatchString;
+    internal IComparable? Maximum;
+    internal IComparable? Minimum;
 
     public FilterCriteria(Expression<Func<T, IComparable>> expression, IComparable minimum, IComparable maximum)
     {
@@ -193,25 +174,18 @@ public class FilterCriteria<T>
         MatchString = matchString;
     }
 
-    private bool MatchAString(T item)
+    public bool IsMatch(T item)
     {
-        if (String.IsNullOrEmpty(MatchString))
+        if (item != null)
         {
-            return true;
-        }
-        
-        if (Expression is LambdaExpression lambdaBody)
-        {
-            var compiled = lambdaBody.Compile();
-            var value = (string?)compiled?.DynamicInvoke(item);
-
-            if (value != null && value.Contains(MatchString, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return true;
-            }
+            if (MatchString != null)
+                return MatchAString(item);
+            else
+                return MatchARange(item);
         }
         return false;
     }
+
     private bool MatchARange(T item)
     {
         if (Expression is LambdaExpression lambdaBody)
@@ -227,18 +201,23 @@ public class FilterCriteria<T>
         return false;
     }
 
-    public bool IsMatch(T item)
+    private bool MatchAString(T item)
     {
-        if (item != null)
+        if (String.IsNullOrEmpty(MatchString))
         {
-            if (MatchString != null)
-                return MatchAString(item);
-            else
-                return MatchARange(item);
+            return true;
+        }
 
+        if (Expression is LambdaExpression lambdaBody)
+        {
+            var compiled = lambdaBody.Compile();
+            var value = (string?)compiled?.DynamicInvoke(item);
+
+            if (value != null && value.Contains(MatchString, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return true;
+            }
         }
         return false;
     }
 }
-
-

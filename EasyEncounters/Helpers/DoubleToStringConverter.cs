@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml.Data;
+﻿using Microsoft.UI.Xaml.Data;
 
 namespace EasyEncounters.Helpers
 {
@@ -11,12 +6,12 @@ namespace EasyEncounters.Helpers
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if(value is double)
+            if (value is double)
             {
                 var number = (double)value;
                 string ans = number.ToString();
-                
-                if(number < 1 && number > 0)
+
+                if (number < 1 && number > 0)
                 {
                     if (number == 0.25)
                         ans = "1/4";
@@ -29,6 +24,7 @@ namespace EasyEncounters.Helpers
             }
             throw new ArgumentException("Must be a double");
         }
+
         public object ConvertBack(object value, Type targetType, object parameter, string language) => throw new NotImplementedException();
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using EasyEncounters.Core.Models.Enums;
@@ -18,20 +13,18 @@ namespace EasyEncounters.ViewModels
     public partial class DamageCreatureViewModel : ObservableRecipient
     {
         [ObservableProperty]
+        private ActiveEncounterCreatureViewModel _activeEncounterCreatureViewModel;
+
+        [ObservableProperty]
         private IList<DamageVolume> _damageVolumes = Enum.GetValues(typeof(DamageVolume)).Cast<DamageVolume>().ToList();
 
         [ObservableProperty]
         private DamageVolume _selectedDamageVolume;
 
-        [ObservableProperty]
-        private ActiveEncounterCreatureViewModel _activeEncounterCreatureViewModel;
-
-
         public DamageCreatureViewModel(ActiveEncounterCreatureViewModel creatureVM)
         {
             SelectedDamageVolume = DamageVolume.Normal;
             ActiveEncounterCreatureViewModel = creatureVM;
-
         }
 
         [RelayCommand]

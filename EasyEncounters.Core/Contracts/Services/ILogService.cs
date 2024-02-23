@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EasyEncounters.Core.Models;
+﻿using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
 
 namespace EasyEncounters.Core.Contracts.Services;
+
 public interface ILogService
 {
-    Task SaveAsync();
     Task EndEncounterLog();
+
+    //void Log(string message);
+    Task<string> LogDamage(DamageType damageType, ActiveEncounterCreature source, ActiveEncounterCreature target, int damage);
+
+    void LogError(string message);
+
+    string LogTurnEnd();
 
     string LogTurnStart(ActiveEncounterCreature creature);
 
-    string LogTurnEnd();
-    //void Log(string message);
-    Task<string> LogDamage(DamageType damageType, ActiveEncounterCreature source, ActiveEncounterCreature target, int damage);
+    Task SaveAsync();
+
     void StartEncounterLog(ActiveEncounterCreature firstTurnCreature);
-    void LogError(string message);
 }

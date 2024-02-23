@@ -1,10 +1,10 @@
 ﻿{
-    "profiles": {
-      "EasyEncounters (Package)": {
-        "commandName": "MsixPackage"
-      },
-      "EasyEncounters (Unpackaged)": {
-        "commandName": "Project"
-      }
+  "profiles": {
+    "EasyEncounters (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "EasyEncounters (Unpackaged)": {
+      "commandName": "Project"
     }
+  }
 }

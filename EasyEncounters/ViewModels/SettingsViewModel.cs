@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using EasyEncounters.Contracts.Services;
-using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Helpers;
 using Microsoft.UI.Xaml;
 
@@ -15,38 +14,23 @@ namespace EasyEncounters.ViewModels;
 
 public partial class SettingsViewModel : ObservableRecipient
 {
-    private readonly IThemeSelectorService _themeSelectorService;
     private readonly IModelOptionsService _modelOptionsService;
+    private readonly IThemeSelectorService _themeSelectorService;
 
     [ObservableProperty]
     private ElementTheme _elementTheme;
 
     [ObservableProperty]
-    private string _versionDescription;
-
-    [ObservableProperty]
     private bool _rollMaxHP;
 
-    async partial void OnRollMaxHPChanged(bool value)
-    {
-        await _modelOptionsService.SaveActiveEncounterOptionAsync(value);
-    }
-
-    //public ICommand SwitchRollMaxCommand
-    //{
-    //    get;
-    //}
-
-    public ICommand SwitchThemeCommand
-    {
-        get;
-    }
+    [ObservableProperty]
+    private string _versionDescription;
 
     public SettingsViewModel(IThemeSelectorService themeSelectorService, IModelOptionsService modelOptionsService)
     {
         _themeSelectorService = themeSelectorService;
         _elementTheme = _themeSelectorService.Theme;
-        _versionDescription = GetVersionDescription();      
+        _versionDescription = GetVersionDescription();
         _modelOptionsService = modelOptionsService;
         _rollMaxHP = _modelOptionsService.RollHP;
 
@@ -71,6 +55,15 @@ public partial class SettingsViewModel : ObservableRecipient
             });
     }
 
+    public ICommand SwitchThemeCommand
+    {
+        get;
+    }
+
+    //public ICommand SwitchRollMaxCommand
+    //{
+    //    get;
+    //}
     private static string GetVersionDescription()
     {
         Version version;
@@ -87,5 +80,10 @@ public partial class SettingsViewModel : ObservableRecipient
         }
 
         return $"{"AppDisplayName".GetLocalized()} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+    }
+
+    async partial void OnRollMaxHPChanged(bool value)
+    {
+        await _modelOptionsService.SaveActiveEncounterOptionAsync(value);
     }
 }

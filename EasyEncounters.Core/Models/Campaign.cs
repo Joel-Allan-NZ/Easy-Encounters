@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-#nullable enable
+﻿#nullable enable
 
 namespace EasyEncounters.Core.Models;
+
 /// <summary>
 /// For dividing encounters into campaign blocks.
 /// </summary>
 public class Campaign : Persistable
 {
-    public string Name
+    public Campaign(string name = "New Campaign", string desc = "Add a description.")
     {
-        get; set;
+        Name = name;
+        Id = Guid.NewGuid();
+        Description = desc;
     }
 
     public string Description
@@ -21,11 +19,9 @@ public class Campaign : Persistable
         get; set;
     }
 
-    public Campaign(string name = "New Campaign", string desc = "Add a description.")
+    public string Name
     {
-        Name = name;
-        Id = Guid.NewGuid();
-        Description = desc;
+        get; set;
     }
 
     public override bool Equals(object? obj)
@@ -36,6 +32,7 @@ public class Campaign : Persistable
         }
         return ((Campaign)obj).Id == Id;
     }
+
     public override int GetHashCode()
     {
         return Id.GetHashCode();

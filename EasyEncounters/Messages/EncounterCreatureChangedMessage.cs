@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EasyEncounters.ViewModels;
+﻿using EasyEncounters.ViewModels;
 
-namespace EasyEncounters.Messages
+namespace EasyEncounters.Messages;
+
+public class EncounterCreatureChangedMessage
 {
-    public class EncounterCreatureChangedMessage
+    public EncounterCreatureChangedMessage(IList<ActiveEncounterCreatureViewModel> creatures)
     {
-        public IList<ActiveEncounterCreatureViewModel> Creatures
-        {
-            get; private set;
-        }
-        public EncounterCreatureChangedMessage(IList<ActiveEncounterCreatureViewModel> creatures)
-        {
-            Creatures = creatures;
-        }
+        Creatures = creatures;
+    }
+
+    public IList<ActiveEncounterCreatureViewModel> Creatures
+    {
+        get; private set;
     }
 }

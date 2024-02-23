@@ -1,28 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace EasyEncounters.Core.Services;
+
 public class ActiveEncounterService : IActiveEncounterService
 {
-    readonly IRandomService _randomService;
-    readonly IDataService _dataService;
-    readonly ICreatureService _creatureService;
-    readonly IEncounterService _encounterService;
-    readonly ILogService _logService;
-
-    public bool RollHP
-    {
-        get; set;
-    } = false; //defaults to false
-
+    private readonly ICreatureService _creatureService;
+    private readonly IDataService _dataService;
+    private readonly IEncounterService _encounterService;
+    private readonly ILogService _logService;
+    private readonly IRandomService _randomService;
 
     public ActiveEncounterService(IRandomService randomService, IDataService dataService, IEncounterService encounterService, ICreatureService creatureService, ILogService logService)
     {
@@ -31,7 +20,24 @@ public class ActiveEncounterService : IActiveEncounterService
         _dataService = dataService;
         _creatureService = creatureService;
         _logService = logService;
+    }
 
+    public bool RollHP
+    {
+        get; set;
+    } = false; //defaults to false (ie Fixed HP is the default)
+
+    public void AddCreatureToInProgressEncounter(ActiveEncounter inProgress, Creature creatureToAdd)
+    {
+        var activeCreatureToAdd = _encounterService.CreateActiveEncounterCreature(creatureToAdd, RollHP);
+        var collisionCount = inProgress.ActiveCreatures.Count(x => x.Name == creatureToAdd.Name);
+
+        activeCreatureToAdd.EncounterName = $"{creatureToAdd.Name} {collisionCount}";
+
+        inProgress.ActiveCreatures.Add(activeCreatureToAdd);
+        RollInitiative(activeCreatureToAdd);
+
+        inProgress.CreatureTurns.Enqueue(activeCreatureToAdd);
     }
 
     public async Task<ActiveEncounter> CreateActiveEncounterAsync(Encounter encounter, Party party)
@@ -40,105 +46,13 @@ public class ActiveEncounterService : IActiveEncounterService
 
         var active = new ActiveEncounter(encounter, activeCreatures);
         await _dataService.SaveAddAsync(active);
-        //OrderInitiative(active);
+
         return active;
     }
 
-    private IEnumerable<ActiveEncounterCreature> CreateCreaturesForActiveEncounter(Encounter encounter, Party party)
+    public async Task<string> DealDamageAsync(ActiveEncounter activeEncounter, DamageInstance damageInstance)
     {
-        List<ActiveEncounterCreature> activeCreatures = new();
-
-        foreach(var creature in encounter.Creatures)
-        {
-            activeCreatures.Add(_encounterService.CreateActiveEncounterCreature(creature, RollHP));
-        }
-        foreach (var creature in party.Members)
-            if(creature.DMControl)
-                activeCreatures.Add(_encounterService.CreateActiveEncounterCreature(creature, false));
-
-        foreach (var creature in party.Members)
-            if (!creature.DMControl)
-                activeCreatures.Add(_encounterService.CreateActiveEncounterCreature(creature, false));
-
-        return activeCreatures;
-    }
-
-    //deprecated
-    public void AddEncounterCreature(ActiveEncounter activeEncounter, Creature creature, bool maxHPRoll)
-    {
-        int collisions = 0;
-        HashSet<string> names = new HashSet<string>();
-        foreach (var activeCreature in activeEncounter.ActiveCreatures)
-        {
-            if (names.Contains(activeCreature.Name))
-                collisions++;
-            else
-                names.Add(activeCreature.Name);
-        }
-
-        var tempCreature = _encounterService.CreateActiveEncounterCreature(creature, maxHPRoll);
-        if (names.Contains(tempCreature.Name))
-            tempCreature.EncounterName = $"{tempCreature.Name} {collisions+1}";
-        else
-            tempCreature.EncounterName = tempCreature.Name;
-
-        activeEncounter.ActiveCreatures.Add(tempCreature); 
-    }
-
-    public void AddCreatureInProgress(ActiveEncounter activeEncounter, Creature creature)
-    {
-        int collisions = 1;
-        foreach(var existingCreature in activeEncounter.ActiveCreatures)
-        {
-            if(existingCreature.Name == creature.Name) collisions++;
-        }
-        var toAdd = _encounterService.CreateActiveEncounterCreature(creature, RollHP);
-        toAdd.EncounterName = creature.Name + " " + collisions;
-
-        activeEncounter.ActiveCreatures.Add(toAdd);
-        activeEncounter.CreatureTurns.Enqueue(toAdd);
-
-    }
-
-    private async Task<string> DealDamageAsync(ActiveEncounter activeEncounter, ActiveEncounterCreature sourceCreature, ActiveEncounterCreature targetCreature, DamageType damageType, int damageValue)
-    {
-        //var logMessageString = "";
-        if (damageType == DamageType.Healing)
-        {
-            targetCreature.CurrentHP += damageValue;
-            if (targetCreature.CurrentHP > targetCreature.MaxHP)
-                targetCreature.CurrentHP = targetCreature.MaxHP;
-
-            //logMessageString = $"{sourceCreature.EncounterName} healed {targetCreature.EncounterName} for {damageValue}";
-        }
-        else
-        {
-            targetCreature.CurrentHP -= damageValue;
-
-            
-            if (targetCreature.MaxHP != 0 && targetCreature.CurrentHP <= 0) //non-pc character dead'd
-            {
-                targetCreature.Dead = true;
-                //logMessageString = $"{sourceCreature.EncounterName} deals {damageValue} {DamageTypeToString(damageType)} " +
-                //    $"to {targetCreature.EncounterName} \n {targetCreature.EncounterName} is downed! {targetCreature.CurrentHP} overkill.";
-            }
-            //else
-            //    logMessageString = $"{sourceCreature.EncounterName} deals {damageValue} {DamageTypeToString(damageType)} to {targetCreature.EncounterName}";
-        }
-        //activeEncounter.Log.Add(logMessageString);
-        //return logMessageString;
-        return await _logService.LogDamage(damageType, sourceCreature, targetCreature, damageValue);
-    }
-
-    private static string DamageTypeToString(DamageType damage)
-    {
-        StringBuilder sb = new();
-        foreach (DamageType damageType in Enum.GetValues(typeof(DamageType)))
-        {
-            if ((damage & damageType) != 0)
-                sb.Append(damageType.ToString());
-        }
-        return sb.ToString();
+        return await DealDamageAsync(activeEncounter, damageInstance.Source, damageInstance.Target, damageInstance.DamageType, GetEffectiveDamage(damageInstance.BaseDamageValue, damageInstance.DamageVolume));
     }
 
     public async Task<string> EndCurrentTurnAsync(ActiveEncounter activeEncounter)
@@ -154,7 +68,7 @@ public class ActiveEncounterService : IActiveEncounterService
         activeEncounter.ActiveTurn = activeEncounter.CreatureTurns.Peek();
         activeEncounter.CreatureTurns.Enqueue(activeEncounter.CreatureTurns.Dequeue());
         //clear out all remaining dead creatures.
-        while(activeEncounter.CreatureTurns.Peek() != activeEncounter.ActiveTurn)
+        while (activeEncounter.CreatureTurns.Peek() != activeEncounter.ActiveTurn)
         {
             if (activeEncounter.CreatureTurns.Peek().Dead)
                 activeEncounter.CreatureTurns.Dequeue();
@@ -172,26 +86,33 @@ public class ActiveEncounterService : IActiveEncounterService
 
     public async Task EndEncounterAsync(ActiveEncounter activeEncounter)
     {
-       await _dataService.WriteLog(activeEncounter.Log);
+        await _dataService.WriteLog(activeEncounter.Log);
         await _dataService.ClearActiveEncounterAsync();
         await _logService.EndEncounterLog();
     }
 
-    private void RollInitiative(ActiveEncounterCreature activeEncounterCreature)
+    public DamageVolume GetDamageVolumeSuggestion(ActiveEncounterCreature target, DamageType damageType)
     {
+        DamageVolume suggestedDamageVolume = DamageVolume.Normal;
+        if (target.Vulnerability.HasFlag(damageType))
+            suggestedDamageVolume = DamageVolume.Double;
+        else if (target.Resistance.HasFlag(damageType))
+            suggestedDamageVolume = DamageVolume.Half;
+        else if (target.Immunity.HasFlag(damageType))
+            suggestedDamageVolume = DamageVolume.None;
 
-        activeEncounterCreature.Initiative = _randomService.RandomInteger(1, 20) 
-            + activeEncounterCreature.InitiativeBonus 
-            + _creatureService.GetAttributeBonusValue(activeEncounterCreature, CreatureAttributeType.Dexterity);
+        return suggestedDamageVolume;
+    }
 
-        if (activeEncounterCreature.InitiativeAdvantage)
+    public void ReorderInitiative(ActiveEncounter activeEncounter, IEnumerable<ActiveEncounterCreature> creatures)
+    {
+        activeEncounter.CreatureTurns.Clear();
+        foreach (var creature in creatures)
+            activeEncounter.CreatureTurns.Enqueue(creature);
+
+        while (activeEncounter.ActiveTurn != activeEncounter.CreatureTurns.Peek())
         {
-            var adv = _randomService.RandomInteger(1, 20)
-                + activeEncounterCreature.InitiativeBonus
-                + _creatureService.GetAttributeBonusValue(activeEncounterCreature, CreatureAttributeType.Dexterity);
-
-            if (activeEncounterCreature.Initiative < adv)
-                activeEncounterCreature.Initiative = adv;
+            activeEncounter.CreatureTurns.Enqueue(activeEncounter.CreatureTurns.Dequeue());
         }
     }
 
@@ -208,12 +129,11 @@ public class ActiveEncounterService : IActiveEncounterService
             }
             OrderInitiative(activeEncounter);
             activeEncounter.ActiveTurn = activeEncounter.CreatureTurns.Peek();
-            
         }
         else if (activeEncounter.CreatureTurns.Contains(activeEncounter.ActiveTurn) && !activeEncounter.ActiveTurn.Dead)
         {
             OrderInitiative(activeEncounter);
-            while(activeEncounter.CreatureTurns.Peek() != activeEncounter.ActiveTurn)
+            while (activeEncounter.CreatureTurns.Peek() != activeEncounter.ActiveTurn)
             {
                 await EndCurrentTurnAsync(activeEncounter);
             }
@@ -227,52 +147,68 @@ public class ActiveEncounterService : IActiveEncounterService
         return activeEncounter.CreatureTurns;
     }
 
-    private void OrderInitiative(ActiveEncounter activeEncounter)
+    private static string DamageTypeToString(DamageType damage)
     {
-        if (activeEncounter.ActiveCreatures.Count == 0)
-            return;
-        activeEncounter.CreatureTurns.Clear();
-        //clean(ish) tiebreaking by roll, then dex bonus, then finally if PC or NPC (advantage to PC)
-        var ordered = activeEncounter.ActiveCreatures
-                                                    .OrderByDescending(x => x.Initiative + ((double)_creatureService.GetAttributeBonusValue(x, CreatureAttributeType.Dexterity) / 100))
-                                                    .ThenByDescending(y => y.DMControl);
-
-        foreach (var creature in ordered)
+        StringBuilder sb = new();
+        foreach (DamageType damageType in Enum.GetValues(typeof(DamageType)))
         {
-            activeEncounter.CreatureTurns.Enqueue(creature);
+            if ((damage & damageType) != 0)
+                sb.Append(damageType.ToString());
         }
-        
+        return sb.ToString();
     }
 
-    public void ReorderInitiative(ActiveEncounter activeEncounter, IEnumerable<ActiveEncounterCreature> creatures)
+    private void AddCreatureToInitiativeOrder(ActiveEncounter encounter, ActiveEncounterCreature activeEncounterCreature)
     {
-        activeEncounter.CreatureTurns.Clear();
-        foreach (var creature in creatures)
-            activeEncounter.CreatureTurns.Enqueue(creature);
+        encounter.CreatureTurns.Enqueue(activeEncounterCreature); //todo:
+    }
 
-        while (activeEncounter.ActiveTurn != activeEncounter.CreatureTurns.Peek())
+    private IEnumerable<ActiveEncounterCreature> CreateCreaturesForActiveEncounter(Encounter encounter, Party party)
+    {
+        List<ActiveEncounterCreature> activeCreatures = new();
+
+        foreach (var creature in encounter.Creatures)
         {
-            activeEncounter.CreatureTurns.Enqueue(activeEncounter.CreatureTurns.Dequeue());
+            activeCreatures.Add(_encounterService.CreateActiveEncounterCreature(creature, RollHP));
         }
+        foreach (var creature in party.Members)
+            if (creature.DMControl)
+                activeCreatures.Add(_encounterService.CreateActiveEncounterCreature(creature, false));
+
+        foreach (var creature in party.Members)
+            if (!creature.DMControl)
+                activeCreatures.Add(_encounterService.CreateActiveEncounterCreature(creature, false));
+
+        return activeCreatures;
     }
 
-    public DamageVolume GetDamageVolumeSuggestion(ActiveEncounterCreature target, DamageType damageType)
+    private async Task<string> DealDamageAsync(ActiveEncounter activeEncounter, ActiveEncounterCreature sourceCreature, ActiveEncounterCreature targetCreature, DamageType damageType, int damageValue)
     {
-        DamageVolume suggestedDamageVolume = DamageVolume.Normal;
-        if (target.Vulnerability.HasFlag(damageType))
-            suggestedDamageVolume = DamageVolume.Double;
-        else if (target.Resistance.HasFlag(damageType))
-            suggestedDamageVolume = DamageVolume.Half;
-        else if (target.Immunity.HasFlag(damageType))
-            suggestedDamageVolume = DamageVolume.None;
+        //var logMessageString = "";
+        if (damageType == DamageType.Healing)
+        {
+            targetCreature.CurrentHP += damageValue;
+            if (targetCreature.CurrentHP > targetCreature.MaxHP)
+                targetCreature.CurrentHP = targetCreature.MaxHP;
 
-        return suggestedDamageVolume;
-    }
+            //logMessageString = $"{sourceCreature.EncounterName} healed {targetCreature.EncounterName} for {damageValue}";
+        }
+        else
+        {
+            targetCreature.CurrentHP -= damageValue;
 
-
-    public async Task<string> DealDamageAsync(ActiveEncounter activeEncounter, DamageInstance damageInstance)
-    {
-        return await DealDamageAsync(activeEncounter, damageInstance.Source, damageInstance.Target, damageInstance.DamageType, GetEffectiveDamage(damageInstance.BaseDamageValue, damageInstance.DamageVolume));
+            if (targetCreature.MaxHP != 0 && targetCreature.CurrentHP <= 0) //non-pc character dead'd
+            {
+                targetCreature.Dead = true;
+                //logMessageString = $"{sourceCreature.EncounterName} deals {damageValue} {DamageTypeToString(damageType)} " +
+                //    $"to {targetCreature.EncounterName} \n {targetCreature.EncounterName} is downed! {targetCreature.CurrentHP} overkill.";
+            }
+            //else
+            //    logMessageString = $"{sourceCreature.EncounterName} deals {damageValue} {DamageTypeToString(damageType)} to {targetCreature.EncounterName}";
+        }
+        //activeEncounter.Log.Add(logMessageString);
+        //return logMessageString;
+        return await _logService.LogDamage(damageType, sourceCreature, targetCreature, damageValue);
     }
 
     private int GetEffectiveDamage(int damage, DamageVolume multiplierEnum)
@@ -291,5 +227,38 @@ public class ActiveEncounterService : IActiveEncounterService
             result /= 2;
         }
         return result;
+    }
+
+    private void OrderInitiative(ActiveEncounter activeEncounter)
+    {
+        if (activeEncounter.ActiveCreatures.Count == 0)
+            return;
+        activeEncounter.CreatureTurns.Clear();
+        //clean(ish) tiebreaking by roll, then dex bonus, then finally if PC or NPC (advantage to PC)
+        var ordered = activeEncounter.ActiveCreatures
+                                                    .OrderByDescending(x => x.Initiative + ((double)_creatureService.GetAttributeBonusValue(x, CreatureAttributeType.Dexterity) / 100))
+                                                    .ThenByDescending(y => y.DMControl);
+
+        foreach (var creature in ordered)
+        {
+            activeEncounter.CreatureTurns.Enqueue(creature);
+        }
+    }
+
+    private void RollInitiative(ActiveEncounterCreature activeEncounterCreature)
+    {
+        activeEncounterCreature.Initiative = _randomService.RandomInteger(1, 20)
+            + activeEncounterCreature.InitiativeBonus
+            + _creatureService.GetAttributeBonusValue(activeEncounterCreature, CreatureAttributeType.Dexterity);
+
+        if (activeEncounterCreature.InitiativeAdvantage)
+        {
+            var adv = _randomService.RandomInteger(1, 20)
+                + activeEncounterCreature.InitiativeBonus
+                + _creatureService.GetAttributeBonusValue(activeEncounterCreature, CreatureAttributeType.Dexterity);
+
+            if (activeEncounterCreature.Initiative < adv)
+                activeEncounterCreature.Initiative = adv;
+        }
     }
 }

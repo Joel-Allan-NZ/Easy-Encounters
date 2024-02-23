@@ -7,4 +7,5 @@ public enum ActionSpeed
     BonusAction = 1 << 1,
     Reaction = 1 << 2,
     Other = 1 << 3,
+    Legendary = 1 << 4,
 }

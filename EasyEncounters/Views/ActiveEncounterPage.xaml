@@ -2,9 +2,8 @@
 <Page
     x:Class="EasyEncounters.Views.ActiveEncounterPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:EasyEncounters.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:behaviors="using:EasyEncounters.Behaviors"
     xmlns:helpers="using:EasyEncounters.Helpers"
@@ -12,20 +11,20 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
-        <helpers:EnumToStringConverter x:Key="EnumToStringConverter"/>
+        <helpers:EnumToStringConverter x:Key="EnumToStringConverter" />
     </Page.Resources>
 
     <Grid Name="Main_Grid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="10*"/>
-            <RowDefinition Height="8*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="10*" />
+            <RowDefinition Height="8*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0"
               Name="Turns_Selected_Grid">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
             <ListView Grid.Column="0"
                       Name="TurnOrder_ListView"
@@ -39,14 +38,14 @@
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Text="Deal Damage"
-                                                    Command="{Binding DamageRequestedCommand}"/>
+                                                    Command="{Binding DamageRequestedCommand}" />
                                     <MenuFlyoutItem Text="Add as Damage Target"
-                                                    Command="{Binding AddTargetRequestedCommand}"/>
+                                                    Command="{Binding AddTargetRequestedCommand}" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="2*" />
                             </Grid.ColumnDefinitions>
                             <Image Source="/Assets/InitiativeBG.png"
                                    HorizontalAlignment="Left"
@@ -70,11 +69,10 @@
                                        VerticalAlignment="Center"
                                        AcceptsExpression="False"
                                        Text="{Binding Creature.Initiative, Mode=TwoWay}">
-                                
                             </NumberBox>
                             <TextBlock Margin="2,2,2,2"
                                        Grid.Column="1"
-                                       Text="{Binding Creature.EncounterName}"/>
+                                       Text="{Binding Creature.EncounterName}" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -83,20 +81,20 @@
                   Grid.Column="1"
                   Margin="2,2,2,2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid Grid.Column="0"
                       Name="LeftSideCreatureInfoPanel">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="2*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="4*"/>
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="4*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <HyperlinkButton Content="{x:Bind ViewModel.SelectedCreature.Creature.EncounterName, Mode=OneWay}"
                                     NavigateUri="{x:Bind ViewModel.SelectedCreature.Creature.Hyperlink, Mode=OneWay}"
@@ -104,51 +102,51 @@
                                     Margin="2"
                                     Grid.Row="0"
                                     Grid.ColumnSpan="2"
-                                    VerticalAlignment="Top"/>
+                                    VerticalAlignment="Top" />
                     <!--<TextBlock Margin="2,2,2,2"
                                Text="{x:Bind ViewModel.SelectedCreature.Creature.EncounterName, Mode=OneWay}"
                                Grid.ColumnSpan="2"
-                               Grid.Row="0"/>-->
+                               Grid.Row="0" />-->
                     <CheckBox IsChecked="{x:Bind ViewModel.SelectedCreature.Creature.Concentrating, Mode=TwoWay}"
                                 Grid.Row="1"
                                 Grid.Column="0"
                                 Content="Concentrating"
-                                Margin="2,2,2,2"/>
+                                Margin="2,2,2,2" />
                     <CheckBox IsChecked="{x:Bind ViewModel.SelectedCreature.Creature.Reaction, Mode=TwoWay}"
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 Content="Reaction"
-                                Margin="2,2,2,2"/>
+                                Margin="2,2,2,2" />
                     <NumberBox Grid.Row="1"
                                 Grid.Column="1"
                                 Maximum="{x:Bind ViewModel.SelectedCreature.Creature.MaxLegendaryActions}"
                                 Minimum="0"
                                 Value="{x:Bind ViewModel.SelectedCreature.Creature.CurrentLegendaryActions, Mode=TwoWay}"
                                 AcceptsExpression="False"
-                                Description="Legendary Actions"/>
+                                Description="Legendary Actions" />
                     <NumberBox Grid.Row="2"
                                    Grid.Column="1"
                                    Maximum="{x:Bind ViewModel.SelectedCreature.Creature.MaxLegendaryResistance}"
                                    Minimum="0"
                                    Value="{x:Bind ViewModel.SelectedCreature.Creature.CurrentLegendaryResistance, Mode=TwoWay}"
                                    AcceptsExpression="False"
-                                   Description="Legendary Resistance"/>
+                                   Description="Legendary Resistance" />
                     <TextBlock Text="Abilities placeholder"
                                Margin="2,2,2,2"
                                Grid.ColumnSpan="2"
-                               Grid.Row="3"/>
+                               Grid.Row="3" />
                 </Grid>
                 <Grid Name="RightSideCreatureInfoPanel"
                       Grid.Column="1">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="2*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="2*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="2*" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="45"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="45" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <!--Top Section-->
                     <Image Source="/Assets/ShieldBG.png"
@@ -163,38 +161,37 @@
                            Text="{x:Bind ViewModel.SelectedCreature.Creature.AC, Mode=OneWay}"
                            TextAlignment="Center"
                            Margin="0,10"
-                           FontWeight="Bold"
-                           />
+                           FontWeight="Bold" />
                     <TextBlock Grid.Row="0"
                            Grid.Column="1"
                                FontSize="24"
                            Text="{x:Bind ViewModel.SelectedCreature.Creature.CurrentHP, Mode=OneWay}"
-                           Margin="10,2"/>
+                           Margin="10,2" />
                     <TextBlock Text="/"
                            Grid.Row="0"
                            Grid.Column="1"
                            FontSize="24"
-                           Margin="60, 2, 2, 2"/>
+                           Margin="60, 2, 2, 2" />
                     <TextBlock Grid.Row="0"
                            Grid.Column="1"
                            Text="{x:Bind ViewModel.SelectedCreature.Creature.EncounterMaxHP, Mode=OneWay}"
                                FontSize="24"
-                           Margin="80,2,2,2"/>
+                           Margin="80,2,2,2" />
                     <!--Middle Rows-->
                     <TextBlock Margin="2"
                                Grid.Row="1"
                                Grid.ColumnSpan="2"
-                               Text="Conditions Placeholder"/>
+                               Text="Conditions Placeholder" />
                     <TextBlock Margin="2"
                                Grid.Row="2"
                                Grid.ColumnSpan="2"
-                               Text="Spell slot placeholder"/>
+                               Text="Spell slot placeholder" />
                     <!--Notes Area-->
                     <TextBox Margin="2"
                              Grid.Row="3"
                              Grid.ColumnSpan="2"
                              Text="{x:Bind ViewModel.SelectedCreature.Notes, Mode=TwoWay}"
-                             TextWrapping="Wrap"/>
+                             TextWrapping="Wrap" />
                 </Grid>
             </Grid>
         </Grid>
@@ -202,18 +199,18 @@
         <Grid Grid.Row="1"
               Margin="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="4*"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
             <!--Damage Instances-->
             <StackPanel Grid.Column="0"
                         Orientation="Vertical">
-                <TextBlock Text="Damage Source Creature:"/>
+                <TextBlock Text="Damage Source Creature:" />
                 <TextBlock Text="{x:Bind ViewModel.DamageSourceCreature.Creature.EncounterName, Mode=OneWay}"
-                           FontSize="20"/>
-                <ListView 
+                           FontSize="20" />
+                <ListView
                           Margin="2"
                           Header="Damage Instances"
                           ItemsSource="{x:Bind ViewModel.DamageInstances, Mode=OneWay}"
@@ -225,12 +222,12 @@
                                 <Grid.ContextFlyout>
                                     <MenuFlyout>
                                         <MenuFlyoutItem Text="Make a copy of this damage instance"
-                                                    Command="{Binding CopyDamageRequestCommand}"/>
+                                                    Command="{Binding CopyDamageRequestCommand}" />
                                         <MenuFlyoutItem Text="Delete"
-                                                    Command="{Binding DeleteDamageRequestCommand}"/>
+                                                    Command="{Binding DeleteDamageRequestCommand}" />
                                     </MenuFlyout>
                                 </Grid.ContextFlyout>
-                                <TextBlock Text="{Binding Name}"/>
+                                <TextBlock Text="{Binding Name}" />
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -249,8 +246,7 @@
                   Grid.Row="0"
                   Grid.Column="1"
                   AcceptsExpression="False"
-                  Minimum="0"
-                  />
+                  Minimum="0" />
                 <ComboBox Name="selectDamageType"
                   VerticalAlignment="Stretch"
                   ItemsSource="{x:Bind ViewModel.DamageTypes}"
@@ -263,7 +259,7 @@
                   Grid.Column="2">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                            <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
@@ -278,26 +274,26 @@
                     <DataTemplate>
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="2*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="2*"/>
+                                <RowDefinition Height="2*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="2*" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem Text="Remove"
-                                                    Command="{Binding RemoveTargetRequestedCommand}"/>
+                                                    Command="{Binding RemoveTargetRequestedCommand}" />
                                 </MenuFlyout>
                             </Grid.ContextFlyout>
                             <TextBlock Grid.Row="0"
@@ -305,27 +301,27 @@
                                        Grid.ColumnSpan="7"
                                        Text="{Binding ActiveEncounterCreatureViewModel.Creature.Name}"
                                        Margin="2,2,2,2"
-                                       FontSize="30"/>
+                                       FontSize="30" />
                             <TextBlock Grid.Row="1"
                                        Grid.Column="2"
                                        Margin="2,2,2,2"
-                                       Text="{Binding ActiveEncounterCreatureViewModel.Creature.CurrentHP}"/>
+                                       Text="{Binding ActiveEncounterCreatureViewModel.Creature.CurrentHP}" />
                             <TextBlock Grid.Row="1"
                                        Grid.Column="3"
                                        Margin="2,2,2,2"
-                                       Text="/"/>
+                                       Text="/" />
                             <TextBlock Grid.Row="1"
                                        Grid.Column="4"
                                        Margin="2,2,2,2"
-                                       Text="{Binding ActiveEncounterCreatureViewModel.Creature.EncounterMaxHP}"/>
+                                       Text="{Binding ActiveEncounterCreatureViewModel.Creature.EncounterMaxHP}" />
                             <TextBlock Grid.Row="1"
                                        Grid.Column="5"
                                        Margin="2,2,2,2"
-                                       Text="AC:"/>
+                                       Text="AC:" />
                             <TextBlock Grid.Row="1"
                                        Grid.Column="6"
                                        Margin="2,2,2,2"
-                                       Text="{Binding ActiveEncounterCreatureViewModel.Creature.AC}"/>
+                                       Text="{Binding ActiveEncounterCreatureViewModel.Creature.AC}" />
                             <CheckBox Grid.Row="2"
                                       Grid.Column="0"
                                       Grid.ColumnSpan="3"
@@ -337,7 +333,7 @@
                                       Grid.ColumnSpan="3"
                                       Margin="2,2,2,2"
                                       IsChecked="{Binding ActiveEncounterCreatureViewModel.Creature.Concentrating}"
-                                      Content="Concentrating?"/>
+                                      Content="Concentrating?" />
                             <ComboBox Name="selectDamageVolume"
                                       Header="Damage Taken Multiplier:"
                                       Grid.Column="3"
@@ -348,7 +344,7 @@
                                       SelectedItem="{Binding SelectedDamageVolume, Mode=TwoWay}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate>
-                                        <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                                        <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
@@ -364,7 +360,7 @@
                         VerticalContentAlignment="Stretch">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock FontSize="9" Text="{Binding}"/>
+                        <TextBlock FontSize="9" Text="{Binding}" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -373,16 +369,16 @@
         <StackPanel Orientation="Horizontal" Grid.Row="2">
             <Button Command="{x:Bind ViewModel.NextTurnCommand}"
                         Content="Next Turn"
-                        Margin="20,2"/>
+                        Margin="20,2" />
             <Button Command="{x:Bind ViewModel.RollInitiativeCommand}"
                         Content="Roll Initiative"
-                        Margin="20,2"/>
+                        Margin="20,2" />
             <Button Command="{x:Bind ViewModel.DealDamageCommand}"
                     Content="Deal Damage"
-                    Margin="20,2"/>
+                    Margin="20,2" />
             <Button Command="{x:Bind ViewModel.EndEncounterCommand}"
                         Content="Encounter Finished"
-                        Margin="20,2"/>
+                        Margin="20,2" />
         </StackPanel>
     </Grid>
 </Page>

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EasyEncounters.Contracts.Services;
@@ -11,82 +6,81 @@ using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 
-namespace EasyEncounters.ViewModels
+namespace EasyEncounters.ViewModels;
+
+public partial class DealDamageViewModel : ObservableRecipient, INavigationAware
 {
-    public partial class DealDamageViewModel : ObservableRecipient, INavigationAware
+    private readonly IActiveEncounterService _activeEncounterService;
+
+    private readonly INavigationService _navigationService;
+
+    private ActiveEncounter? _activeEncounter;
+
+    [ObservableProperty]
+    private ActiveEncounterCreatureViewModel? _sourceCreature;
+
+    //public ObservableCollection<ActiveEncounterCreatureViewModel> Targets = new();
+    private IList<DamageCreatureViewModel> _targets;
+
+    public DealDamageViewModel(IActiveEncounterService activeEncounterService, INavigationService navigationService)
     {
-        [ObservableProperty]
-        private ActiveEncounterCreatureViewModel? _sourceCreature;
+        _navigationService = navigationService;
+        _activeEncounterService = activeEncounterService;
+        _targets = new List<DamageCreatureViewModel>();
+    }
 
-        //public ObservableCollection<ActiveEncounterCreatureViewModel> Targets = new();
-        private IList<DamageCreatureViewModel> _targets;
+    public ObservableCollection<DamageInstanceViewModel> DamageInstances
+    {
+        get; private set;
+    } = new();
 
-        public ObservableCollection<DamageInstanceViewModel> DamageInstances
+    public void OnNavigatedFrom()
+    {
+    }
+
+    public void OnNavigatedTo(object parameter)
+    {
+        if (parameter is DealDamageTargetting && parameter != null)
         {
-            get; private set;
-        } = new();
+            //set properties
+            var targetting = (DealDamageTargetting)parameter;
 
+            SourceCreature = targetting.Source;
 
-        private readonly INavigationService _navigationService;
-        private readonly IActiveEncounterService _activeEncounterService;
-        private ActiveEncounter? _activeEncounter;
+            _activeEncounter = targetting.Encounter;
+            _targets = targetting.Targets.Select(x => new DamageCreatureViewModel(x)).ToList();
 
-        public DealDamageViewModel(IActiveEncounterService activeEncounterService, INavigationService navigationService)
-        {
-            _navigationService = navigationService;
-            _activeEncounterService = activeEncounterService;
-            _targets = new List<DamageCreatureViewModel>();
-
+            AddDamage();
         }
+    }
 
-        public void OnNavigatedFrom()
+    [RelayCommand]
+    private void AddDamage()
+    {
+        DamageInstances.Add(new DamageInstanceViewModel(_targets, _activeEncounterService));
+    }
+
+    [RelayCommand]
+    private void DealDamage()
+    {
+        var instances = GetInstancesOfDamage();
+        foreach (var instance in instances)
+            _activeEncounterService.DealDamageAsync(_activeEncounter, instance);
+
+        _navigationService.NavigateTo(typeof(RunEncounterViewModel).FullName!, ignoreNavigation: true);
+    }
+
+    private List<DamageInstance> GetInstancesOfDamage()
+    {
+        List<DamageInstance> damageInstances = new List<DamageInstance>();
+
+        foreach (var damage in DamageInstances)
         {
-        }
-        public void OnNavigatedTo(object parameter)
-        {
-            if (parameter is DealDamageTargetting && parameter != null)
+            foreach (var target in damage.Targets)
             {
-                //set properties
-                var targetting = (DealDamageTargetting)parameter;
-
-                SourceCreature = targetting.Source;
-
-                _activeEncounter = targetting.Encounter;
-                _targets = targetting.Targets.Select(x => new DamageCreatureViewModel(x)).ToList();
-
-                AddDamage();
-
+                damageInstances.Add(new DamageInstance(target.ActiveEncounterCreatureViewModel.Creature, SourceCreature?.Creature, damage.SelectedDamageType, target.SelectedDamageVolume, damage.DamageValue));
             }
         }
-
-        [RelayCommand]
-        private void AddDamage()
-        {
-            DamageInstances.Add(new DamageInstanceViewModel(_targets, _activeEncounterService));
-        }
-
-        [RelayCommand]
-        private void DealDamage()
-        {
-            var instances = GetInstancesOfDamage();
-            foreach(var instance in instances)
-                _activeEncounterService.DealDamageAsync(_activeEncounter, instance);
-
-            _navigationService.NavigateTo(typeof(RunEncounterViewModel).FullName!, ignoreNavigation: true);
-        }
-
-        private List<DamageInstance> GetInstancesOfDamage()
-        {
-            List<DamageInstance> damageInstances = new List<DamageInstance>();
-
-            foreach(var damage in DamageInstances)
-            {
-                foreach(var target in damage.Targets)
-                {
-                    damageInstances.Add(new DamageInstance(target.ActiveEncounterCreatureViewModel.Creature, SourceCreature?.Creature, damage.SelectedDamageType, target.SelectedDamageVolume, damage.DamageValue));
-                }
-            }
-            return damageInstances;
-        }
+        return damageInstances;
     }
 }

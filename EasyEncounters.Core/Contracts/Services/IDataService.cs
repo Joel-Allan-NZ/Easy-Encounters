@@ -1,38 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EasyEncounters.Core.Models;
+﻿using EasyEncounters.Core.Models;
 
 namespace EasyEncounters.Core.Contracts.Services;
+
 public interface IDataService
 {
-    Task<IEnumerable<Campaign>> GetAllCampaignsAsync();
-
-    Task<IEnumerable<Party>> GetAllPartiesAsync();
-
-    Task<IEnumerable<Creature>> GetAllCreaturesAsync();
-
-    Task<IEnumerable<Encounter>> GetAllEncountersAsync();
-
-    Task<IEnumerable<Ability>> GetAllSpellsAsync();
-
     Task<bool> ActiveEncounterExistsAsync();
-
-    Task<ActiveEncounter> GetActiveEncounterAsync();
-
-    Task WriteLog(IEnumerable<string> log);
-
-    Task<IEnumerable<Party>> GetCampaignPartiesAsync(Campaign campaign);
-
-    Task<IEnumerable<EncounterData>> GetAllEncounterDataAsync(Party party);
-
-    Task SaveAddAsync<T>(T entity) where T : IPersistable;
 
     Task ClearActiveEncounterAsync();
 
-    Task DeleteAsync<T>(T entity) where T: IPersistable;
-
     Task<T> CopyAsync<T>(T entity) where T : IPersistable;
+
+    Task DeleteAsync<T>(T entity) where T : IPersistable;
+
+    Task<ActiveEncounter> GetActiveEncounterAsync();
+
+    Task<IEnumerable<Campaign>> GetAllCampaignsAsync();
+
+    Task<IEnumerable<Creature>> GetAllCreaturesAsync();
+
+    Task<IEnumerable<EncounterData>> GetAllEncounterDataAsync(Party party);
+
+    Task<IEnumerable<Encounter>> GetAllEncountersAsync();
+
+    Task<IEnumerable<Party>> GetAllPartiesAsync();
+
+    Task<IEnumerable<Ability>> GetAllSpellsAsync();
+
+    Task<IEnumerable<Party>> GetCampaignPartiesAsync(Campaign campaign);
+
+    Task SaveAddAsync<T>(T entity) where T : IPersistable;
+
+    Task WriteLog(IEnumerable<string> log);
 }

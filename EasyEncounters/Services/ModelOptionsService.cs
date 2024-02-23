@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EasyEncounters.Contracts.Services;
+﻿using EasyEncounters.Contracts.Services;
 using EasyEncounters.Core.Contracts.Services;
 
 namespace EasyEncounters.Services;
+
 public class ModelOptionsService : IModelOptionsService
 {
     private const string OptionsKey = "MaxHPRoll";
-    private readonly ILocalSettingsService _localSettingService;
     private readonly IActiveEncounterService _activeEncounterService;
+    private readonly ILocalSettingsService _localSettingService;
 
     public ModelOptionsService(ILocalSettingsService localSettingService, IActiveEncounterService activeEncounterService)
     {

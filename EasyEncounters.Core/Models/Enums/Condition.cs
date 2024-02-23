@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace EasyEncounters.Core.Models.Enums;
 
-namespace EasyEncounters.Core.Models.Enums;
 [Flags]
 public enum Condition
 {
-    None  = 0,
+    None = 0,
     Blinded = 1 << 0,
     Charmed = 1 << 1,
     Deafened = 1 << 2,
@@ -24,7 +19,7 @@ public enum Condition
     Stunned = 1 << 12,
     Unconscious = 1 << 13,
     Exhausted = 1 << 14,
-    All = (1 << 15) - (1<<6) -1,
+    All = (1 << 15) - (1 << 6) - 1,
     Exhaustion2 = 1 << 15,
     Exhaustion3 = 1 << 16,
     Exhaustion4 = 1 << 17,
