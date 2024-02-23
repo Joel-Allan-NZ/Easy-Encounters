@@ -13,7 +13,9 @@ public class ActiveEncounterCreature : Creature
     {
         get; set;
     }
-
+    /// <summary>
+    /// A creature's maximum HP for the purposes of the active encounter; ie a rolled a value or default fixed value
+    /// </summary>
     public int EncounterMaxHP
     {
         get; set;
@@ -99,6 +101,7 @@ public class ActiveEncounterCreature : Creature
         get; set;
     }
 
+
     public Condition ActiveConditions
     {
         get; set;
@@ -111,47 +114,19 @@ public class ActiveEncounterCreature : Creature
 
     public ActiveEncounterCreature(Creature creature)
     {
-        //ActiveAbilities = new();
-
-        //InitiativeBonus = creature.InitiativeBonus;
-        //InitiativeAdvantage = creature.InitiativeAdvantage;
-        //DMControl = creature.DMControl;
-        //DexBonus = creature.DexBonus;
         Name = creature.Name;
         EncounterName = creature.Name ?? "Unnamed Creature"; //placeholder name, expect this to be overwritten in an active encounter
-        //Resistance = creature.Resistance;
-        //Immunity = creature.Immunity;
-        //Vulnerability = creature.Vulnerability;
         Dead = false;
         EncounterID = Guid.NewGuid();
         Reaction = true;
         Notes = ""+creature.Description;
-        //Hyperlink = creature.Hyperlink;
-        //MaxHP = creature.MaxHP;
-        //CurrentHP = creature.MaxHP;
         Concentrating = false;
-        Initiative = -100; //impossible to reach, purely for confirming this creature hasn't rolled initiative yet.
+
+        Initiative = -100; //placeholder value that indicates a creature hasn't rolled initiative
+
         CurrentLegendaryActions = creature.MaxLegendaryActions;
         CurrentLegendaryResistance = creature.MaxLegendaryResistance;
-        //MaxHPString = creature.MaxHPString;
-        //AC = creature.AC;
         ActiveConditions = Condition.None;
-        //ProficiencyBonus = creature.ProficiencyBonus;
-        //AttackDescription = creature.AttackDescription;
-        //Strength = creature.Strength;
-        //StrengthSave = creature.StrengthSave;
-        //Dexterity = creature.Dexterity;
-        //DexteritySave = creature.DexteritySave;
-        //Constitution = creature.Constitution;
-        //ConstitutionSave = creature.ConstitutionSave;
-        //Intelligence = creature.Intelligence;
-        //IntelligenceSave = creature.IntelligenceSave;
-        //Wisdom = creature.Wisdom;
-        //WisdomSave = creature.WisdomSave;
-        //Charisma = creature.Charisma;
-        //CharismaSave = creature.CharismaSave;
-        //Movement = creature.Movement;
-        //Features = creature.Features;
         SpellSlots = new Dictionary<int, int>();
 
         foreach(var kvp in creature.SpellSlots)

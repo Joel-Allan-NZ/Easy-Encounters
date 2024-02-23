@@ -561,4 +561,97 @@
   <data name="ThreeStateBoolean_True" xml:space="preserve">
     <value>True</value>
   </data>
+  <data name="CreatureAlignment_ChaoticEvil" xml:space="preserve">
+    <value>Chaotic Evil</value>
+  </data>
+  <data name="CreatureAlignment_ChaoticGood" xml:space="preserve">
+    <value>Chaotic Good</value>
+  </data>
+  <data name="CreatureAlignment_ChaoticNeutral" xml:space="preserve">
+    <value>Chaotic Neutral</value>
+  </data>
+  <data name="CreatureAlignment_LawfulEvil" xml:space="preserve">
+    <value>Lawful Evil</value>
+  </data>
+  <data name="CreatureAlignment_LawfulGood" xml:space="preserve">
+    <value>Lawful Good</value>
+  </data>
+  <data name="CreatureAlignment_LawfulNeutral" xml:space="preserve">
+    <value>Lawful Neutral</value>
+  </data>
+  <data name="CreatureAlignment_NeutralEvil" xml:space="preserve">
+    <value>Neutral Evil</value>
+  </data>
+  <data name="CreatureAlignment_NeutralGood" xml:space="preserve">
+    <value>Neutral Good</value>
+  </data>
+  <data name="CreatureAlignment_TrueNeutral" xml:space="preserve">
+    <value>True Neutral</value>
+  </data>
+  <data name="CreatureAlignment_Undefined" xml:space="preserve">
+    <value>None/Undefined</value>
+  </data>
+  <data name="CreatureSizeClass_Gargantuan" xml:space="preserve">
+    <value>Gargantuan (20 sqft +)</value>
+  </data>
+  <data name="CreatureSizeClass_Huge" xml:space="preserve">
+    <value>Huge (15 sqft)</value>
+  </data>
+  <data name="CreatureSizeClass_Large" xml:space="preserve">
+    <value>Large (10 sqft)</value>
+  </data>
+  <data name="CreatureSizeClass_Medium" xml:space="preserve">
+    <value>Medium  (5 sqft)</value>
+  </data>
+  <data name="CreatureSizeClass_Small" xml:space="preserve">
+    <value>Small (5 sqft)</value>
+  </data>
+  <data name="CreatureSizeClass_Tiny" xml:space="preserve">
+    <value>Tiny (2.5 sqft)</value>
+  </data>
+  <data name="CreatureSizeClass_Unknown" xml:space="preserve">
+    <value>Unspecified</value>
+  </data>
+  <data name="CreatureType_Aberration" xml:space="preserve">
+    <value>Aberration</value>
+  </data>
+  <data name="CreatureType_Beast" xml:space="preserve">
+    <value>Beast</value>
+  </data>
+  <data name="CreatureType_Celestial" xml:space="preserve">
+    <value>Celestial</value>
+  </data>
+  <data name="CreatureType_Construct" xml:space="preserve">
+    <value>Construct</value>
+  </data>
+  <data name="CreatureType_Dragon" xml:space="preserve">
+    <value>Dragon</value>
+  </data>
+  <data name="CreatureType_Elemental" xml:space="preserve">
+    <value>Elemental</value>
+  </data>
+  <data name="CreatureType_Fey" xml:space="preserve">
+    <value>Fey</value>
+  </data>
+  <data name="CreatureType_Fiend" xml:space="preserve">
+    <value>Fiend</value>
+  </data>
+  <data name="CreatureType_Giant" xml:space="preserve">
+    <value>Giant</value>
+  </data>
+  <data name="CreatureType_Humanoid" xml:space="preserve">
+    <value>Humanoid</value>
+  </data>
+  <data name="CreatureType_Monstrosity" xml:space="preserve">
+    <value>Monstrosity</value>
+  </data>
+  <data name="CreatureType_Ooze" xml:space="preserve">
+    <value>Ooze</value>
+  </data>
+  <data name="CreatureType_Plant" xml:space="preserve">
+    <value>Plant</value>
+  </data>
+  <data name="CreatureType_Undead" xml:space="preserve">
+    <value>Undead</value>
+  </data>
 </root>

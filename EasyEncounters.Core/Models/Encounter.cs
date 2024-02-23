@@ -41,13 +41,22 @@ public class Encounter : Persistable
         get; set;
     }
 
-    public Encounter(string name = "default", List<Creature>? creatures = null, string description = "", double adjustedEncounterXP = -1)
+    /// <summary>
+    /// The Campaign this encounter was designed for, if any
+    /// </summary>
+    public Campaign? Campaign
+    {
+        get; set;
+    }
+
+    public Encounter(string name = "default", List<Creature>? creatures = null, string description = "", double adjustedEncounterXP = -1, Campaign? campaign = null)
     {
         Creatures = creatures ?? new List<Creature>();
         Name = name;
         Id = Guid.NewGuid();
         Description = description ?? "";
         AdjustedEncounterXP = adjustedEncounterXP;
+        Campaign = campaign;
     }
 
     public override bool Equals(object? obj)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using EasyEncounters.Core.Models.Enums;
@@ -35,15 +36,6 @@ public class Creature : Persistable
     {
         get; set;
     }
-
-
-    ///// <summary>
-    ///// For initiative tie-breaking.
-    ///// </summary>
-    //public int DexBonus //TODO: deprecate.
-    //{
-    //    get; set;
-    //}
 
     /// <summary>
     /// The creature's name. NB this is a statblock wide thing like "orc" not an encounter wide one like "orc1".
@@ -98,6 +90,9 @@ public class Creature : Persistable
         get; set;
     }
 
+    /// <summary>
+    /// An external hyperlink address for the statblock. 
+    /// </summary>
     public string? Hyperlink
     {
         get; set;
@@ -233,20 +228,48 @@ public class Creature : Persistable
         get; set;
     }
 
-    public Creature(string name = "New Creature", /*int dmgTaken =0, int tempHP =0,*/ int initBonus = 0,
+    public string? Senses
+    {
+        get; set;
+    }
+
+    public CreatureType CreatureType
+    {
+        get; set;
+    }
+
+    /// <summary>
+    /// The Creature's Subtype, if any. For example, a creature with a CreatureType of Humanoid may have a Subtype of Orc.
+    /// </summary>
+    public string? CreatureSubtype
+    {
+        get; set;
+    }
+
+    public CreatureAlignment Alignment
+    {
+        get; set;
+    }
+
+    public CreatureSizeClass Size
+    {
+        get; set;
+    }
+
+
+    public Creature(string name = "New Creature", int initBonus = 0,
         bool initAdv = false, bool dmControl = true, DamageType resistance = DamageType.None,
         DamageType immunity = DamageType.None, DamageType vuln = DamageType.None, string description = "",
         double levelCR = 0.0, string hyper = "https://www.dndbeyond.com/", int maxHP = 0, string maxHPString = "", int aC = 10,
         int legActions = 0, int legRes = 0, string attackDescription = "", Condition conditionImmunities = Condition.None,
-        int strength = 10, int strengthSave = 0, int dexterity = 10, int dexteritySave =0, int constitution = 10, int constitutionSave = 0,
-        int intelligence = 10, int intelligenceSave = 0, int wisdom = 10, int wisdomSave = 0, int charisma = 10, int charismaSave = 0, 
-        Dictionary<int, int>? spellSlots = null, int proficiencyBonus = 0, CreatureAttributeType spellStat = CreatureAttributeType.None, 
-        string features = "", string movement = "")
+        int strength = 10, int strengthSave = 0, int dexterity = 10, int dexteritySave = 0, int constitution = 10, int constitutionSave = 0,
+        int intelligence = 10, int intelligenceSave = 0, int wisdom = 10, int wisdomSave = 0, int charisma = 10, int charismaSave = 0,
+        Dictionary<int, int>? spellSlots = null, int proficiencyBonus = 0, CreatureAttributeType spellStat = CreatureAttributeType.None,
+        string features = "", string movement = "", string senses = "", CreatureType creatureType = CreatureType.Aberration, string creatureSubtype = "",
+        CreatureAlignment creatureAlignment = CreatureAlignment.Undefined, CreatureSizeClass size = CreatureSizeClass.Medium)
     {
         Name = name;
         Abilities = new List<Ability>();
-        //HealthDamageTaken = dmgTaken;
-        //TempHP= tempHP;
         InitiativeBonus = initBonus;
         InitiativeAdvantage = initAdv;
         DMControl = dmControl;
@@ -280,10 +303,15 @@ public class Creature : Persistable
         CharismaSave = charismaSave;
         ProficiencyBonus = proficiencyBonus;
 
-       //AttackStat = attackStat;
         SpellStat = spellStat;
         Features = features;
         Movement=movement;
+
+        Size = size;
+        CreatureType = creatureType;
+        Senses = senses;
+        CreatureSubtype = creatureSubtype;
+        Alignment = creatureAlignment;
     }
 
     public void CopyFrom(Creature other)
@@ -296,6 +324,7 @@ public class Creature : Persistable
                 Abilities.Add(ability);
             else
             {
+                //TODO: add ability copying for non-spells
                 var newAbility = new Ability();
                 
             }
@@ -333,9 +362,14 @@ public class Creature : Persistable
         Movement = other.Movement;
         ProficiencyBonus = other.ProficiencyBonus;
 
-        //AttackStat = other.AttackStat;
         SpellStat = other.SpellStat;
         Features = other.Features;
+
+        Size = other.Size;
+        CreatureType = other.CreatureType;
+        Senses = other.Senses;
+        CreatureSubtype = other.CreatureSubtype;
+        Alignment = other.Alignment;
 
         SpellSlots.Clear();
         foreach(var kvp in other.SpellSlots)
@@ -346,11 +380,7 @@ public class Creature : Persistable
 
     public override bool Equals(object? obj)
     {
-        if (obj is Creature)
-        {
-            return ((Creature)obj).Id == this.Id;
-        }
-        return false;
+        return (obj is Creature creature && creature.Id == Id);
     }
 
     public override int GetHashCode()

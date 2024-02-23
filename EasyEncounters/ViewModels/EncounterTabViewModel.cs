@@ -111,7 +111,10 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
 
         var current = await _activeEncounterService.EndCurrentTurnAsync(_activeEncounter); /*$"{_activeEncounter.ActiveTurn?.EncounterName ?? "A creature"} ends their turn.";*/
 
+        
 
+
+        
         if (_activeEncounter.CreatureTurns.Count != Creatures.Count)
         {
             var temp = new List<ActiveEncounterCreatureViewModel>(Creatures);
@@ -244,22 +247,22 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
             else
                 openTab = _tabService.OpenTab(typeof(EncounterDamageTabViewModel).FullName!,
                     new EncounterDamageTabData(_activeEncounter, source, Creatures, null), $"Damage from {source.Creature.EncounterName}");
-            //Tuple.Create(_activeEncounter, source), $"Damage from {source.Creature.EncounterName}");
 
             Tabs.Add(openTab);
-            //Tabs.Insert(0, openTab);
-            //Tabs.Insert(1, openTab);
         }
         else
         {
-            if (abilityVM != null)
-            {
-                ((EncounterDamageTabViewModel)openTab).SelectedAbility = abilityVM;
-                ((EncounterDamageTabViewModel)openTab).HasSelectedAbility = true;
-                ((EncounterDamageTabViewModel)openTab).SelectedDamageType = abilityVM.DamageType;
-            }
-            else
-            ((EncounterDamageTabViewModel)openTab).HasSelectedAbility = false;
+            ((EncounterDamageTabViewModel)openTab).SelectedAbility = abilityVM;
+            ((EncounterDamageTabViewModel)openTab).HasSelectedAbility = abilityVM != null;
+            ((EncounterDamageTabViewModel)openTab).SelectedDamageType = abilityVM?.DamageType ?? Core.Models.Enums.DamageType.None;
+            //if (abilityVM != null)
+            //{
+            //    ((EncounterDamageTabViewModel)openTab).SelectedAbility = abilityVM;
+            //    ((EncounterDamageTabViewModel)openTab).HasSelectedAbility = true;
+            //    ((EncounterDamageTabViewModel)openTab).SelectedDamageType = abilityVM.DamageType;
+            //}
+            //else
+            //((EncounterDamageTabViewModel)openTab).HasSelectedAbility = false;
 
         }
         SelectedTab = openTab;
@@ -312,11 +315,11 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
         WeakReferenceMessenger.Default.UnregisterAll(this);
     }
 
-    public async void OnNavigatedTo(object parameter)
+    public async void OnNavigatedTo(object activeEncounter)
     {
-        if(parameter != null && parameter is ActiveEncounter)
+        if(activeEncounter != null && activeEncounter is ActiveEncounter)
         {
-            _activeEncounter = (ActiveEncounter)parameter;
+            _activeEncounter = (ActiveEncounter)activeEncounter;
         }
         else
         {

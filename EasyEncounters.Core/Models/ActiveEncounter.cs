@@ -66,29 +66,6 @@ public class ActiveEncounter : Encounter
         ActiveCreatures.Add(creature);
     }
 
-    public ActiveEncounter(Encounter encounter, Party party)
-    {
-        this.ActiveCreatures = new List<ActiveEncounterCreature>();
-        this.Name = encounter.Name;
-        this.CreatureTurns = new Queue<ActiveEncounterCreature>();
-        Log = new List<string>();
-
-        Dictionary<string, int> nameCollisions = new();
-
-        //this.Creatures = new List<Creature>(); //never really need to use/instantiate this one
-        if (encounter.Creatures != null)
-        {
-            foreach (var creature in encounter.Creatures)
-            {
-                AddCreature(new ActiveEncounterCreature(creature), nameCollisions);
-            }
-            foreach (var member in party.Members)
-            {
-                AddCreature(new ActiveEncounterCreature(member), nameCollisions);
-            }
-        }
-    }
-
     public ActiveEncounter(Encounter encounter, IEnumerable<ActiveEncounterCreature> creatures)
     {
         this.ActiveCreatures = new List<ActiveEncounterCreature>();
