@@ -69,7 +69,7 @@ public partial class ActiveEncounterCreatureViewModel : ObservableRecipient //to
 
     public bool HasConditionImmunities => this.Creature.ConditionImmunities > Core.Models.Enums.Condition.None;
 
-    public bool HasFeatures => this.Creature.Features.Length > 1;
+    public bool HasFeatures => this.Creature.Features?.Length > 1;
 
     public bool HasImmunities => this.Creature.Immunity > Core.Models.Enums.DamageType.None;
 

@@ -6,17 +6,11 @@ namespace EasyEncounters.Core.Services;
 
 public class EncounterService : IEncounterService
 {
-    private readonly IAbilityService _abilityService;
-    private readonly ICreatureService _creatureService;
-    private readonly IDiceService _diceService;
     private readonly IPartyXPService _partyXPService;
 
-    public EncounterService(IPartyXPService partyXPService, IDiceService diceService, IAbilityService abilityService, ICreatureService creatureService)
+    public EncounterService(IPartyXPService partyXPService)
     {
-        _diceService = diceService;
         _partyXPService = partyXPService;
-        _abilityService = abilityService;
-        _creatureService = creatureService;
     }
 
     public void AddCreature(Encounter encounter, Creature creature)
@@ -38,65 +32,21 @@ public class EncounterService : IEncounterService
         return monsterXPTotal * EncounterSizeMulitiplier(EffectiveMonsterCount(encounter));
     }
 
-    public ActiveEncounterCreature CreateActiveEncounterCreature(Creature creature, bool maxHPRoll)
-    {
-        ActiveEncounterCreature result = new ActiveEncounterCreature(creature);// new ActiveEncounterCreature(creature);
-        _creatureService.CopyTo(result, creature);
-        if (maxHPRoll && creature.DMControl)
-        {
-            if (creature.MaxHPString != null)
-            {
-                result.EncounterMaxHP = _diceService.Roll(creature.MaxHPString);
-            }
-            else
-                result.EncounterMaxHP = creature.MaxHP;
-
-            result.CurrentHP = result.EncounterMaxHP;
-        }
-        else
-        {
-            result.EncounterMaxHP = result.MaxHP;
-            result.CurrentHP = result.MaxHP; //todo: long term we need to improve this for parties specifically - should be able to track friendly NPC health between
-            //encounters. Gets messy with rests, but that's a future issue
-        }
-
-        foreach (var ability in creature.Abilities)
-        {
-            if (ability.SpellLevel != Models.Enums.SpellLevel.NotASpell)
-            {
-                result.ActiveAbilities.Add(_abilityService.CreateActiveAbility(result, ability, _creatureService.GetAttributeBonusValue(result, creature.SpellStat)));
-            }
-            else
-                result.ActiveAbilities.Add(_abilityService.CreateActiveAbility(result, ability, _creatureService.GetAttributeBonusValue(result, ability.ResolutionStat)));
-        }
-
-        return result;
-    }
-
-    public EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, int[] partyXPThreshold)
+    public EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, double[] partyXPThreshold)
     {
         if (encounter.Creatures == null || encounter.Creatures.Count == 0)
-            return EncounterDifficulty.None; //"N/A";
+        {
+            return EncounterDifficulty.None;
+        }
 
         if (encounter.AdjustedEncounterXP == -1)
-            encounter.AdjustedEncounterXP = CalculateEncounterXP(encounter);
+        {
+            CalculateEncounterXP(encounter);
+        }
 
-        if (encounter.AdjustedEncounterXP < partyXPThreshold[0])
-            return EncounterDifficulty.Trivial; //"Trivial";
+        var thresholdCount = partyXPThreshold.Count(x => encounter.AdjustedEncounterXP > x);
 
-        if (encounter.AdjustedEncounterXP < partyXPThreshold[1])
-            return EncounterDifficulty.Easy; //"Easy";
-
-        if (encounter.AdjustedEncounterXP < partyXPThreshold[2])
-            return EncounterDifficulty.Medium;//"Medium";
-
-        if (encounter.AdjustedEncounterXP < partyXPThreshold[3])
-            return EncounterDifficulty.Hard;//"Hard";
-
-        if (encounter.AdjustedEncounterXP < partyXPThreshold[3] * 1.5)
-            return EncounterDifficulty.Deadly;//"Deadly";
-
-        return EncounterDifficulty.VeryDeadly;//"Very Deadly";
+        return (EncounterDifficulty)thresholdCount+1;
     }
 
     public EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, Party party)
@@ -104,7 +54,21 @@ public class EncounterService : IEncounterService
         return DetermineDifficultyForParty(encounter, GetPartyXPThreshold(party));
     }
 
-    public int[] GetPartyXPThreshold(Party party) => _partyXPService.FindPartyXPThreshold(party);
+    public IEnumerable<EncounterData> GenerateEncounterData(Party party, IEnumerable<Encounter> encounters)
+    {
+        List<EncounterData> data = new();
+
+        var partyXPThreshold = GetPartyXPThreshold(party);
+
+        foreach (var encounter in encounters)
+        {
+            data.Add(new EncounterData(encounter, party, DetermineDifficultyForParty(encounter, partyXPThreshold)));
+        }
+
+        return data;
+    }
+
+    public double[] GetPartyXPThreshold(Party party) => _partyXPService.CalculatePartyXPThresholds(party);
 
     public void RemoveCreature(Encounter encounter, Creature creature)
     {
@@ -118,49 +82,26 @@ public class EncounterService : IEncounterService
     /// the average CR.
     /// </summary>
     /// <returns></returns>
-    private int EffectiveMonsterCount(Encounter encounter)
+    private static int EffectiveMonsterCount(Encounter encounter)
     {
         var averageCR = encounter.Creatures.Average(x => x.LevelOrCR);
-        var creatureCount = encounter.Creatures.Count;
-        if (averageCR != 0)
-        {
-            creatureCount = 0;
-            foreach (var creature in encounter.Creatures)
-            {
-                if (creature.LevelOrCR > averageCR / 3)
-                {
-                    creatureCount++;
-                }
-            }
-        }
-        return creatureCount;
+        return encounter.Creatures.Count(x => x.LevelOrCR > (averageCR / 3));
     }
 
-    private double EncounterSizeMulitiplier(int encounterSize)
+    private static double EncounterSizeMulitiplier(int encounterSize)
     {
-        switch (encounterSize)
+        return encounterSize switch
         {
-            case 1:
-                return 1;
-
-            case 2:
-                return 1.5;
-
-            case < 7:
-                return 2;
-
-            case < 11:
-                return 2.5;
-
-            case < 15:
-                return 3;
-
-            default:
-                return 4;
-        }
+            1 => 1,
+            2 => 1.5,
+            < 7 => 2,
+            < 11 => 2.5,
+            < 15 => 3,
+            _ => 4,
+        };
     }
 
-    private int MonsterXPFromCR(double CR)
+    private static int MonsterXPFromCR(double CR)
     {
         switch (CR)
         {

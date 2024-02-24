@@ -12,17 +12,21 @@ public class ActiveEncounterService_Tests : IDisposable
     private IDataService dataService;
     private IEncounterService encounterService;
     private ILogService logService;
-    private IRandomService randomService;
+    private IDiceService diceService;
+    private IAbilityService abilityService;
+    private IModelOptionsService modelOptionsService;
 
     public ActiveEncounterService_Tests()
     {
         dataService = Substitute.For<IDataService>();
-        randomService = Substitute.For<IRandomService>();
+        diceService = Substitute.For<IDiceService>();
         encounterService = Substitute.For<IEncounterService>();
         creatureService = Substitute.For<ICreatureService>();
         logService = Substitute.For<ILogService>();
+        abilityService = Substitute.For<IAbilityService>();
+        modelOptionsService = Substitute.For<IModelOptionsService>();
 
-        _service = new ActiveEncounterService(randomService, dataService, encounterService, creatureService, logService);
+        _service = new ActiveEncounterService(diceService, dataService, encounterService, creatureService, logService, abilityService, modelOptionsService);
     }
 
     [Fact]
@@ -32,13 +36,13 @@ public class ActiveEncounterService_Tests : IDisposable
         {
             Creatures = new List<Creature>()
             {
-                new Creature(),
-                new Creature()
+                new(),
+                new()
             }
         };
         Party party = new();
         dataService.SaveAddAsync<ActiveEncounter>(default).ReturnsForAnyArgs(Task.CompletedTask);
-        encounterService.CreateActiveEncounterCreature(default, default).ReturnsForAnyArgs(new ActiveEncounterCreature());
+        //_service.CreateActiveEncounterCreature(default, default).ReturnsForAnyArgs(new ActiveEncounterCreature());
 
         var active = _service.CreateActiveEncounterAsync(encounter, party);
 
@@ -51,7 +55,7 @@ public class ActiveEncounterService_Tests : IDisposable
         Encounter encounter = new();
         Party party = new();
         dataService.SaveAddAsync<ActiveEncounter>(default).ReturnsForAnyArgs(Task.CompletedTask);
-        encounterService.CreateActiveEncounterCreature(default, default).ReturnsForAnyArgs(new ActiveEncounterCreature());
+        //_service.CreateActiveEncounterCreature(default, default).ReturnsForAnyArgs(new ActiveEncounterCreature());
 
         var active = _service.CreateActiveEncounterAsync(encounter, party);
 
@@ -78,7 +82,7 @@ public class ActiveEncounterService_Tests : IDisposable
             }
         };
         dataService.SaveAddAsync<ActiveEncounter>(default).ReturnsForAnyArgs(Task.CompletedTask);
-        encounterService.CreateActiveEncounterCreature(default, default).ReturnsForAnyArgs(new ActiveEncounterCreature());
+        //_service.CreateActiveEncounterCreature(default, default).ReturnsForAnyArgs(new ActiveEncounterCreature());
 
         var active = _service.CreateActiveEncounterAsync(encounter, party);
 
@@ -98,7 +102,7 @@ public class ActiveEncounterService_Tests : IDisposable
             }
         };
         dataService.SaveAddAsync<ActiveEncounter>(default).ReturnsForAnyArgs(Task.CompletedTask);
-        encounterService.CreateActiveEncounterCreature(default, default).ReturnsForAnyArgs(new ActiveEncounterCreature());
+        //_service.CreateActiveEncounterCreature(default, default).ReturnsForAnyArgs(new ActiveEncounterCreature());
 
         var active = _service.CreateActiveEncounterAsync(encounter, party);
 
@@ -108,7 +112,7 @@ public class ActiveEncounterService_Tests : IDisposable
     public void Dispose()
     {
         _service = null;
-        randomService = null;
+        diceService = null;
         encounterService = null;
         creatureService = null;
         logService = null;

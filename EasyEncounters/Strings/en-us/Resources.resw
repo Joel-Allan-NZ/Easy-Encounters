@@ -216,445 +216,524 @@
   <data name="Settings_MaxHPPersonalization.Text" xml:space="preserve">
     <value>Control whether creatures should roll for HP</value>
   </data>
-  <data name="ActionRangeType_Feet" xml:space="preserve">
+  <data name="ActionRangeType_Feet_Short" xml:space="preserve">
     <value>Feet</value>
   </data>
-  <data name="ActionRangeType_Mile" xml:space="preserve">
+  <data name="ActionRangeType_Mile_Short" xml:space="preserve">
     <value>Miles</value>
   </data>
-  <data name="ActionRangeType_Self" xml:space="preserve">
+  <data name="ActionRangeType_Self_Short" xml:space="preserve">
     <value>Self</value>
   </data>
-  <data name="ActionRangeType_Sight" xml:space="preserve">
+  <data name="ActionRangeType_Sight_Short" xml:space="preserve">
     <value>Sight</value>
   </data>
-  <data name="ActionRangeType_Touch" xml:space="preserve">
+  <data name="ActionRangeType_Touch_Short" xml:space="preserve">
     <value>Touch</value>
   </data>
-  <data name="ActionRangeType_Unlimited" xml:space="preserve">
+  <data name="ActionRangeType_Unlimited_Short" xml:space="preserve">
     <value>Unlimited</value>
   </data>
-  <data name="ActionSpeed_Action" xml:space="preserve">
+  <data name="ActionSpeed_Action_Short" xml:space="preserve">
     <value>Action</value>
   </data>
-  <data name="ActionSpeed_BonusAction" xml:space="preserve">
+  <data name="ActionSpeed_BonusAction_Short" xml:space="preserve">
     <value>Bonus Action</value>
   </data>
-  <data name="ActionSpeed_None" xml:space="preserve">
+  <data name="ActionSpeed_None_Short" xml:space="preserve">
     <value>None</value>
   </data>
-  <data name="ActionSpeed_Reaction" xml:space="preserve">
+  <data name="ActionSpeed_Reaction_Short" xml:space="preserve">
     <value>Reaction</value>
   </data>
-  <data name="Condition_All" xml:space="preserve">
+  <data name="Condition_All_Short" xml:space="preserve">
     <value>All Conditions</value>
   </data>
-  <data name="Condition_Blind" xml:space="preserve">
+  <data name="Condition_Blind_Short" xml:space="preserve">
     <value>Blinded</value>
   </data>
-  <data name="Condition_Charmed" xml:space="preserve">
+  <data name="Condition_Charmed_Short" xml:space="preserve">
     <value>Charmed</value>
   </data>
-  <data name="Condition_Deafened" xml:space="preserve">
+  <data name="Condition_Deafened_Short" xml:space="preserve">
     <value>Deafened</value>
   </data>
-  <data name="Condition_Exhausted" xml:space="preserve">
+  <data name="Condition_Exhausted_Short" xml:space="preserve">
     <value>Exhaustion</value>
   </data>
-  <data name="Condition_Exhaustion2" xml:space="preserve">
+  <data name="Condition_Exhaustion2_Short" xml:space="preserve">
     <value>Exhaustion (Level 2)</value>
   </data>
-  <data name="Condition_Exhaustion3" xml:space="preserve">
+  <data name="Condition_Exhaustion3_Short" xml:space="preserve">
     <value>Exhaustion (Level 3)</value>
   </data>
-  <data name="Condition_Exhaustion4" xml:space="preserve">
+  <data name="Condition_Exhaustion4_Short" xml:space="preserve">
     <value>Exhaustion (Level 4)</value>
   </data>
-  <data name="Condition_Exhaustion5" xml:space="preserve">
+  <data name="Condition_Exhaustion5_Short" xml:space="preserve">
     <value>Exhaustion (Level 5)</value>
   </data>
-  <data name="Condition_Exhaustion6" xml:space="preserve">
+  <data name="Condition_Exhaustion6_Short" xml:space="preserve">
     <value>Exhaustion (Level 6)</value>
   </data>
-  <data name="Condition_Frightened" xml:space="preserve">
+  <data name="Condition_Frightened_Short" xml:space="preserve">
     <value>Frightened</value>
   </data>
-  <data name="Condition_Grappled" xml:space="preserve">
+  <data name="Condition_Grappled_Short" xml:space="preserve">
     <value>Grappled</value>
   </data>
-  <data name="Condition_Invisible" xml:space="preserve">
+  <data name="Condition_Invisible_Short" xml:space="preserve">
     <value>Invisible</value>
   </data>
-  <data name="Condition_None" xml:space="preserve">
+  <data name="Condition_None_Short" xml:space="preserve">
     <value>None</value>
   </data>
-  <data name="Condition_Paralyzed" xml:space="preserve">
+  <data name="Condition_Paralyzed_Short" xml:space="preserve">
     <value>Paralyzed</value>
   </data>
-  <data name="Condition_Petrified" xml:space="preserve">
+  <data name="Condition_Petrified_Short" xml:space="preserve">
     <value>Petrified</value>
   </data>
-  <data name="Condition_Poisoned" xml:space="preserve">
+  <data name="Condition_Poisoned_Short" xml:space="preserve">
     <value>Poisoned</value>
   </data>
-  <data name="Condition_Prone" xml:space="preserve">
+  <data name="Condition_Prone_Short" xml:space="preserve">
     <value>Prone</value>
   </data>
-  <data name="Condition_Restrained" xml:space="preserve">
+  <data name="Condition_Restrained_Short" xml:space="preserve">
     <value>Restrained</value>
   </data>
-  <data name="Condition_Stunned" xml:space="preserve">
+  <data name="Condition_Stunned_Short" xml:space="preserve">
     <value>Stunned</value>
   </data>
-  <data name="Condition_Unconscious" xml:space="preserve">
+  <data name="Condition_Unconscious_Short" xml:space="preserve">
     <value>Unconscious</value>
   </data>
-  <data name="CreatureAttributeType_Charisma" xml:space="preserve">
+  <data name="CreatureAttributeType_Charisma_Short" xml:space="preserve">
     <value>Charisma</value>
   </data>
-  <data name="CreatureAttributeType_Constitution" xml:space="preserve">
+  <data name="CreatureAttributeType_Constitution_Short" xml:space="preserve">
     <value>Constitution</value>
   </data>
-  <data name="CreatureAttributeType_Dexterity" xml:space="preserve">
+  <data name="CreatureAttributeType_Dexterity_Short" xml:space="preserve">
     <value>Dexterity</value>
   </data>
-  <data name="CreatureAttributeType_Intelligence" xml:space="preserve">
+  <data name="CreatureAttributeType_Intelligence_Short" xml:space="preserve">
     <value>Intelligence</value>
   </data>
-  <data name="CreatureAttributeType_None" xml:space="preserve">
+  <data name="CreatureAttributeType_None_Short" xml:space="preserve">
     <value>None</value>
   </data>
-  <data name="CreatureAttributeType_Strength" xml:space="preserve">
+  <data name="CreatureAttributeType_Strength_Short" xml:space="preserve">
     <value>Strength</value>
   </data>
-  <data name="CreatureAttributeType_Wisdom" xml:space="preserve">
+  <data name="CreatureAttributeType_Wisdom_Short" xml:space="preserve">
     <value>Wisdom</value>
   </data>
-  <data name="DamageType_Acid" xml:space="preserve">
+  <data name="DamageType_Acid_Short" xml:space="preserve">
     <value>Acid</value>
   </data>
-  <data name="DamageType_Bludgeoning" xml:space="preserve">
+  <data name="DamageType_Bludgeoning_Short" xml:space="preserve">
     <value>Bludgeoning</value>
   </data>
-  <data name="DamageType_Cold" xml:space="preserve">
+  <data name="DamageType_Cold_Short" xml:space="preserve">
     <value>Cold</value>
   </data>
-  <data name="DamageType_Fire" xml:space="preserve">
+  <data name="DamageType_Fire_Short" xml:space="preserve">
     <value>Fire</value>
   </data>
-  <data name="DamageType_Force" xml:space="preserve">
+  <data name="DamageType_Force_Short" xml:space="preserve">
     <value>Force</value>
   </data>
-  <data name="DamageType_Healing" xml:space="preserve">
+  <data name="DamageType_Healing_Short" xml:space="preserve">
     <value>Healing</value>
   </data>
-  <data name="DamageType_Lightning" xml:space="preserve">
+  <data name="DamageType_Lightning_Short" xml:space="preserve">
     <value>Lightning</value>
   </data>
-  <data name="DamageType_Necrotic" xml:space="preserve">
+  <data name="DamageType_Necrotic_Short" xml:space="preserve">
     <value>Necrotic</value>
   </data>
-  <data name="DamageType_None" xml:space="preserve">
+  <data name="DamageType_None_Short" xml:space="preserve">
     <value>No Damage</value>
   </data>
-  <data name="DamageType_NonMagicalPhysical" xml:space="preserve">
+  <data name="DamageType_NonMagicalPhysical_Short" xml:space="preserve">
     <value>Bludgeoning, Piercing, or Slashing from Nonmagical attacks</value>
   </data>
-  <data name="DamageType_NonSilveredPhysical" xml:space="preserve">
+  <data name="DamageType_NonSilveredPhysical_Short" xml:space="preserve">
     <value>Bludgeoning, Piercing, or Slashing from Nonmagical attacks that aren't Silvered</value>
   </data>
-  <data name="DamageType_Piercing" xml:space="preserve">
+  <data name="DamageType_Piercing_Short" xml:space="preserve">
     <value>Piercing</value>
   </data>
-  <data name="DamageType_Poison" xml:space="preserve">
+  <data name="DamageType_Poison_Short" xml:space="preserve">
     <value>Poison</value>
   </data>
-  <data name="DamageType_Psychic" xml:space="preserve">
+  <data name="DamageType_Psychic_Short" xml:space="preserve">
     <value>Psychic</value>
   </data>
-  <data name="DamageType_Radiant" xml:space="preserve">
+  <data name="DamageType_Radiant_Short" xml:space="preserve">
     <value>Radiant</value>
   </data>
-  <data name="DamageType_Slashing" xml:space="preserve">
+  <data name="DamageType_Slashing_Short" xml:space="preserve">
     <value>Slashing</value>
   </data>
-  <data name="DamageType_Thunder" xml:space="preserve">
+  <data name="DamageType_Thunder_Short" xml:space="preserve">
     <value>Thunder</value>
   </data>
-  <data name="DamageType_Untyped" xml:space="preserve">
+  <data name="DamageType_Untyped_Short" xml:space="preserve">
     <value>Generic</value>
   </data>
-  <data name="DamageVolume_Double" xml:space="preserve">
+  <data name="DamageVolume_Double_Short" xml:space="preserve">
     <value>Vulnerable</value>
   </data>
-  <data name="DamageVolume_Half" xml:space="preserve">
+  <data name="DamageVolume_Half_Short" xml:space="preserve">
     <value>Resist or Save.</value>
   </data>
-  <data name="DamageVolume_None" xml:space="preserve">
+  <data name="DamageVolume_None_Short" xml:space="preserve">
     <value>Immune</value>
   </data>
-  <data name="DamageVolume_Normal" xml:space="preserve">
+  <data name="DamageVolume_Normal_Short" xml:space="preserve">
     <value>Normal</value>
   </data>
-  <data name="DamageVolume_Quarter" xml:space="preserve">
+  <data name="DamageVolume_Quarter_Short" xml:space="preserve">
     <value>Resist (and Save for half)</value>
   </data>
-  <data name="MagicSchool_Abjuration" xml:space="preserve">
+  <data name="MagicSchool_Abjuration_Short" xml:space="preserve">
     <value>Abjuration</value>
   </data>
-  <data name="MagicSchool_Conjuration" xml:space="preserve">
+  <data name="MagicSchool_Conjuration_Short" xml:space="preserve">
     <value>Conjuration</value>
   </data>
-  <data name="MagicSchool_Divination" xml:space="preserve">
+  <data name="MagicSchool_Divination_Short" xml:space="preserve">
     <value>Divination</value>
   </data>
-  <data name="MagicSchool_Enchantment" xml:space="preserve">
+  <data name="MagicSchool_Enchantment_Short" xml:space="preserve">
     <value>Enchantment</value>
   </data>
-  <data name="MagicSchool_Evocation" xml:space="preserve">
+  <data name="MagicSchool_Evocation_Short" xml:space="preserve">
     <value>Evocation</value>
   </data>
-  <data name="MagicSchool_Illusion" xml:space="preserve">
+  <data name="MagicSchool_Illusion_Short" xml:space="preserve">
     <value>Illusion</value>
   </data>
-  <data name="MagicSchool_Necromancy" xml:space="preserve">
+  <data name="MagicSchool_Necromancy_Short" xml:space="preserve">
     <value>Necromancy</value>
   </data>
-  <data name="MagicSchool_None" xml:space="preserve">
+  <data name="MagicSchool_None_Short" xml:space="preserve">
     <value>None</value>
   </data>
-  <data name="MagicSchool_Transmutation" xml:space="preserve">
+  <data name="MagicSchool_Transmutation_Short" xml:space="preserve">
     <value>Transmutation</value>
   </data>
-  <data name="ResolutionType_Attack" xml:space="preserve">
+  <data name="ResolutionType_Attack_Short" xml:space="preserve">
     <value>Attack</value>
   </data>
-  <data name="ResolutionType_SavingThrow" xml:space="preserve">
+  <data name="ResolutionType_SavingThrow_Short" xml:space="preserve">
     <value>Saving Throw</value>
   </data>
-  <data name="ResolutionType_Undefined" xml:space="preserve">
+  <data name="ResolutionType_Undefined_Short" xml:space="preserve">
     <value>Other</value>
   </data>
-  <data name="ResolutionType_WillingTarget" xml:space="preserve">
+  <data name="ResolutionType_WillingTarget_Short" xml:space="preserve">
     <value>Willing Target/s</value>
   </data>
-  <data name="SpellCastComponent_Material" xml:space="preserve">
+  <data name="SpellCastComponent_Material_Short" xml:space="preserve">
     <value>Material</value>
   </data>
-  <data name="SpellCastComponent_None" xml:space="preserve">
+  <data name="SpellCastComponent_None_Short" xml:space="preserve">
     <value>No Casting Components</value>
   </data>
-  <data name="SpellCastComponent_Somatic" xml:space="preserve">
+  <data name="SpellCastComponent_Somatic_Short" xml:space="preserve">
     <value>Somatic</value>
   </data>
-  <data name="SpellCastComponent_Verbal" xml:space="preserve">
+  <data name="SpellCastComponent_Verbal_Short" xml:space="preserve">
     <value>Verbal</value>
   </data>
-  <data name="SpellLevel_Cantrip" xml:space="preserve">
+  <data name="SpellLevel_Cantrip_Short" xml:space="preserve">
     <value>Cantrip</value>
   </data>
-  <data name="SpellLevel_LevelEight" xml:space="preserve">
+  <data name="SpellLevel_LevelEight_Short" xml:space="preserve">
     <value>8th Level</value>
   </data>
-  <data name="SpellLevel_LevelFive" xml:space="preserve">
+  <data name="SpellLevel_LevelFive_Short" xml:space="preserve">
     <value>5th Level</value>
   </data>
-  <data name="SpellLevel_LevelFour" xml:space="preserve">
+  <data name="SpellLevel_LevelFour_Short" xml:space="preserve">
     <value>4th Level</value>
   </data>
-  <data name="SpellLevel_LevelNine" xml:space="preserve">
+  <data name="SpellLevel_LevelNine_Short" xml:space="preserve">
     <value>9th Level</value>
   </data>
-  <data name="SpellLevel_LevelOne" xml:space="preserve">
+  <data name="SpellLevel_LevelOne_Short" xml:space="preserve">
     <value>1st Level</value>
   </data>
-  <data name="SpellLevel_LevelSeven" xml:space="preserve">
+  <data name="SpellLevel_LevelSeven_Short" xml:space="preserve">
     <value>7th Level</value>
   </data>
-  <data name="SpellLevel_LevelSix" xml:space="preserve">
+  <data name="SpellLevel_LevelSix_Short" xml:space="preserve">
     <value>6th Level</value>
   </data>
-  <data name="SpellLevel_LevelThree" xml:space="preserve">
+  <data name="SpellLevel_LevelThree_Short" xml:space="preserve">
     <value>3rd Level</value>
   </data>
-  <data name="SpellLevel_LevelTwo" xml:space="preserve">
+  <data name="SpellLevel_LevelTwo_Short" xml:space="preserve">
     <value>2nd Level</value>
   </data>
-  <data name="SpellLevel_NotASpell" xml:space="preserve">
+  <data name="SpellLevel_NotASpell_Short" xml:space="preserve">
     <value>Not A Spell</value>
   </data>
-  <data name="TargetAreaType_Cone" xml:space="preserve">
+  <data name="TargetAreaType_Cone_Short" xml:space="preserve">
     <value>Cone</value>
   </data>
-  <data name="TargetAreaType_Creatures" xml:space="preserve">
+  <data name="TargetAreaType_Creatures_Short" xml:space="preserve">
     <value>Target Creature</value>
   </data>
-  <data name="TargetAreaType_Cube" xml:space="preserve">
+  <data name="TargetAreaType_Cube_Short" xml:space="preserve">
     <value>Cube</value>
   </data>
-  <data name="TargetAreaType_Line" xml:space="preserve">
+  <data name="TargetAreaType_Line_Short" xml:space="preserve">
     <value>Line</value>
   </data>
-  <data name="TargetAreaType_None" xml:space="preserve">
+  <data name="TargetAreaType_None_Short" xml:space="preserve">
     <value>No targeting type</value>
   </data>
-  <data name="TargetAreaType_Sphere" xml:space="preserve">
+  <data name="TargetAreaType_Sphere_Short" xml:space="preserve">
     <value>Sphere</value>
   </data>
-  <data name="TimeDuration_Days" xml:space="preserve">
+  <data name="TimeDuration_Days_Short" xml:space="preserve">
     <value>Days</value>
   </data>
-  <data name="TimeDuration_Hours" xml:space="preserve">
+  <data name="TimeDuration_Hours_Short" xml:space="preserve">
     <value>Hours</value>
   </data>
-  <data name="TimeDuration_Instantaneous" xml:space="preserve">
+  <data name="TimeDuration_Instantaneous_Short" xml:space="preserve">
     <value>Instantaneous</value>
   </data>
-  <data name="TimeDuration_Minutes" xml:space="preserve">
+  <data name="TimeDuration_Minutes_Short" xml:space="preserve">
     <value>Minutes</value>
   </data>
-  <data name="TimeDuration_Permanent" xml:space="preserve">
+  <data name="TimeDuration_Permanent_Short" xml:space="preserve">
     <value>Permanent</value>
   </data>
-  <data name="TimeDuration_Rounds" xml:space="preserve">
+  <data name="TimeDuration_Rounds_Short" xml:space="preserve">
     <value>Rounds</value>
   </data>
-  <data name="TimeDuration_Years" xml:space="preserve">
+  <data name="TimeDuration_Years_Short" xml:space="preserve">
     <value>Years</value>
   </data>
-  <data name="ActionSpeed_Other" xml:space="preserve">
+  <data name="ActionSpeed_Other_Short" xml:space="preserve">
     <value>Other</value>
   </data>
-  <data name="ResolutionType_SpellAttack" xml:space="preserve">
+  <data name="ResolutionType_SpellAttack_Short" xml:space="preserve">
     <value>Spell Attack</value>
   </data>
   <data name="Shell_SpellsCRUD.Content" xml:space="preserve">
     <value>Manage Spells</value>
   </data>
-  <data name="EncounterDifficulty_Deadly" xml:space="preserve">
+  <data name="EncounterDifficulty_Deadly_Short" xml:space="preserve">
     <value>Deadly</value>
   </data>
-  <data name="EncounterDifficulty_Easy" xml:space="preserve">
+  <data name="EncounterDifficulty_Easy_Short" xml:space="preserve">
     <value>Easy</value>
   </data>
-  <data name="EncounterDifficulty_Hard" xml:space="preserve">
+  <data name="EncounterDifficulty_Hard_Short" xml:space="preserve">
     <value>Hard</value>
   </data>
-  <data name="EncounterDifficulty_Medium" xml:space="preserve">
+  <data name="EncounterDifficulty_Medium_Short" xml:space="preserve">
     <value>Medium</value>
   </data>
-  <data name="EncounterDifficulty_None" xml:space="preserve">
+  <data name="EncounterDifficulty_None_Short" xml:space="preserve">
     <value>N/A</value>
   </data>
-  <data name="EncounterDifficulty_Trivial" xml:space="preserve">
+  <data name="EncounterDifficulty_Trivial_Short" xml:space="preserve">
     <value>Trivial</value>
   </data>
-  <data name="EncounterDifficulty_VeryDeadly" xml:space="preserve">
+  <data name="EncounterDifficulty_VeryDeadly_Short" xml:space="preserve">
     <value>Very Deadly</value>
   </data>
-  <data name="ThreeStateBoolean_Either" xml:space="preserve">
+  <data name="ThreeStateBoolean_Either_Short" xml:space="preserve">
     <value>Either</value>
   </data>
-  <data name="ThreeStateBoolean_False" xml:space="preserve">
+  <data name="ThreeStateBoolean_False_Short" xml:space="preserve">
     <value>False</value>
   </data>
-  <data name="ThreeStateBoolean_True" xml:space="preserve">
+  <data name="ThreeStateBoolean_True_Short" xml:space="preserve">
     <value>True</value>
   </data>
-  <data name="CreatureAlignment_ChaoticEvil" xml:space="preserve">
+  <data name="CreatureAlignment_ChaoticEvil_Short" xml:space="preserve">
     <value>Chaotic Evil</value>
   </data>
-  <data name="CreatureAlignment_ChaoticGood" xml:space="preserve">
+  <data name="CreatureAlignment_ChaoticGood_Short" xml:space="preserve">
     <value>Chaotic Good</value>
   </data>
-  <data name="CreatureAlignment_ChaoticNeutral" xml:space="preserve">
+  <data name="CreatureAlignment_ChaoticNeutral_Short" xml:space="preserve">
     <value>Chaotic Neutral</value>
   </data>
-  <data name="CreatureAlignment_LawfulEvil" xml:space="preserve">
+  <data name="CreatureAlignment_LawfulEvil_Short" xml:space="preserve">
     <value>Lawful Evil</value>
   </data>
-  <data name="CreatureAlignment_LawfulGood" xml:space="preserve">
+  <data name="CreatureAlignment_LawfulGood_Short" xml:space="preserve">
     <value>Lawful Good</value>
   </data>
-  <data name="CreatureAlignment_LawfulNeutral" xml:space="preserve">
+  <data name="CreatureAlignment_LawfulNeutral_Short" xml:space="preserve">
     <value>Lawful Neutral</value>
   </data>
-  <data name="CreatureAlignment_NeutralEvil" xml:space="preserve">
+  <data name="CreatureAlignment_NeutralEvil_Short" xml:space="preserve">
     <value>Neutral Evil</value>
   </data>
-  <data name="CreatureAlignment_NeutralGood" xml:space="preserve">
+  <data name="CreatureAlignment_NeutralGood_Short" xml:space="preserve">
     <value>Neutral Good</value>
   </data>
-  <data name="CreatureAlignment_TrueNeutral" xml:space="preserve">
+  <data name="CreatureAlignment_TrueNeutral_Short" xml:space="preserve">
     <value>True Neutral</value>
   </data>
-  <data name="CreatureAlignment_Undefined" xml:space="preserve">
+  <data name="CreatureAlignment_Undefined_Short" xml:space="preserve">
     <value>None/Undefined</value>
   </data>
-  <data name="CreatureSizeClass_Gargantuan" xml:space="preserve">
+  <data name="CreatureSizeClass_Gargantuan_Short" xml:space="preserve">
     <value>Gargantuan (20 sqft +)</value>
   </data>
-  <data name="CreatureSizeClass_Huge" xml:space="preserve">
+  <data name="CreatureSizeClass_Huge_Short" xml:space="preserve">
     <value>Huge (15 sqft)</value>
   </data>
-  <data name="CreatureSizeClass_Large" xml:space="preserve">
+  <data name="CreatureSizeClass_Large_Short" xml:space="preserve">
     <value>Large (10 sqft)</value>
   </data>
-  <data name="CreatureSizeClass_Medium" xml:space="preserve">
+  <data name="CreatureSizeClass_Medium_Short" xml:space="preserve">
     <value>Medium  (5 sqft)</value>
   </data>
-  <data name="CreatureSizeClass_Small" xml:space="preserve">
+  <data name="CreatureSizeClass_Small_Short" xml:space="preserve">
     <value>Small (5 sqft)</value>
   </data>
-  <data name="CreatureSizeClass_Tiny" xml:space="preserve">
+  <data name="CreatureSizeClass_Tiny_Short" xml:space="preserve">
     <value>Tiny (2.5 sqft)</value>
   </data>
-  <data name="CreatureSizeClass_Unknown" xml:space="preserve">
+  <data name="CreatureSizeClass_Unknown_Short" xml:space="preserve">
     <value>Unspecified</value>
   </data>
-  <data name="CreatureType_Aberration" xml:space="preserve">
+  <data name="CreatureType_Aberration_Short" xml:space="preserve">
     <value>Aberration</value>
   </data>
-  <data name="CreatureType_Beast" xml:space="preserve">
+  <data name="CreatureType_Beast_Short" xml:space="preserve">
     <value>Beast</value>
   </data>
-  <data name="CreatureType_Celestial" xml:space="preserve">
+  <data name="CreatureType_Celestial_Short" xml:space="preserve">
     <value>Celestial</value>
   </data>
-  <data name="CreatureType_Construct" xml:space="preserve">
+  <data name="CreatureType_Construct_Short" xml:space="preserve">
     <value>Construct</value>
   </data>
-  <data name="CreatureType_Dragon" xml:space="preserve">
+  <data name="CreatureType_Dragon_Short" xml:space="preserve">
     <value>Dragon</value>
   </data>
-  <data name="CreatureType_Elemental" xml:space="preserve">
+  <data name="CreatureType_Elemental_Short" xml:space="preserve">
     <value>Elemental</value>
   </data>
-  <data name="CreatureType_Fey" xml:space="preserve">
+  <data name="CreatureType_Fey_Short" xml:space="preserve">
     <value>Fey</value>
   </data>
-  <data name="CreatureType_Fiend" xml:space="preserve">
+  <data name="CreatureType_Fiend_Short" xml:space="preserve">
     <value>Fiend</value>
   </data>
-  <data name="CreatureType_Giant" xml:space="preserve">
+  <data name="CreatureType_Giant_Short" xml:space="preserve">
     <value>Giant</value>
   </data>
-  <data name="CreatureType_Humanoid" xml:space="preserve">
+  <data name="CreatureType_Humanoid_Short" xml:space="preserve">
     <value>Humanoid</value>
   </data>
-  <data name="CreatureType_Monstrosity" xml:space="preserve">
+  <data name="CreatureType_Monstrosity_Short" xml:space="preserve">
     <value>Monstrosity</value>
   </data>
-  <data name="CreatureType_Ooze" xml:space="preserve">
+  <data name="CreatureType_Ooze_Short" xml:space="preserve">
     <value>Ooze</value>
   </data>
-  <data name="CreatureType_Plant" xml:space="preserve">
+  <data name="CreatureType_Plant_Short" xml:space="preserve">
     <value>Plant</value>
   </data>
-  <data name="CreatureType_Undead" xml:space="preserve">
+  <data name="CreatureType_Undead_Short" xml:space="preserve">
     <value>Undead</value>
   </data>
-  <data name="ActionSpeed_Legendary" xml:space="preserve">
+  <data name="ActionSpeed_Legendary_Short" xml:space="preserve">
     <value>Legendary Action</value>
+  </data>
+  <data name="Condition_Blinded_Description" xml:space="preserve">
+    <value>A blinded creature can't see and automatically fails and ability check that requires sight. 
+Attack Rolls against the creature have advantage, and the creature's attack rolls have disadvantage</value>
+  </data>
+  <data name="Condition_Charmed_Description" xml:space="preserve">
+    <value>A charmed creatures can't attack the charmer of target the charmer with harmful abilities or magical effects. 
+The charmer has advantage on any ability check to interact socially with the creature.</value>
+  </data>
+  <data name="Condition_Deafened_Description" xml:space="preserve">
+    <value>A deafened creature can't hear and automatically fails any ability check that requires hearing.</value>
+  </data>
+  <data name="Condition_Exhaustion_Description" xml:space="preserve">
+    <value>The first level of exhaustion causes the creature to have disadvantage on ability checks.</value>
+  </data>
+  <data name="Condition_Exhaustion2_Description" xml:space="preserve">
+    <value>The second level of exhaustion causes the creature to have its speed halved.</value>
+  </data>
+  <data name="Condition_Exhaustion3_Description" xml:space="preserve">
+    <value>The third level of exhaustion causes the creature to have disadvantage on attack rolls and saving throws.</value>
+  </data>
+  <data name="Condition_Exhaustion4_Description" xml:space="preserve">
+    <value>The fourth level of exhaustion causes the creature to have its hit point maximum halved.</value>
+  </data>
+  <data name="Condition_Exhaustion5_Description" xml:space="preserve">
+    <value>The fifth level of exhaustion causes the creature to have its speed reduced to 0</value>
+  </data>
+  <data name="Condition_Exhaustion6_Description" xml:space="preserve">
+    <value>The sixth level of exhaustion causes death.</value>
+  </data>
+  <data name="Condition_Frightened_Description" xml:space="preserve">
+    <value>A frightened creature has disadvantage on ability checks and attack rolls wile the source of its fear is within line of sight.
+The creature can't willingly move closer to the source of its fear.</value>
+  </data>
+  <data name="Condition_Incapacitated_Description" xml:space="preserve">
+    <value>An incapacitated creature can't take actions or reactions</value>
+  </data>
+  <data name="Condition_Invisible_Description" xml:space="preserve">
+    <value>An invisible creasture is impossible to see without the aid of magic or a special sense. For the purpose of hiding, the creature is heavily obscured. The creature's location can be detected by any noise it makes or any tracks it leaves. 
+Attack rolls against the creature have disadvantage, and the creature's attack rolls have advantage.</value>
+  </data>
+  <data name="Condition_Paralyzed_Description" xml:space="preserve">
+    <value>A paralyzed creature is incapacitated and can't move or speak.
+The creature automatically fails Strength and Dexterity saving throws.
+Attack rolls against the creature have advantage.
+Any attack that his the creature is a critical hit if the attacker is within 5 feet of the creature.</value>
+  </data>
+  <data name="Condition_Petrified_Description" xml:space="preserve">
+    <value>A petrified creature is transformed, along with any nonmagical object it is wearing or carrying, into a solid inanimate substance (usually stone). Its weight increases by a factor of ten, and it ceases aging.
+The creature is incapacitated, can't move or speak, and is unaware of its surroundings.
+Attack rolls against the creature have advantage.
+The creature automatically fails Strength and Dexterity saving throws.
+The creature has resistance to all damage.
+The creature is immune to poison and disease, although a poison or disease already in its system is suspended, not neutralized.</value>
+  </data>
+  <data name="Condition_Poisoned_Description" xml:space="preserve">
+    <value>A poisoned creature has disadvantage on attack rolls and ability checks.</value>
+  </data>
+  <data name="Condition_Prone_Description" xml:space="preserve">
+    <value>A prone creature's only movement option is to crawl, unless it stands up and thereby ends the condition.
+The creature has disadvantage on attack rolls.
+An attack roll against the creature has advantage if the attacker is within 5 feet of the creature. Otherwise, the attack roll has disadvantage.</value>
+  </data>
+  <data name="Condition_Restrained_Description" xml:space="preserve">
+    <value>A restrained creature's speed becomes 0, and it can't benefit from any bonus to its speed.
+Attack rolls against the creature have advantage, and the creature's attack rolls have disadvantage.
+The creature has disadvantage on Dexterity saving throws.</value>
+  </data>
+  <data name="Condition_Stunned_Description" xml:space="preserve">
+    <value>A stunned creature is incapacitated, can't move, and can speak only falteringly. 
+The creature automatically fails Strength and Dexterity saving throws.
+Attack rolls against the creature have advantage.</value>
+  </data>
+  <data name="Condition_Unconscious_Description" xml:space="preserve">
+    <value>An unconscious creature is incapacitated, can't move or speak, and is unaware of its surroundings. 
+The creature drops whatever it's holding and falls prone.
+The creature automatically fails Strength and Dexterity saving throws.
+Attack rolls against the creature have advantage.
+Any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature.</value>
   </data>
 </root>

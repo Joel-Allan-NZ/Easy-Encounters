@@ -5,7 +5,11 @@ namespace EasyEncounters.Core.Contracts.Services;
 
 public interface ICreatureService
 {
-    void CopyTo(Creature creatureTarget, Creature creatureSource);
+    /// <summary>
+    /// Create a deep copy of a source creature
+    /// </summary>
+    /// <param name="toCopy"></param>
+    Creature DeepCopy(Creature toCopy);
 
     /// <summary>
     /// Get the bonus value for a specified attribute on a specified creature.
@@ -15,5 +19,11 @@ public interface ICreatureService
     /// <returns>Bonus value of an attribute, ie +2</returns>
     int GetAttributeBonusValue(Creature creature, CreatureAttributeType creatureAttributeType);
 
+    /// <summary>
+    /// Get the total value for a specified attribute for a specified creature.
+    /// </summary>
+    /// <param name="creature"></param>
+    /// <param name="creatureAttributeType"></param>
+    /// <returns></returns>
     int GetAttributeTypeValue(Creature creature, CreatureAttributeType creatureAttributeType);
 }

@@ -2,7 +2,7 @@
 using EasyEncounters.Contracts.Services;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Services;
-using EasyEncounters.Models;
+using EasyEncounters.Core.Services.Models;
 using EasyEncounters.Services;
 using EasyEncounters.Services.Filter;
 using EasyEncounters.ViewModels;
@@ -44,7 +44,7 @@ public partial class App : Application
             services.AddSingleton<ITabService, TabService>();
             services.AddSingleton<ICreatureService, CreatureService>();
             services.AddSingleton<IAbilityService, AbilityService>();
-            services.AddSingleton<IConditionService, ConditionService>();
+            //services.AddSingleton<IConditionService, ConditionService>();
             services.AddSingleton<IFilteringService, FilteringService>();
 
             // Core Services

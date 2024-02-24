@@ -1,4 +1,4 @@
-﻿namespace EasyEncounters.Contracts.Services;
+﻿namespace EasyEncounters.Core.Contracts.Services;
 
 public interface ILocalSettingsService
 {

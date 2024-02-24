@@ -4,6 +4,7 @@ using EasyEncounters.Views;
 
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using EasyEncounters.Core.Contracts.Services;
 
 namespace EasyEncounters.Services;
 
@@ -66,7 +67,10 @@ public class ActivationService : IActivationService
     private async Task InitializeAsync()
     {
         await _themeSelectorService.InitializeAsync().ConfigureAwait(false);
-        await _modelOptionsService.ReadActiveEncounterOptionAsync();
+
+        await _modelOptionsService.Initialize();
+        //await _modelOptionsService.ReadActiveEncounterOptionAsync();
+        //await _modelOptionsService.ReadSaveLocation();
 
         await Task.CompletedTask;
     }

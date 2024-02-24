@@ -18,8 +18,6 @@ public interface IDataService
 
     Task<IEnumerable<Creature>> GetAllCreaturesAsync();
 
-    Task<IEnumerable<EncounterData>> GetAllEncounterDataAsync(Party party);
-
     Task<IEnumerable<Encounter>> GetAllEncountersAsync();
 
     Task<IEnumerable<Party>> GetAllPartiesAsync();

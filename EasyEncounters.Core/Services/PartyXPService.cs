@@ -7,18 +7,19 @@ public class PartyXPService : IPartyXPService
 {
     /// <summary>
     /// Calculates the party's XP thresholds for various encounter difficulties, based on party size and level,
-    /// and returns the range of thresholds in order of difficulty.
+    /// and returns the range of thresholds in order of difficulty, including an unofficial "Very Difficult"
     /// </summary>
     /// <returns>Array of int in order of encounter difficulty</returns>
-    public int[] FindPartyXPThreshold(Party party)
+    public double[] CalculatePartyXPThresholds(Party party)
     {
-        int[] result = new int[4] { 0, 0, 0, 0 };
+        var result = new double[6] { 0, 0, 0, 0, 0, double.MaxValue };
         foreach (Creature c in party.Members)
         {
-            var add = GetXPThreshold(c.LevelOrCR);
-            for (int i = 0; i < 4; i++)
+            var add = AddSinglePlayerXPThreshold(c.LevelOrCR);
+            for (var i = 0; i < 4; i++)
                 result[i] += add[i];
         }
+        result[4] = result[3] * 1.5;
         return result;
     }
 
@@ -27,7 +28,7 @@ public class PartyXPService : IPartyXPService
     /// </summary>
     /// <param name="playerLevel">The level of the player to find thresholds for</param>
     /// <returns></returns>
-    private int[] GetXPThreshold(double playerLevel)
+    private static int[] AddSinglePlayerXPThreshold(double playerLevel)
     {
         var thresholds = playerLevel switch
         {

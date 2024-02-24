@@ -210,13 +210,13 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
     [RelayCommand]
     private void ReportReorder()
     {
-        _activeEncounterService.ReorderInitiative(_activeEncounter, Creatures.Select(x => x.Creature));
+        _activeEncounterService.OrderCreatureTurns(_activeEncounter, Creatures.Select(x => x.Creature));
     }
 
     [RelayCommand]
     private async Task RollInitiative()
     {
-        var orderedInitiative = await _activeEncounterService.UpdateInitiativeOrder(_activeEncounter);
+        var orderedInitiative = await _activeEncounterService.RollInitiative(_activeEncounter);
 
         var tempAECreatureList = new List<ActiveEncounterCreatureViewModel>(Creatures);
         Creatures.Clear();

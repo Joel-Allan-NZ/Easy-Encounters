@@ -91,6 +91,11 @@ public class NavigationService : INavigationService
         return false;
     }
 
+    public nint GetWindowHandle()
+    {
+        return App.MainWindow.GetWindowHandle();
+    }
+
     private void OnNavigated(object sender, NavigationEventArgs e)
     {
         if (sender is Frame frame)

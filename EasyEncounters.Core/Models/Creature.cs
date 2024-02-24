@@ -1,4 +1,5 @@
-﻿using EasyEncounters.Core.Models.Enums;
+﻿using System.Drawing;
+using EasyEncounters.Core.Models.Enums;
 
 #nullable enable
 
@@ -6,6 +7,61 @@ namespace EasyEncounters.Core.Models;
 
 public class Creature : Persistable
 {
+    /// <summary>
+    /// Creates a creature based on a shallow copy of the parameter creature.
+    /// </summary>
+    /// <param name="other"></param>
+    public Creature(Creature other)
+    {
+        Name = other.Name;
+        
+        InitiativeBonus = other.InitiativeBonus;
+        InitiativeAdvantage = other.InitiativeAdvantage;
+        Name = other.Name;
+        InitiativeAdvantage = other.InitiativeAdvantage;
+        InitiativeBonus = other.InitiativeBonus;
+        DMControl = other.DMControl;
+        Description = other.Description;
+        LevelOrCR = other.LevelOrCR;
+        Immunity = other.Immunity;
+        Vulnerability = other.Vulnerability;
+        Resistance = other.Resistance;
+        Hyperlink = other.Hyperlink;
+        MaxHP = other.MaxHP;
+        MaxHPString = other.MaxHPString;
+        AC = other.AC;
+        MaxLegendaryResistance = other.MaxLegendaryResistance;
+        MaxLegendaryActions = other.MaxLegendaryActions;
+        ConditionImmunities = other.ConditionImmunities;
+        AttackDescription = other.AttackDescription;
+        Strength = other.Strength;
+        StrengthSave = other.StrengthSave;
+        Dexterity = other.Dexterity;
+        DexteritySave = other.DexteritySave;
+        Constitution = other.Constitution;
+        ConstitutionSave = other.ConstitutionSave;
+        Intelligence = other.Intelligence;
+        IntelligenceSave = other.IntelligenceSave;
+        Wisdom = other.Wisdom;
+        WisdomSave = other.WisdomSave;
+        Charisma = other.Charisma;
+        ProficiencyBonus = other.ProficiencyBonus;
+        CharismaSave = other.CharismaSave;
+        Movement = other.Movement;
+        SpellStat = other.SpellStat;
+        Features = other.Features ?? "";
+        Size = other.Size;
+        CreatureType = other.CreatureType;
+        Senses = other.Senses;
+        CreatureSubtype = other.CreatureSubtype;
+        Alignment = other.Alignment;
+
+        SpellSlots = new Dictionary<int, int>(other.SpellSlots);
+        Abilities = new List<Ability>(other.Abilities);
+
+    }
+
+
     public Creature(string name = "New Creature", int initBonus = 0,
             bool initAdv = false, bool dmControl = true, DamageType resistance = DamageType.None,
             DamageType immunity = DamageType.None, DamageType vuln = DamageType.None, string description = "",
@@ -61,6 +117,13 @@ public class Creature : Persistable
         Senses = senses;
         CreatureSubtype = creatureSubtype;
         Alignment = creatureAlignment;
+    }
+
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    public Creature()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    {
+    
     }
 
     public List<Ability> Abilities
@@ -160,7 +223,7 @@ public class Creature : Persistable
     /// <summary>
     /// An external hyperlink address for the statblock.
     /// </summary>
-    public string? Hyperlink
+    public string Hyperlink
     {
         get; set;
     }
@@ -314,68 +377,68 @@ public class Creature : Persistable
         get; set;
     }
 
-    public void CopyFrom(Creature other)
-    {
-        Abilities.Clear();
-        foreach (Ability ability in other.Abilities)
-        {
-            //copy spells as is, but clone other abilities
-            if (ability.SpellLevel != SpellLevel.NotASpell)
-                Abilities.Add(ability);
-            else
-            {
-                //TODO: add ability copying for non-spells
-                var newAbility = new Ability();
-            }
-        }
+    //public void CopyFrom(Creature other)
+    //{
+    //    Abilities.Clear();
+    //    foreach (Ability ability in other.Abilities)
+    //    {
+    //        //copy spells as is, but clone other abilities
+    //        if (ability.SpellLevel != SpellLevel.NotASpell)
+    //            Abilities.Add(ability);
+    //        else
+    //        {
+    //            //TODO: add ability copying for non-spells-
+    //            var newAbility = new Ability();
+    //        }
+    //    }
 
-        Name = other.Name;
-        InitiativeAdvantage = other.InitiativeAdvantage;
-        InitiativeBonus = other.InitiativeBonus;
-        DMControl = other.DMControl;
-        Description = other.Description;
-        LevelOrCR = other.LevelOrCR;
-        Immunity = other.Immunity;
-        Vulnerability = other.Vulnerability;
-        Resistance = other.Resistance;
-        Hyperlink = other.Hyperlink;
-        MaxHP = other.MaxHP;
-        MaxHPString = other.MaxHPString;
-        AC = other.AC;
-        MaxLegendaryResistance = other.MaxLegendaryResistance;
-        MaxLegendaryActions = other.MaxLegendaryActions;
-        ConditionImmunities = other.ConditionImmunities;
-        AttackDescription = other.AttackDescription;
-        Strength = other.Strength;
-        StrengthSave = other.StrengthSave;
-        Dexterity = other.Dexterity;
-        DexteritySave = other.DexteritySave;
-        Constitution = other.Constitution;
-        ConstitutionSave = other.ConstitutionSave;
-        Intelligence = other.Intelligence;
-        IntelligenceSave = other.IntelligenceSave;
-        Wisdom = other.Wisdom;
-        WisdomSave = other.WisdomSave;
-        Charisma = other.Charisma;
-        CharismaSave = other.CharismaSave;
-        Movement = other.Movement;
-        ProficiencyBonus = other.ProficiencyBonus;
+    //    Name = other.Name;
+    //    InitiativeAdvantage = other.InitiativeAdvantage;
+    //    InitiativeBonus = other.InitiativeBonus;
+    //    DMControl = other.DMControl;
+    //    Description = other.Description;
+    //    LevelOrCR = other.LevelOrCR;
+    //    Immunity = other.Immunity;
+    //    Vulnerability = other.Vulnerability;
+    //    Resistance = other.Resistance;
+    //    Hyperlink = other.Hyperlink;
+    //    MaxHP = other.MaxHP;
+    //    MaxHPString = other.MaxHPString;
+    //    AC = other.AC;
+    //    MaxLegendaryResistance = other.MaxLegendaryResistance;
+    //    MaxLegendaryActions = other.MaxLegendaryActions;
+    //    ConditionImmunities = other.ConditionImmunities;
+    //    AttackDescription = other.AttackDescription;
+    //    Strength = other.Strength;
+    //    StrengthSave = other.StrengthSave;
+    //    Dexterity = other.Dexterity;
+    //    DexteritySave = other.DexteritySave;
+    //    Constitution = other.Constitution;
+    //    ConstitutionSave = other.ConstitutionSave;
+    //    Intelligence = other.Intelligence;
+    //    IntelligenceSave = other.IntelligenceSave;
+    //    Wisdom = other.Wisdom;
+    //    WisdomSave = other.WisdomSave;
+    //    Charisma = other.Charisma;
+    //    CharismaSave = other.CharismaSave;
+    //    Movement = other.Movement;
+    //    ProficiencyBonus = other.ProficiencyBonus;
 
-        SpellStat = other.SpellStat;
-        Features = other.Features;
+    //    SpellStat = other.SpellStat;
+    //    Features = other.Features;
 
-        Size = other.Size;
-        CreatureType = other.CreatureType;
-        Senses = other.Senses;
-        CreatureSubtype = other.CreatureSubtype;
-        Alignment = other.Alignment;
+    //    Size = other.Size;
+    //    CreatureType = other.CreatureType;
+    //    Senses = other.Senses;
+    //    CreatureSubtype = other.CreatureSubtype;
+    //    Alignment = other.Alignment;
 
-        SpellSlots.Clear();
-        foreach (var kvp in other.SpellSlots)
-        {
-            SpellSlots.Add(kvp.Key, kvp.Value);
-        }
-    }
+    //    SpellSlots.Clear();
+    //    foreach (var kvp in other.SpellSlots)
+    //    {
+    //        SpellSlots.Add(kvp.Key, kvp.Value);
+    //    }
+    //}
 
     public override bool Equals(object? obj)
     {

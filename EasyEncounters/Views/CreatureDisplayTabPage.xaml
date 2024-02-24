@@ -23,9 +23,6 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <!--<StackPanel Orientation="Horizontal">
-        <ScrollViewer VerticalScrollMode="Enabled"
-                      MaxHeight="850">-->
         <StackPanel Name="LHS"
                     Grid.Row="0"
                     Grid.Column="0"
@@ -33,7 +30,7 @@
             <HyperlinkButton Content="{x:Bind ViewModel.Creature.EncounterName, Mode=OneWay}"
                              Margin="2"
                              FontWeight="Medium"
-                             NavigateUri="{x:Bind ViewModel.Creature.Hyperlink, Mode=OneWay}"
+                             NavigateUri="{x:Bind ViewModel.Hyperlink, Mode=OneWay}"
                              FontSize="30" />
             <NavigationViewItemSeparator></NavigationViewItemSeparator>
             <StackPanel Orientation="Horizontal">

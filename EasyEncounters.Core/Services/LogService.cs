@@ -10,15 +10,13 @@ public class LogService : ILogService
     private static readonly string errorfileName = @"ErrorLogging.txt";
     private static readonly string fileName = @"Log.txt";
     private static readonly string folderPath = @"D:\D&D\DND Tools";
-    private readonly IDataService _dataService;
     private readonly IFileService _fileService;
-    private Log _cached;
+    private readonly Log _cached;
 
     private EncounterLog _encounterLog;
 
-    public LogService(IDataService dataService, IFileService fileService)
+    public LogService(IFileService fileService)
     {
-        _dataService = dataService;
         _fileService = fileService;
         _cached = _fileService.Read<Log>(folderPath, fileName) ?? new Log(null);
     }

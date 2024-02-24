@@ -78,7 +78,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
             InitRolled = true;
 
             var correctTurn = _activeEncounter.ActiveTurn;
-            while (_activeEncounter.CreatureTurns.Peek() != correctTurn)
+            while (_activeEncounter.ActiveTurn != correctTurn)
                 await NextTurn();
 
             //encounter in progress
@@ -131,7 +131,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
 
         if (InitNotRolled)
         {
-            await _activeEncounterService.UpdateInitiativeOrder(_activeEncounter);
+            await _activeEncounterService.RollInitiative(_activeEncounter);
         }
         InitNotRolled = false;
         InitRolled = true;

@@ -54,6 +54,11 @@
                 <TextBlock x:Uid="Settings_MaxHPPersonalization" />
                 <CheckBox Content="Roll HP for every creature?" IsChecked="{x:Bind ViewModel.RollMaxHP,  Mode=TwoWay}" />
             </StackPanel>
+            <StackPanel Margin="{StaticResource XSmallTopMargin}" Orientation="Horizontal">
+                <TextBlock Text="Save Location:" Margin="{StaticResource SmallLeftRightMargin}"></TextBlock>
+                <TextBox Text="{x:Bind ViewModel.LocationDescription}" Margin="{StaticResource SmallLeftRightMargin}"></TextBox>
+                <Button Content="Change" Command="{x:Bind ViewModel.PickFolderCommand}" Margin="{StaticResource SmallLeftRightMargin}"></Button>
+            </StackPanel>
 
             <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
 

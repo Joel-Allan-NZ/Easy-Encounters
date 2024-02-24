@@ -325,7 +325,7 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
     [RelayCommand]
     private async Task RollInitiative()
     {
-        var orderedInitiative = await _activeEncounterService.UpdateInitiativeOrder(_activeEncounter);
+        var orderedInitiative = await _activeEncounterService.RollInitiative(_activeEncounter);
 
         var tempAECreatureList = new List<ActiveEncounterCreatureViewModel>(Creatures);
         Creatures.Clear();

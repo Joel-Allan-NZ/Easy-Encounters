@@ -1,4 +1,5 @@
 ﻿using EasyEncounters.Contracts.Services;
+using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Helpers;
 
 using Microsoft.UI.Xaml;

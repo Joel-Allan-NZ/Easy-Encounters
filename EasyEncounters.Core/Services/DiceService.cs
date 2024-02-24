@@ -1,4 +1,9 @@
-﻿using EasyEncounters.Core.Contracts.Services;
+﻿using System.Security;
+using System.Text.RegularExpressions;
+using System.Xml.XPath;
+using EasyEncounters.Core.Contracts.Enums;
+using EasyEncounters.Core.Contracts.Services;
+using EasyEncounters.Core.Helpers;
 
 namespace EasyEncounters.Core.Services;
 
@@ -6,7 +11,8 @@ internal enum DiceParseType
 {
     Minus,
     Flat,
-    Dice
+    Dice,
+    Other
 }
 
 public class DiceService : IDiceService
@@ -18,12 +24,19 @@ public class DiceService : IDiceService
         _randomService = randomService;
     }
 
-    public int Roll(int dieSize, int dieCount = 1)
+    public int Roll(int dieSize, int dieCount = 1, DiceRollModifier modifier = DiceRollModifier.None)
     {
-        int result = 0;
-        for (int i = 0; i < dieCount; i++)
+        var result = 0;
+        for (var i = 0; i < dieCount; i++)
         {
             result += _randomService.RandomInteger(1, dieSize);
+        }
+
+        if(modifier != DiceRollModifier.None)
+        {
+            var secondResult = Roll(dieSize, dieCount, DiceRollModifier.None);
+
+            result = modifier == DiceRollModifier.Disadvantage ? Math.Min(result, secondResult) : Math.Max(result, secondResult);
         }
 
         return result;
@@ -36,9 +49,28 @@ public class DiceService : IDiceService
         return Parse(diceString);
     }
 
+    private int HandleToken(DiceParseType parseType, string[] tokens, int currentIndex)
+    {
+        var result = 0;
+
+        if (parseType == DiceParseType.Minus)
+        {
+            result -= int.Parse(tokens[currentIndex]);
+        }
+        else if (parseType == DiceParseType.Flat)
+        {
+            result = int.Parse(tokens[currentIndex]);
+        }
+        else //handle dice - tricksy 
+        { 
+
+        }
+        return result;
+    }
+
     private int HandleToken(DiceParseType parseType, string subString)
     {
-        int res = 0;
+        var res = 0;
         if (parseType == DiceParseType.Dice)
         {
             var split = subString.Split('d').Select(x => int.Parse(x)).ToList();
@@ -64,58 +96,66 @@ public class DiceService : IDiceService
 
     private int Parse(string diceString)
     {
-        int result = 0;
+        var result = 0;
 
-        DiceParseType parseType = DiceParseType.Flat;
         var lowerString = diceString.ToLower();
+        var tokens = lowerString.SplitInclusive(new char[] { '+', '-' });
 
-        Dictionary<int, int> dice = new();
-        int substringStart = 0, substringCurrent = 0;
 
-        if (lowerString[0] == '-')
+        var lastParseType = GetParseType(tokens[0]);
+        if (lastParseType == DiceParseType.Other)
         {
-            parseType = DiceParseType.Minus;
-        }
-        else if (lowerString[0] == 'd')
-        {
-            parseType = DiceParseType.Dice;
-        }
-        else if (lowerString[0] == '+')
-        {
-            parseType = DiceParseType.Flat;
+            result += ResolveTokenValue(tokens[0]);
         }
 
-        while (substringCurrent < lowerString.Length)
+        for(var i = 1; i<tokens.Length; i++)
         {
-            if (Char.IsDigit(lowerString[substringCurrent]))
-            {
-                substringCurrent++;
-            }
-            else if (lowerString[substringCurrent] == '-')
-            {
-                result += HandleToken(parseType, diceString.Substring(substringStart, substringCurrent - substringStart));
-                parseType = DiceParseType.Minus;
+            var parseType = GetParseType(tokens[i]);
 
-                substringCurrent++;
-                substringStart = substringCurrent;
-            }
-            else if (lowerString[substringCurrent] == 'd')
+            if(parseType == DiceParseType.Other)
             {
-                //ParseLast(parseType, diceString.Substring(substringStart, substringStart + 1 - substringCurrent));
-                parseType = DiceParseType.Dice;
-                substringCurrent++;
-            }
-            else if (lowerString[substringCurrent] == '+')
-            {
-                result += HandleToken(parseType, diceString.Substring(substringStart, substringCurrent - substringStart));
-                parseType = DiceParseType.Flat;
+                var tokenValue = ResolveTokenValue(tokens[i]);
 
-                substringCurrent++;
-                substringStart = substringCurrent;
+                var positiveOrNegative = lastParseType == DiceParseType.Flat ? 1 : -1;
+
+                result += (tokenValue * positiveOrNegative);
             }
+            lastParseType = parseType;
         }
 
-        result += HandleToken(parseType, lowerString.Substring(substringStart));
         return result;
+
+    }
+
+    private int ResolveTokenValue(string possibleDiceToken)
+    {
+        var diceSplit = possibleDiceToken.SplitInclusive('d');//Regex.Split(possibleDiceToken, @"(?<=[d])"); //the result will be in form x,d,y or d,y or just y
+        int result;
+
+        if (diceSplit.Length == 3)
+        {
+            result = Roll(int.Parse(diceSplit[2]), int.Parse(diceSplit[0]));
+        }
+        else if (diceSplit.Length == 2)
+        {
+            result = Roll(int.Parse(diceSplit[1]));
+        }
+        else
+        {
+            result = int.Parse(possibleDiceToken);
+        }
+
+        return result;
+
+    }
+
+    private DiceParseType GetParseType(string token)
+    {
+        return token[0] switch
+        {
+            '-' => DiceParseType.Minus,
+            '+' => DiceParseType.Flat,
+            _ => DiceParseType.Other //only possibly Dice
+        };
     }
 }

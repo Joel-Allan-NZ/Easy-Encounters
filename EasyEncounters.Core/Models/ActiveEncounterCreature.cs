@@ -4,7 +4,7 @@ namespace EasyEncounters.Core.Models;
 
 public class ActiveEncounterCreature : Creature
 {
-    public ActiveEncounterCreature(Creature creature)
+    public ActiveEncounterCreature(Creature creature) : base(creature)
     {
         Name = creature.Name;
         EncounterName = creature.Name ?? "Unnamed Creature"; //placeholder name, expect this to be overwritten in an active encounter
@@ -13,6 +13,8 @@ public class ActiveEncounterCreature : Creature
         Reaction = true;
         Notes = "" + creature.Description;
         Concentrating = false;
+
+        
 
         Initiative = -100; //placeholder value that indicates a creature hasn't rolled initiative
 

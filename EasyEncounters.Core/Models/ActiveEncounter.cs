@@ -12,14 +12,14 @@ public class ActiveEncounter : Encounter
         //just to end annoying warnings the lazy way:
         ActiveCreatures = new List<ActiveEncounterCreature>();
         Log = new List<string>();
-        CreatureTurns = new Queue<ActiveEncounterCreature>();
+        CreatureTurns = new List<ActiveEncounterCreature>();
     }
 
     public ActiveEncounter(Encounter encounter, IEnumerable<ActiveEncounterCreature> creatures)
     {
         this.ActiveCreatures = new List<ActiveEncounterCreature>();
         this.Name = encounter.Name;
-        this.CreatureTurns = new Queue<ActiveEncounterCreature>();
+        this.CreatureTurns = new List<ActiveEncounterCreature>();
         Log = new List<string>();
 
         Dictionary<string, int> nameCollisions = new();
@@ -49,7 +49,7 @@ public class ActiveEncounter : Encounter
     /// <summary>
     /// The creatures in the combat in turn order. Stays updated by en/de-queueing following each turn.
     /// </summary>
-    public Queue<ActiveEncounterCreature> CreatureTurns //todo: does it make sense for this to be queue? It's ordered, but Queues are horrible for re-ordering which is meaningful
+    public List<ActiveEncounterCreature> CreatureTurns //todo: does it make sense for this to be queue? It's ordered, but Queues are horrible for re-ordering which is meaningful
     {
         get; set;
     }

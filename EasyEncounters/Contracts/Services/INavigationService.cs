@@ -17,7 +17,11 @@ public interface INavigationService
         get; set;
     }
 
+    nint GetWindowHandle();
+
     bool GoBack();
 
     bool NavigateTo(string pageKey, object? parameter = null, bool clearNavigation = false, bool ignoreNavigation = false);
+
+    
 }

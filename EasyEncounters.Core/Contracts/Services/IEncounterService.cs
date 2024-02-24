@@ -9,13 +9,12 @@ public interface IEncounterService
 
     double CalculateEncounterXP(Encounter encounter);
 
-    ActiveEncounterCreature CreateActiveEncounterCreature(Creature creature, bool maxHPRoll);
-
     EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, Party party);
 
-    EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, int[] partyXPThreshold);
+    EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, double[] partyXPThreshold);
 
-    int[] GetPartyXPThreshold(Party party);
+    IEnumerable<EncounterData> GenerateEncounterData(Party party, IEnumerable<Encounter> encounters);
+    double[] GetPartyXPThreshold(Party party);
 
     void RemoveCreature(Encounter encounter, Creature creature);
 }

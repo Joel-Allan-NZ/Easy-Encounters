@@ -1,16 +1,24 @@
-﻿using EasyEncounters.Core.Contracts;
+﻿
+using System.CodeDom;
+using System.Drawing;
+using EasyEncounters.Core.Contracts;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
+using EasyEncounters.Core.Models.Enums;
 
 namespace EasyEncounters.Core.Services;
 
 public class DataService : IDataService
 {
-    private static readonly string folderPath = @"D:\D&D\DND Tools";
+    private static readonly string defaultFolderPath = @"D:\D&D\DND Tools";
     private static readonly string jsonFile = @"TextJson.txt";
     private static readonly string logFile = @"LogTextJson.txt";
     private readonly IAbilityService _abilityService;
     private readonly ICreatureService _creatureService;
+    private readonly IModelOptionsService _modelOptionsService;
+    //private string SaveFolderPath = defaultFolderPath;
+
+
 
     //todo: make setting
     private readonly IEncounterService _encounterService;
@@ -18,13 +26,17 @@ public class DataService : IDataService
     private readonly IFileService _fileService;
     private Data _cached;
 
-    public DataService(IFileService fileService, IEncounterService encounterService, IAbilityService abiltyService, ICreatureService creatureService)
+    public DataService(IFileService fileService, IEncounterService encounterService, IAbilityService abiltyService, ICreatureService creatureService, IModelOptionsService modelOptionsService)
     {
         _encounterService = encounterService;
         _fileService = fileService;
         _creatureService = creatureService;
         _abilityService = abiltyService;
-        _cached = _fileService.Read<Data>(folderPath, jsonFile);
+        _modelOptionsService = modelOptionsService;
+
+
+        _cached = _fileService.Read<Data>(_modelOptionsService.SavePath, jsonFile);
+
     }
 
     public async Task<bool> ActiveEncounterExistsAsync()
@@ -39,16 +51,15 @@ public class DataService : IDataService
         await RefreshCacheAsync();
         _cached.ActiveEncounter = null;
 
-        await _fileService.SaveAsync(folderPath, jsonFile, _cached);
+        await DefaultSave();
     }
 
     public async Task<T> CopyAsync<T>(T entity) where T : IPersistable
     {
         await RefreshCacheAsync();
-        var tType = typeof(T);
         T result;
 
-        if (tType == typeof(Encounter))
+        if (entity is Encounter)
             result = (T)CopyEncounter(entity as Encounter);
         else if (entity is Creature)
             result = (T)CopyCreature(entity as Creature);
@@ -59,9 +70,9 @@ public class DataService : IDataService
         else if (entity is Ability)
             result = (T)CopySpell(entity as Ability);
         else
-            throw new ArgumentException("Type of T must be an IPersistable"); //should never happen as ActiveEncounters are Encounters too.
+            throw new NotImplementedException($"Copying {typeof(T)} is not yet implemented."); 
 
-        await _fileService.SaveAsync(folderPath, jsonFile, _cached);
+        await DefaultSave();
         return result;
     }
 
@@ -87,7 +98,7 @@ public class DataService : IDataService
         else if (entity is Ability)
             DeleteSpell(entity as Ability);
 
-        await _fileService.SaveAsync(folderPath, jsonFile, _cached);
+        await DefaultSave();
     }
 
     public async Task<ActiveEncounter> GetActiveEncounterAsync()
@@ -109,20 +120,7 @@ public class DataService : IDataService
         await RefreshCacheAsync();
 
         return _cached?.Creatures;
-    }
-
-    public async Task<IEnumerable<EncounterData>> GetAllEncounterDataAsync(Party party)
-    {
-        List<EncounterData> data = new();
-        var partyXPThreshold = _encounterService.GetPartyXPThreshold(party);
-
-        await RefreshCacheAsync();
-        foreach (var encounter in await GetAllEncountersAsync())
-        {
-            data.Add(new EncounterData(encounter, party, _encounterService.DetermineDifficultyForParty(encounter, partyXPThreshold)));
-        }
-        return data;
-    }
+    } 
 
     public async Task<IEnumerable<Encounter>> GetAllEncountersAsync()
     {
@@ -142,7 +140,7 @@ public class DataService : IDataService
     {
         await RefreshCacheAsync();
 
-        return _cached?.Abilities.Where(x => x.SpellLevel != Models.Enums.SpellLevel.NotASpell);
+        return _cached?.Abilities.Where(x => x.SpellLevel != SpellLevel.NotASpell);
     }
 
     public async Task<IEnumerable<Party>> GetCampaignPartiesAsync(Campaign campaign)
@@ -183,12 +181,12 @@ public class DataService : IDataService
         {
             return;
         }
-        await _fileService.SaveAsync(folderPath, jsonFile, _cached);
+        await DefaultSave();
     }
 
     public async Task WriteLog(IEnumerable<string> log)
     {
-        await _fileService.AppendAsync(folderPath, logFile, log);
+        await _fileService.AppendAsync(_modelOptionsService.SavePath, logFile, log);
     }
 
     private IPersistable CopyCampaign(Campaign campaign)
@@ -201,8 +199,7 @@ public class DataService : IDataService
     private IPersistable CopyCreature(Creature creature)
     {
         //todo: all copy functions with a proper factory set up
-        var res = new Creature();
-        _creatureService.CopyTo(res, creature);
+        var res = _creatureService.DeepCopy(creature);
         _cached.Creatures.Add(res);
         return res;
     }
@@ -263,7 +260,7 @@ public class DataService : IDataService
 
     private async Task RefreshCacheAsync()
     {
-        _cached ??= await _fileService.ReadAsync<Data>(folderPath, jsonFile);
+        _cached ??= await _fileService.ReadAsync<Data>(_modelOptionsService.SavePath, jsonFile);
     }
 
     private void SaveAddAbility(Ability ability)
@@ -274,7 +271,7 @@ public class DataService : IDataService
 
             _abilityService.CopyTo(cachedAbility, ability);
         }
-        else if (ability.SpellLevel != Models.Enums.SpellLevel.NotASpell)
+        else if (ability.SpellLevel != SpellLevel.NotASpell)
             _cached.Abilities.Add(ability);
     }
 
@@ -300,19 +297,12 @@ public class DataService : IDataService
         var cachedCreature = _cached.Creatures.FirstOrDefault(x => x.Equals(creature));
         if (cachedCreature != null)
         {
-            _creatureService.CopyTo(cachedCreature, creature);
+            cachedCreature = _creatureService.DeepCopy(creature);
+            //_creatureService.DeepCopy(cachedCreature, creature);
         }
         else
             _cached.Creatures.Add(creature);
 
-        //if (_cached.Creatures.Contains(creature))
-        //{
-        //    var cachedCreature = _cached.Creatures.First(x => x.Equals(creature));
-        //    _creatureService.CopyTo(cachedCreature, creature);
-        //    //cachedCreature.CopyFrom(creature);
-        //}
-        //else
-        //    _cached.Creatures.Add(creature);
     }
 
     private void SaveAddEncounter(Encounter encounter)
@@ -348,5 +338,10 @@ public class DataService : IDataService
 
         foreach (var member in party.Members)
             SaveAddCreature(member);
+    }
+
+    private async Task DefaultSave()
+    {
+        await _fileService.SaveAsync(_modelOptionsService.SavePath, jsonFile, _cached);
     }
 }

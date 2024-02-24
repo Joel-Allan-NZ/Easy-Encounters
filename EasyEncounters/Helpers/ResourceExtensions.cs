@@ -8,7 +8,7 @@ public static class ResourceExtensions
 
     public static string GetEnumerationString(Enum enumeration)
     {
-        var resourceName = string.Concat(enumeration.GetType().Name, "_", enumeration);
+        var resourceName = string.Concat(enumeration.GetType().Name, "_", enumeration, "_Short");
         return GetLocalized(resourceName);
     }
 

@@ -505,7 +505,8 @@
                                   IsChecked="{x:Bind ViewModel.ConditionImmunities.Charmed, Mode=TwoWay}" />
                             <ToggleButton Content="Deafened"
                                   Margin="2,2,2,2"
-                                  IsChecked="{x:Bind ViewModel.ConditionImmunities.Deafened, Mode=TwoWay}" />
+                                  IsChecked="{x:Bind ViewModel.ConditionImmunities.Deafened, Mode=TwoWay}">
+                            </ToggleButton>
                             <ToggleButton Content="Frightened"
                                   Margin="2,2,2,2"
                                   IsChecked="{x:Bind ViewModel.ConditionImmunities.Frightened, Mode=TwoWay}" />

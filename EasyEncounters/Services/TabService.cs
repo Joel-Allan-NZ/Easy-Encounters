@@ -42,7 +42,7 @@ public class TabService : ITabService
         throw new ArgumentException("Tab Key does not refer to a valid Observable Recipient Tab");
     }
 
-    private object? GetPageViewModel(Page? page) => page?.GetType().GetProperty("ViewModel")?.GetValue(page, null);
+    private object? GetPageViewModel(Page? page) => page?.GetType().GetProperty(_viewModelString)?.GetValue(page, null);
 
     //public ITab OpenTab(string tabName, string pageKey, object parameter)
     //{

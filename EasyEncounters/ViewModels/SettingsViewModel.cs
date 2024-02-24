@@ -5,10 +5,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 using EasyEncounters.Contracts.Services;
+using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Helpers;
 using Microsoft.UI.Xaml;
 
 using Windows.ApplicationModel;
+using Windows.Storage.Pickers;
 
 namespace EasyEncounters.ViewModels;
 
@@ -16,6 +18,7 @@ public partial class SettingsViewModel : ObservableRecipient
 {
     private readonly IModelOptionsService _modelOptionsService;
     private readonly IThemeSelectorService _themeSelectorService;
+    private readonly INavigationService _navigationService;
 
     [ObservableProperty]
     private ElementTheme _elementTheme;
@@ -26,23 +29,18 @@ public partial class SettingsViewModel : ObservableRecipient
     [ObservableProperty]
     private string _versionDescription;
 
-    public SettingsViewModel(IThemeSelectorService themeSelectorService, IModelOptionsService modelOptionsService)
+    [ObservableProperty]
+    private string _locationDescription;
+
+    public SettingsViewModel(IThemeSelectorService themeSelectorService, IModelOptionsService modelOptionsService, INavigationService navigationService)
     {
         _themeSelectorService = themeSelectorService;
         _elementTheme = _themeSelectorService.Theme;
         _versionDescription = GetVersionDescription();
         _modelOptionsService = modelOptionsService;
         _rollMaxHP = _modelOptionsService.RollHP;
-
-        //SwitchRollMaxCommand = new RelayCommand<bool>(
-        //    async (param) =>
-        //    {
-        //        if(RollMaxHP != param)
-        //        {
-        //            RollMaxHP = param;
-        //            await _modelOptionsService.SaveActiveEncounterOptionAsync(param);
-        //        }
-        //    });
+        LocationDescription = _modelOptionsService.SavePath;
+        _navigationService = navigationService;
 
         SwitchThemeCommand = new RelayCommand<ElementTheme>(
             async (param) =>
@@ -60,10 +58,24 @@ public partial class SettingsViewModel : ObservableRecipient
         get;
     }
 
-    //public ICommand SwitchRollMaxCommand
-    //{
-    //    get;
-    //}
+    [RelayCommand]
+    private async Task PickFolder()
+    {
+        var hwnd = _navigationService.GetWindowHandle();
+
+        var folderPicker = new FolderPicker();
+
+        WinRT.Interop.InitializeWithWindow.Initialize(folderPicker, hwnd);
+
+        var result = await folderPicker.PickSingleFolderAsync();
+
+        if (!string.IsNullOrEmpty(result.Path))
+        {
+            await _modelOptionsService.SaveFolderPath(result.Path);
+        }
+
+    }
+
     private static string GetVersionDescription()
     {
         Version version;

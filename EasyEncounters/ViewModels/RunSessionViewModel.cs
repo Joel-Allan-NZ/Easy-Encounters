@@ -17,14 +17,17 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
     private readonly IList<EncounterData> _encounters;
     private readonly IFilteringService _filteringService;
     private readonly INavigationService _navigationService;
+    private readonly IEncounterService _encounterService;
 
     [ObservableProperty]
     private EncounterFilter _encounterFilterValues;
 
-    public RunSessionViewModel(IDataService dataService, INavigationService navigationService, IActiveEncounterService encounterService, IFilteringService filteringService)
+    public RunSessionViewModel(IDataService dataService, INavigationService navigationService, IActiveEncounterService activeEncounterService, IFilteringService filteringService,
+        IEncounterService encounterService)
     {
+        _encounterService = encounterService;
         _dataService = dataService;
-        _activeEncounterService = encounterService;
+        _activeEncounterService = activeEncounterService;
         _navigationService = navigationService;
         _filteringService = filteringService;
         _encounters = new List<EncounterData>();
@@ -46,7 +49,10 @@ public partial class RunSessionViewModel : ObservableRecipient, INavigationAware
             var party = (Party)parameter;
             EncounterData.Clear();
 
-            var data = await _dataService.GetAllEncounterDataAsync(party);
+            var encounters = await _dataService.GetAllEncountersAsync();
+            var data = _encounterService.GenerateEncounterData(party, encounters);
+
+            //var data = await _dataService.GetAllEncounterDataAsync(party);
             foreach (var item in data)
             {
                 _encounters.Add(item);
