@@ -7,15 +7,12 @@ public class ActiveEncounterCreature : Creature
     public ActiveEncounterCreature(Creature creature) : base(creature)
     {
         Name = creature.Name;
-        EncounterName = creature.Name ?? "Unnamed Creature"; //placeholder name, expect this to be overwritten in an active encounter
+        EncounterName = creature.Name ?? "Unnamed Creature"; 
         Dead = false;
         EncounterID = Guid.NewGuid();
         Reaction = true;
         Notes = "" + creature.Description;
         Concentrating = false;
-
-        
-
         Initiative = -100; //placeholder value that indicates a creature hasn't rolled initiative
 
         CurrentLegendaryActions = creature.MaxLegendaryActions;

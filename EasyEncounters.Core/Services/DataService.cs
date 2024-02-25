@@ -10,25 +10,18 @@ namespace EasyEncounters.Core.Services;
 
 public class DataService : IDataService
 {
-    private static readonly string defaultFolderPath = @"D:\D&D\DND Tools";
     private static readonly string jsonFile = @"TextJson.txt";
     private static readonly string logFile = @"LogTextJson.txt";
     private readonly IAbilityService _abilityService;
     private readonly ICreatureService _creatureService;
     private readonly IModelOptionsService _modelOptionsService;
-    //private string SaveFolderPath = defaultFolderPath;
 
-
-
-    //todo: make setting
-    private readonly IEncounterService _encounterService;
 
     private readonly IFileService _fileService;
     private Data _cached;
 
-    public DataService(IFileService fileService, IEncounterService encounterService, IAbilityService abiltyService, ICreatureService creatureService, IModelOptionsService modelOptionsService)
+    public DataService(IFileService fileService, IAbilityService abiltyService, ICreatureService creatureService, IModelOptionsService modelOptionsService)
     {
-        _encounterService = encounterService;
         _fileService = fileService;
         _creatureService = creatureService;
         _abilityService = abiltyService;
@@ -60,23 +53,35 @@ public class DataService : IDataService
         T result;
 
         if (entity is Encounter)
+        {
             result = (T)CopyEncounter(entity as Encounter);
+        }
         else if (entity is Creature)
+        {
             result = (T)CopyCreature(entity as Creature);
+        }
         else if (entity is Campaign)
+        {
             result = (T)CopyCampaign(entity as Campaign);
+        }
         else if (entity is Party)
+        {
             result = (T)CopyParty(entity as Party);
+        }
         else if (entity is Ability)
+        {
             result = (T)CopySpell(entity as Ability);
+        }
         else
-            throw new NotImplementedException($"Copying {typeof(T)} is not yet implemented."); 
+        {
+            throw new NotImplementedException($"Copying {typeof(T)} is not yet implemented.");
+        }
 
         await DefaultSave();
         return result;
     }
 
-    public void DeleteActiveEncounter(ActiveEncounter activeEncounter)
+    public void DeleteActiveEncounter()
     {
         _cached.ActiveEncounter = null;
     }
@@ -86,17 +91,29 @@ public class DataService : IDataService
         await RefreshCacheAsync();
 
         if (entity is ActiveEncounter)
-            DeleteActiveEncounter(entity as ActiveEncounter);
+        {
+            DeleteActiveEncounter();
+        }
         else if (entity is Encounter)
+        {
             DeleteEncounter(entity as Encounter);
+        }
         else if (entity is Party)
+        {
             DeleteParty(entity as Party);
+        }
         else if (entity is Campaign)
+        {
             DeleteCampaign(entity as Campaign);
+        }
         else if (entity is Creature)
+        {
             DeleteCreature(entity as Creature);
+        }
         else if (entity is Ability)
+        {
             DeleteSpell(entity as Ability);
+        }
 
         await DefaultSave();
     }
@@ -272,7 +289,9 @@ public class DataService : IDataService
             _abilityService.CopyTo(cachedAbility, ability);
         }
         else if (ability.SpellLevel != SpellLevel.NotASpell)
+        {
             _cached.Abilities.Add(ability);
+        }
     }
 
     private void SaveAddActiveEncounter(ActiveEncounter activeEncounter)
@@ -289,7 +308,9 @@ public class DataService : IDataService
             cachedCampaign.Name = campaign.Name;
         }
         else
+        {
             _cached.Campaigns.Add(campaign);
+        }
     }
 
     private void SaveAddCreature(Creature creature)
@@ -301,8 +322,9 @@ public class DataService : IDataService
             //_creatureService.DeepCopy(cachedCreature, creature);
         }
         else
+        {
             _cached.Creatures.Add(creature);
-
+        }
     }
 
     private void SaveAddEncounter(Encounter encounter)
@@ -320,7 +342,9 @@ public class DataService : IDataService
             _cached.Encounters.Add(encounter);
         }
         foreach (var creature in encounter.Creatures)
+        {
             SaveAddCreature(creature);
+        }
     }
 
     private void SaveAddParty(Party party)
@@ -334,10 +358,14 @@ public class DataService : IDataService
             cachedParty.Campaign = party.Campaign;
         }
         else
+        {
             _cached.Parties.Add(party);
+        }
 
         foreach (var member in party.Members)
+        {
             SaveAddCreature(member);
+        }
     }
 
     private async Task DefaultSave()

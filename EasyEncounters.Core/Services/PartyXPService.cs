@@ -13,11 +13,13 @@ public class PartyXPService : IPartyXPService
     public double[] CalculatePartyXPThresholds(Party party)
     {
         var result = new double[6] { 0, 0, 0, 0, 0, double.MaxValue };
-        foreach (Creature c in party.Members)
+        foreach (var c in party.Members)
         {
             var add = AddSinglePlayerXPThreshold(c.LevelOrCR);
             for (var i = 0; i < 4; i++)
+            {
                 result[i] += add[i];
+            }
         }
         result[4] = result[3] * 1.5;
         return result;

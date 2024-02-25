@@ -22,7 +22,9 @@ public class EncounterService : IEncounterService
     public double CalculateEncounterXP(Encounter encounter)
     {
         if (encounter.Creatures.Count == 0)
+        {
             return -1;
+        }
 
         var monsterXPTotal = 0;
         foreach (var creature in encounter.Creatures)
@@ -201,12 +203,21 @@ public class EncounterService : IEncounterService
             default:
                 {
                     if (CR > .124 && CR < .126)
+                    {
                         return 25;
+                    }
                     else if (CR > .24 && CR < .26)
+                    {
                         return 50;
+                    }
                     else if (CR > .49 && CR < .51)
+                    {
                         return 100;
-                    else return 1000000;
+                    }
+                    else
+                    {
+                        return 1000000;
+                    }
                 }
         }
     }

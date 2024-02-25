@@ -6,8 +6,6 @@ namespace EasyEncounters.Core.Contracts.Services;
 public interface ILogService
 {
     Task EndEncounterLog();
-
-    //void Log(string message);
     Task<string> LogDamage(DamageType damageType, ActiveEncounterCreature source, ActiveEncounterCreature target, int damage);
 
     void LogError(string message);

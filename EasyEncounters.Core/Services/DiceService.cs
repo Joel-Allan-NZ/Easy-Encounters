@@ -44,54 +44,7 @@ public class DiceService : IDiceService
 
     public int Roll(string diceString) //we're assuming the diceString doesn't have any invalid elements - validating elsewhere.
     {
-        if (diceString == null)
-            return 0;
-        return Parse(diceString);
-    }
-
-    private int HandleToken(DiceParseType parseType, string[] tokens, int currentIndex)
-    {
-        var result = 0;
-
-        if (parseType == DiceParseType.Minus)
-        {
-            result -= int.Parse(tokens[currentIndex]);
-        }
-        else if (parseType == DiceParseType.Flat)
-        {
-            result = int.Parse(tokens[currentIndex]);
-        }
-        else //handle dice - tricksy 
-        { 
-
-        }
-        return result;
-    }
-
-    private int HandleToken(DiceParseType parseType, string subString)
-    {
-        var res = 0;
-        if (parseType == DiceParseType.Dice)
-        {
-            var split = subString.Split('d').Select(x => int.Parse(x)).ToList();
-            if (split.Count == 1)
-            {
-                res = Roll(split[0]);
-            }
-            else
-                res = Roll(split[1], split[0]);
-        }
-        else if (parseType == DiceParseType.Minus)
-        {
-            var val = int.Parse(subString);
-            res = 0 - val;
-        }
-        else
-        {
-            var val = int.Parse(subString);
-            res = val;
-        }
-        return res;
+        return diceString == null ? 0 : Parse(diceString);
     }
 
     private int Parse(string diceString)
@@ -129,7 +82,7 @@ public class DiceService : IDiceService
 
     private int ResolveTokenValue(string possibleDiceToken)
     {
-        var diceSplit = possibleDiceToken.SplitInclusive('d');//Regex.Split(possibleDiceToken, @"(?<=[d])"); //the result will be in form x,d,y or d,y or just y
+        var diceSplit = possibleDiceToken.SplitInclusive('d');
         int result;
 
         if (diceSplit.Length == 3)
@@ -149,7 +102,7 @@ public class DiceService : IDiceService
 
     }
 
-    private DiceParseType GetParseType(string token)
+    private static DiceParseType GetParseType(string token)
     {
         return token[0] switch
         {

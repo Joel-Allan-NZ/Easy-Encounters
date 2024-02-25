@@ -2,6 +2,9 @@
 
 namespace EasyEncounters.Core.Models;
 
+/// <summary>
+/// Represents a DND encounter / fight / combat
+/// </summary>
 public class Encounter : Persistable
 {
     public Encounter(string name = "default", List<Creature>? creatures = null, string description = "", double adjustedEncounterXP = -1, Campaign? campaign = null)
@@ -57,10 +60,7 @@ public class Encounter : Persistable
 
     public override bool Equals(object? obj)
     {
-        if (obj == null || !(obj is Encounter))
-            return false;
-
-        return ((Encounter)obj).Id == Id;
+        return obj != null && obj is Encounter encounter && encounter.Id == Id;
     }
 
     public override int GetHashCode()

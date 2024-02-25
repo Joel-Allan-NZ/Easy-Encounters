@@ -57,7 +57,9 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
     {
         Encounters.Clear();
         foreach (var encounter in await _dataService.GetAllEncountersAsync())
+        {
             Encounters.Add(new EncounterViewModel(encounter));
+        }
     }
 
     [RelayCommand]
@@ -78,18 +80,19 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
             var copied = await _dataService.CopyAsync(parameter as Encounter);
 
             if (copied != null)
+            {
                 Encounters.Add(new EncounterViewModel(copied));
+            }
         }
     }
 
     [RelayCommand]
     private async Task DeleteEncounter(object parameter)
     {
-        if (parameter != null && parameter is Encounter)
+        if (parameter != null && parameter is Encounter encounter)
         {
-            var toDelete = (Encounter)parameter;
-            Encounters.Remove(Encounters.First(x => x.Encounter == toDelete));
-            await _dataService.DeleteAsync(toDelete);
+            Encounters.Remove(Encounters.First(x => x.Encounter == encounter));
+            await _dataService.DeleteAsync(encounter);
         }
     }
 
@@ -100,9 +103,9 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
         {
             _navigationService.NavigateTo(typeof(EncounterEditViewModel).FullName!, parameter);
         }
-        else if (parameter != null && parameter is EncounterViewModel)
+        else if (parameter != null && parameter is EncounterViewModel model)
         {
-            _navigationService.NavigateTo(typeof(EncounterEditViewModel).FullName!, ((EncounterViewModel)parameter).Encounter);
+            _navigationService.NavigateTo(typeof(EncounterEditViewModel).FullName!, model.Encounter);
         }
     }
 
@@ -117,13 +120,12 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
 
     private async Task FilterAsync(object parameter)
     {
-        if (parameter is string)
+        if (parameter is string text)
         {
-            var text = (string)parameter;
 
             //remove is worse performance than clearing and repopulating the list, but much less 'flickery'.
 
-            List<EncounterViewModel> matched = Encounters.Where(x => x.Encounter.Name.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            var matched = Encounters.Where(x => x.Encounter.Name.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToList();
             List<EncounterViewModel> noMatch = new();
 
             for (var i = Encounters.Count - 1; i >= 0; i--)
@@ -137,7 +139,9 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
             }
 
             foreach (var item in noMatch)
+            {
                 Encounters.Add(item);
+            }
         }
     }
 }

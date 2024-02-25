@@ -5,6 +5,9 @@ using EasyEncounters.Core.Models.Enums;
 
 namespace EasyEncounters.Core.Models;
 
+/// <summary>
+/// A creature in 5e, whether that be a player or NPC.
+/// </summary>
 public class Creature : Persistable
 {
     /// <summary>

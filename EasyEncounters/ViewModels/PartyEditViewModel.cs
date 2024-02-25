@@ -63,9 +63,9 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
 
     public async void OnNavigatedTo(object parameter)
     {
-        if (parameter != null && parameter is Party)
+        if (parameter != null && parameter is Party party)
         {
-            Party = (Party)parameter;
+            Party = party;
 
             PartyMembers.Clear();
             foreach (var partyMember in Party.Members)
@@ -76,11 +76,15 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
             Creatures.Clear();
             //todo: will have to  handle campaigns and creatures differently in future when there are a large number; can't possibly load all of each.
             foreach (var creature in await _dataService.GetAllCreaturesAsync())
+            {
                 Creatures.Add(new CreatureViewModel(creature));
+            }
 
             Campaigns.Clear();
             foreach (var campaign in await _dataService.GetAllCampaignsAsync())
+            {
                 Campaigns.Add(campaign);
+            }
 
             SelectedCampaign = Party.Campaign ?? Campaigns.First();
         }
@@ -89,16 +93,13 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void AddCreature(object parameter)
     {
-        if (parameter != null && parameter is Creature)
+        if (parameter != null && parameter is Creature creature)
         {
-            var creature = (Creature)parameter;
             PartyMembers.Add(new CreatureViewModel(creature));
             Party?.Members.Add(creature);
         }
-        else if (parameter != null && parameter is CreatureViewModel)
+        else if (parameter != null && parameter is CreatureViewModel creatureViewModel)
         {
-            var creatureViewModel = (CreatureViewModel)parameter;
-
             PartyMembers.Add(new CreatureViewModel(creatureViewModel.Creature));
             Party?.Members.Add(creatureViewModel.Creature);
         }
@@ -109,7 +110,9 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
     {
         await _dataService.SaveAddAsync(Party);
         if (_navigationService.CanGoBack)
+        {
             _navigationService.GoBack();
+        }
     }
 
     [RelayCommand]
@@ -123,13 +126,12 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
 
     private async Task FilterAsync(object parameter)
     {
-        if (parameter is string)
+        if (parameter is string text)
         {
-            var text = (string)parameter;
 
             //remove is worse performance than clearing and repopulating the list, but much less 'flickery'.
 
-            List<CreatureViewModel> matched = Creatures.Where(x => x.Creature.Name.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            var matched = Creatures.Where(x => x.Creature.Name.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToList();
             List<CreatureViewModel> noMatch = new();
 
             for (var i = Creatures.Count - 1; i >= 0; i--)
@@ -143,7 +145,9 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
             }
 
             foreach (var item in noMatch)
+            {
                 Creatures.Add(item);
+            }
         }
     }
 
@@ -156,12 +160,10 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void RemoveCreature(object parameter)
     {
-        if (parameter != null && parameter is Creature)
+        if (parameter != null && parameter is Creature creature)
         {
-            var toRemove = (Creature)parameter;
-
-            PartyMembers.Remove(PartyMembers.First(x => x.Creature == toRemove));
-            Party?.Members.Remove(toRemove);
+            PartyMembers.Remove(PartyMembers.First(x => x.Creature == creature));
+            Party?.Members.Remove(creature);
         }
     }
 }
