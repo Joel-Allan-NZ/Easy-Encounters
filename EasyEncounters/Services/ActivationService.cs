@@ -1,10 +1,9 @@
 ﻿using EasyEncounters.Activation;
 using EasyEncounters.Contracts.Services;
+using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Views;
-
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using EasyEncounters.Core.Contracts.Services;
 
 namespace EasyEncounters.Services;
 

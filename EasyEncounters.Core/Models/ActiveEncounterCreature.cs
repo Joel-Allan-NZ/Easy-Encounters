@@ -7,7 +7,7 @@ public class ActiveEncounterCreature : Creature
     public ActiveEncounterCreature(Creature creature) : base(creature)
     {
         Name = creature.Name;
-        EncounterName = creature.Name ?? "Unnamed Creature"; 
+        EncounterName = creature.Name ?? "Unnamed Creature";
         Dead = false;
         EncounterID = Guid.NewGuid();
         Reaction = true;

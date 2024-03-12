@@ -35,7 +35,7 @@ public partial class TargetedDamageViewModel : ObservableRecipient, INavigationA
     /// The source of damage.
     /// </summary>
     [ObservableProperty]
-    private ActiveEncounterCreatureViewModel? _sourceCreature;
+    private ObservableActiveEncounterCreature? _sourceCreature;
 
     /// <summary>
     /// workaround attempt for nested vm not binding. todo: fix properly.
@@ -88,7 +88,7 @@ public partial class TargetedDamageViewModel : ObservableRecipient, INavigationA
     /// <summary>
     /// The list of possible target creatures
     /// </summary>
-    public ObservableCollection<ActiveEncounterCreatureViewModel> TargetableCreatures
+    public ObservableCollection<ObservableActiveEncounterCreature> TargetableCreatures
     {
         get; private set;
     } = new();
@@ -126,7 +126,7 @@ public partial class TargetedDamageViewModel : ObservableRecipient, INavigationA
     }
 
     [RelayCommand]
-    private void AddTarget(ActiveEncounterCreatureViewModel creature)
+    private void AddTarget(ObservableActiveEncounterCreature creature)
     {
         if (SelectedTargetedDamageInstance != null)
         {

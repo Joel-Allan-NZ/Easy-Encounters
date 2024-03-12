@@ -10,6 +10,8 @@
                 <ResourceDictionary Source="/Styles/Thickness.xaml" />
                 <ResourceDictionary Source="/Styles/TextBlock.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <FontFamily x:Key="StatBlockTitle">/Assets/Fonts/MRSEAV~9.TTF#MrsEavesSmallCaps</FontFamily>
+            <FontFamily x:Key="StatBlockContent">/Assets/Fonts/BOOKINSANITY.OTF#BOOKINSANITY</FontFamily>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -8,4 +8,5 @@ public enum ActionSpeed
     Reaction = 1 << 2,
     Other = 1 << 3,
     Legendary = 1 << 4,
+    Lair = 1 << 5,
 }

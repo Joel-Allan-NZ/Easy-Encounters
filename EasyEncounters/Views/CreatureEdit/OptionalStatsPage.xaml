@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="EasyEncounters.Views.OptionalStatsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EasyEncounters.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:viewmodels="using:EasyEncounters.ViewModels" 
+    xmlns:helpers="using:EasyEncounters.Helpers"
+    d:DataContext="{d:DesignInstance Type=viewmodels:CreatureEditNavigationPageViewModel}"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <helpers:EnumToDescriptionStringConverter x:Key="EnumToDescriptionConverter" />
+        <helpers:EnumToStringConverter x:Key="EnumToStringConverter" />
+    </Page.Resources>
+
+    <Grid>
+        <ScrollViewer>
+            <StackPanel>
+                <StackPanel Orientation="Horizontal"
+                            Margin="0,5">
+                    <TextBlock Text="Initiative Bonus:"  
+                               Margin="2,8,2,2" />
+                    <NumberBox Value="{Binding Creature.InitiativeBonus, Mode=TwoWay}"  Margin="2,2,2,2" x:DefaultBindMode="TwoWay"
+                                   AcceptsExpression="True"
+                                   Minimum="0"
+                                   Maximum="20"
+                                  ValidationMode="InvalidInputOverwritten" />
+                    <ToggleButton IsChecked="{Binding Creature.InitiativeAdvantage}" Content ="Has Advantage for Initiative?" x:DefaultBindMode="TwoWay"  Margin="2,2,2,2" />
+                </StackPanel>
+
+                <Expander HorizontalAlignment="Stretch"
+                          x:Name="ResistanceExpander"
+                          Margin="0,5">
+                    <Expander.Resources>
+                    </Expander.Resources>
+                    <Expander.Header>
+                        <StackPanel>
+                            <TextBlock Text="Damage Resistances:"
+                                       FontSize="10" />
+                            <TextBlock Text="{Binding Resists.EnumValue, Mode=OneWay}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <Expander.Content>
+                        <GridView ItemsSource="{Binding Resists.Flags}">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid MaximumRowsOrColumns="8" 
+                                                   Orientation="Horizontal"
+                                               
+                                                       HorizontalAlignment="Stretch"
+                                                       VerticalAlignment="Stretch"/>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <ToggleButton Content="{Binding Value, Converter={StaticResource EnumToStringConverter}}"
+                                                      ToolTipService.ToolTip="{Binding Value, Converter={StaticResource EnumToDescriptionConverter}}"
+                                                      MinWidth="200"
+                                                      HorizontalContentAlignment="Center"
+                                                      MinHeight="45"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch"
+                                                      IsChecked="{Binding Flagged, Mode=TwoWay}"/>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                    </Expander.Content>
+                </Expander>
+
+                <Expander HorizontalAlignment="Stretch"
+                          x:Name="ImmunityExpander"
+                          Margin="0,5">
+                    <Expander.Resources>
+                    </Expander.Resources>
+                    <Expander.Header>
+                        <StackPanel>
+                            <TextBlock Text="Damage Immunities:"
+                                       FontSize="10" />
+                            <TextBlock Text="{Binding Immunities.EnumValue, Mode=OneWay}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <Expander.Content>
+                        <GridView ItemsSource="{Binding Immunities.Flags}">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid MaximumRowsOrColumns="8" Orientation="Horizontal"
+                                                       HorizontalAlignment="Stretch"
+                                                       VerticalAlignment="Stretch"/>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <ToggleButton Content="{Binding Value, Converter={StaticResource EnumToStringConverter}}"
+                                                      ToolTipService.ToolTip="{Binding Value, Converter={StaticResource EnumToDescriptionConverter}}"
+                                                      MinWidth="200"
+                                                      MinHeight="45"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch"
+                                                      IsChecked="{Binding Flagged, Mode=TwoWay}"/>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                    </Expander.Content>
+                </Expander>
+
+                <Expander HorizontalAlignment="Stretch"
+                          x:Name="VulnerabilityExpander"
+                          Margin="0,5">
+                    <Expander.Resources>
+                    </Expander.Resources>
+                    <Expander.Header>
+                        <StackPanel>
+                            <TextBlock Text="Damage Vulnerabilities:"
+                                       FontSize="10" />
+                            <TextBlock Text="{Binding Vulnerabilities.EnumValue, Mode=OneWay}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <Expander.Content>
+                        <GridView ItemsSource="{Binding Vulnerabilities.Flags}">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid MaximumRowsOrColumns="8" Orientation="Horizontal"
+                                                       HorizontalAlignment="Stretch"
+                                                       VerticalAlignment="Stretch"/>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <ToggleButton Content="{Binding Value, Converter={StaticResource EnumToStringConverter}}"
+                                                      ToolTipService.ToolTip="{Binding Value, Converter={StaticResource EnumToDescriptionConverter}}"
+                                                      MinWidth="200"
+                                                      MinHeight="45"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch"
+                                                      IsChecked="{Binding Flagged, Mode=TwoWay}"/>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                    </Expander.Content>
+                </Expander>
+
+                <Expander HorizontalAlignment="Stretch"
+                          Margin="0,5"
+                          x:Name="ConditionsExpander">
+                    <Expander.Resources>
+                    </Expander.Resources>
+                    <Expander.Header>
+                        <StackPanel>
+                            <TextBlock Text="Condition Immunities:"
+                                       FontSize="10" />
+                            <TextBlock Text="{Binding ConditionImmunities.EnumValue, Mode=OneWay}"
+                                       TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Expander.Header>
+                    <Expander.Content>
+                        <GridView ItemsSource="{Binding ConditionImmunities.Flags}">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid MaximumRowsOrColumns="8" Orientation="Horizontal"
+                                                       HorizontalAlignment="Stretch"
+                                                       VerticalAlignment="Stretch"/>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <ToggleButton Content="{Binding Value, Converter={StaticResource EnumToStringConverter}}"
+                                                      ToolTipService.ToolTip="{Binding Value, Converter={StaticResource EnumToDescriptionConverter}}"
+                                                      MinWidth="200"
+                                                      MinHeight="45"
+                                                      HorizontalAlignment="Stretch"
+                                                      VerticalAlignment="Stretch"
+                                                      IsChecked="{Binding Flagged, Mode=TwoWay}"/>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                    </Expander.Content>
+                </Expander>
+
+
+                <ScrollViewer>
+                    <RichEditBox x:Name="DescriptionRichBox"
+                                 helpers:RichEditBoxExtension.PlainText="{Binding Creature.Features, Mode=TwoWay}"
+                                 Header="Other Features"
+                                 PlaceholderText="Enter Features Here!"
+                                 ToolTipService.ToolTip="Other Features the creature may have, like Devil's Sight or Magic Resistance"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"/>
+                </ScrollViewer>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

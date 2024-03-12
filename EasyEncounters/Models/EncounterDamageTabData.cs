@@ -5,14 +5,13 @@ namespace EasyEncounters.Models;
 
 internal class EncounterDamageTabData
 {
-    public EncounterDamageTabData(ActiveEncounter activeEncounter, ActiveEncounterCreatureViewModel source,
-        IList<ActiveEncounterCreatureViewModel> targets, ObservableActiveAbility? ability = null)
+    public EncounterDamageTabData(ActiveEncounter activeEncounter, ObservableActiveEncounterCreature source,
+        IList<ObservableActiveEncounterCreature> targets, ObservableActiveAbility? ability = null)
     {
         ActiveEncounter = activeEncounter;
         Source = source;
         Targets = targets;
-        Ability = ability
-            ;
+        Ability = ability;
     }
 
     internal ObservableActiveAbility? Ability
@@ -25,12 +24,12 @@ internal class EncounterDamageTabData
         get; set;
     }
 
-    internal ActiveEncounterCreatureViewModel Source
+    internal ObservableActiveEncounterCreature Source
     {
         get; set;
     }
 
-    internal IList<ActiveEncounterCreatureViewModel> Targets
+    internal IList<ObservableActiveEncounterCreature> Targets
     {
         get; set;
     }

@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using EasyEncounters.Core.Models.Enums;
+﻿using EasyEncounters.Core.Models.Enums;
 
 #nullable enable
 
@@ -17,7 +16,7 @@ public class Creature : Persistable
     public Creature(Creature other)
     {
         Name = other.Name;
-        
+
         InitiativeBonus = other.InitiativeBonus;
         InitiativeAdvantage = other.InitiativeAdvantage;
         Name = other.Name;
@@ -58,9 +57,18 @@ public class Creature : Persistable
         Senses = other.Senses;
         CreatureSubtype = other.CreatureSubtype;
         Alignment = other.Alignment;
+        Id = Guid.NewGuid();
 
         SpellSlots = new Dictionary<int, int>(other.SpellSlots);
         Abilities = new List<Ability>(other.Abilities);
+
+        NotProficient = other.NotProficient;
+        Proficient = other.Proficient;
+        HalfProficient = other.HalfProficient;
+        Expertise = other.Expertise;
+
+        ToolSkills = other.ToolSkills;
+        Languages = other.Languages;
 
     }
 
@@ -74,7 +82,9 @@ public class Creature : Persistable
             int intelligence = 10, int intelligenceSave = 0, int wisdom = 10, int wisdomSave = 0, int charisma = 10, int charismaSave = 0,
             Dictionary<int, int>? spellSlots = null, int proficiencyBonus = 0, CreatureAttributeType spellStat = CreatureAttributeType.None,
             string features = "", string movement = "", string senses = "", CreatureType creatureType = CreatureType.Aberration, string creatureSubtype = "",
-            CreatureAlignment creatureAlignment = CreatureAlignment.Undefined, CreatureSizeClass size = CreatureSizeClass.Medium)
+            CreatureAlignment creatureAlignment = CreatureAlignment.Undefined, CreatureSizeClass size = CreatureSizeClass.Medium, 
+            CreatureSkills notProficient = CreatureSkills.None, CreatureSkills halfProficient = CreatureSkills.None, 
+            CreatureSkills proficient = CreatureSkills.None, CreatureSkills expertise = CreatureSkills.None, string languages ="", string toolSkills = "")
     {
         Name = name;
         Abilities = new List<Ability>();
@@ -120,13 +130,20 @@ public class Creature : Persistable
         Senses = senses;
         CreatureSubtype = creatureSubtype;
         Alignment = creatureAlignment;
+        NotProficient = notProficient;
+        HalfProficient = halfProficient;
+        Proficient = proficient;
+        Expertise = expertise;
+
+        Languages = languages;
+        ToolSkills = toolSkills;
     }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public Creature()
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     {
-    
+
     }
 
     public List<Ability> Abilities
@@ -380,72 +397,39 @@ public class Creature : Persistable
         get; set;
     }
 
-    //public void CopyFrom(Creature other)
-    //{
-    //    Abilities.Clear();
-    //    foreach (Ability ability in other.Abilities)
-    //    {
-    //        //copy spells as is, but clone other abilities
-    //        if (ability.SpellLevel != SpellLevel.NotASpell)
-    //            Abilities.Add(ability);
-    //        else
-    //        {
-    //            //TODO: add ability copying for non-spells-
-    //            var newAbility = new Ability();
-    //        }
-    //    }
+    public CreatureSkills NotProficient
+    {
+        get;set;
+    }
 
-    //    Name = other.Name;
-    //    InitiativeAdvantage = other.InitiativeAdvantage;
-    //    InitiativeBonus = other.InitiativeBonus;
-    //    DMControl = other.DMControl;
-    //    Description = other.Description;
-    //    LevelOrCR = other.LevelOrCR;
-    //    Immunity = other.Immunity;
-    //    Vulnerability = other.Vulnerability;
-    //    Resistance = other.Resistance;
-    //    Hyperlink = other.Hyperlink;
-    //    MaxHP = other.MaxHP;
-    //    MaxHPString = other.MaxHPString;
-    //    AC = other.AC;
-    //    MaxLegendaryResistance = other.MaxLegendaryResistance;
-    //    MaxLegendaryActions = other.MaxLegendaryActions;
-    //    ConditionImmunities = other.ConditionImmunities;
-    //    AttackDescription = other.AttackDescription;
-    //    Strength = other.Strength;
-    //    StrengthSave = other.StrengthSave;
-    //    Dexterity = other.Dexterity;
-    //    DexteritySave = other.DexteritySave;
-    //    Constitution = other.Constitution;
-    //    ConstitutionSave = other.ConstitutionSave;
-    //    Intelligence = other.Intelligence;
-    //    IntelligenceSave = other.IntelligenceSave;
-    //    Wisdom = other.Wisdom;
-    //    WisdomSave = other.WisdomSave;
-    //    Charisma = other.Charisma;
-    //    CharismaSave = other.CharismaSave;
-    //    Movement = other.Movement;
-    //    ProficiencyBonus = other.ProficiencyBonus;
+    public CreatureSkills HalfProficient
+    {
+        get; set;
+    }
 
-    //    SpellStat = other.SpellStat;
-    //    Features = other.Features;
+    public CreatureSkills Proficient
+    {
+        get; set;
+    }
 
-    //    Size = other.Size;
-    //    CreatureType = other.CreatureType;
-    //    Senses = other.Senses;
-    //    CreatureSubtype = other.CreatureSubtype;
-    //    Alignment = other.Alignment;
+    public CreatureSkills Expertise
+    {
+        get; set;
+    }
 
-    //    SpellSlots.Clear();
-    //    foreach (var kvp in other.SpellSlots)
-    //    {
-    //        SpellSlots.Add(kvp.Key, kvp.Value);
-    //    }
-    //}
+    public string ToolSkills
+    {
+        get; set;
+    }
 
+    public string Languages
+    {
+        get; set;
+    }
+    
     public override bool Equals(object? obj)
     {
-        return (obj is Creature creature && creature.Id == Id);
+        return (obj is Creature creature && creature.Id == this.Id);
     }
 
     public override int GetHashCode()

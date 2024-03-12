@@ -16,7 +16,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
     private readonly IActiveEncounterService _activeEncounterService;
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
-    private readonly List<ActiveEncounterCreatureViewModel> _targeted;
+    private readonly List<ObservableActiveEncounterCreature> _targeted;
     private ActiveEncounter? _activeEncounter;
 
     [ObservableProperty]
@@ -39,7 +39,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
         });
     }
 
-    public ObservableCollection<ActiveEncounterCreatureViewModel> Creatures { get; private set; } = new();
+    public ObservableCollection<ObservableActiveEncounterCreature> Creatures { get; private set; } = new();
 
     public ObservableCollection<string> Log
     {
@@ -66,7 +66,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
 
         foreach (var p in _activeEncounter.CreatureTurns)
         {
-            Creatures.Add(new ActiveEncounterCreatureViewModel(p));
+            Creatures.Add(new ObservableActiveEncounterCreature(p));
         }
 
         foreach (var s in _activeEncounter.Log.Reverse<string>())
@@ -88,7 +88,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
     }
 
     [RelayCommand]
-    private void DealDamage(ActiveEncounterCreatureViewModel sourceCreature)
+    private void DealDamage(ObservableActiveEncounterCreature sourceCreature)
     {
         if (_activeEncounter == null)
             return;
@@ -115,7 +115,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
         await _activeEncounterService.EndCurrentTurnAsync(_activeEncounter);
 
         //show current turn order and remove inactive creatures:
-        var tmp = new List<ActiveEncounterCreatureViewModel>(Creatures);
+        var tmp = new List<ObservableActiveEncounterCreature>(Creatures);
         Creatures.Clear();
         foreach (var creature in _activeEncounter.CreatureTurns)
         {
@@ -136,7 +136,7 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
         InitNotRolled = false;
         InitRolled = true;
 
-        var tmp = new List<ActiveEncounterCreatureViewModel>(Creatures);
+        var tmp = new List<ObservableActiveEncounterCreature>(Creatures);
         Creatures.Clear();
         foreach (var creature in _activeEncounter.CreatureTurns)
         {
@@ -151,13 +151,13 @@ public partial class RunEncounterViewModel : ObservableRecipient, INavigationAwa
     {
         foreach (var added in e.AddedItems)
         {
-            if (added is ActiveEncounterCreatureViewModel)
-                _targeted.Add((ActiveEncounterCreatureViewModel)added);
+            if (added is ObservableActiveEncounterCreature)
+                _targeted.Add((ObservableActiveEncounterCreature)added);
         }
         foreach (var removed in e.RemovedItems)
         {
-            if (removed is ActiveEncounterCreatureViewModel)
-                _targeted.Remove((ActiveEncounterCreatureViewModel)removed);
+            if (removed is ObservableActiveEncounterCreature)
+                _targeted.Remove((ObservableActiveEncounterCreature)removed);
         }
     }
 }

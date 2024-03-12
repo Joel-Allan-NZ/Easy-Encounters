@@ -11,6 +11,8 @@ public interface ICreatureService
     /// <param name="toCopy"></param>
     Creature DeepCopy(Creature toCopy);
 
+    Creature Create();
+
     /// <summary>
     /// Get the bonus value for a specified attribute on a specified creature.
     /// </summary>

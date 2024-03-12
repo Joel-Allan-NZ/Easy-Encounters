@@ -3,7 +3,7 @@ using EasyEncounters.Core.Contracts.Services;
 //using Windows.Storage.Search;
 
 namespace EasyEncounters.Services;
-
+#nullable enable
 public class ModelOptionsService : IModelOptionsService
 {
     private const string OptionsKey = "RollHP";
@@ -39,7 +39,7 @@ public class ModelOptionsService : IModelOptionsService
     public async Task ReadSaveLocation()
     {
         SavePath = await _localSettingService.ReadSettingAsync<string>(FolderPath);
-        
+
     }
 
     public async Task SaveActiveEncounterOptionAsync(bool optionValue)

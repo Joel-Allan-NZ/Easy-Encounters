@@ -7,12 +7,14 @@ namespace EasyEncounters.Core.Models;
 /// </summary>
 public class Party : Persistable
 {
-    public Party(Campaign? campaign = null, string name = "party", List<Creature>? members = null)
+    public Party(Campaign? campaign = null, string name = "party", List<Creature>? members = null, double[]? partyXPThresholds = null, string partyDescription = "")
     {
         Campaign = campaign;
         Name = name;
         Members = members ?? new List<Creature>();
         Id = Guid.NewGuid();
+        PartyXPThresholds = partyXPThresholds ?? new double[6];
+        PartyDescription = partyDescription;
     }
 
     /// <summary>
@@ -40,6 +42,11 @@ public class Party : Persistable
         get; set;
     }
 
+    public double[] PartyXPThresholds
+    {
+        get; set;
+    }
+
     public override bool Equals(object? obj)
     {
         if (obj == null || !(obj is Party))
@@ -51,5 +58,10 @@ public class Party : Persistable
     public override int GetHashCode()
     {
         return Id.GetHashCode();
+    }
+
+    public string PartyDescription
+    {
+        get; set; 
     }
 }

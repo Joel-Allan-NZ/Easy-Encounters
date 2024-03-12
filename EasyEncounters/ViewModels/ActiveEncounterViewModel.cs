@@ -23,10 +23,10 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
     private ActiveEncounter? _activeEncounter;
 
     [ObservableProperty]
-    private ActiveEncounterCreatureViewModel? _damageSourceCreature;
+    private ObservableActiveEncounterCreature? _damageSourceCreature;
 
     [ObservableProperty]
-    private ActiveEncounterCreatureViewModel? _selectedCreature;
+    private ObservableActiveEncounterCreature? _selectedCreature;
 
     [ObservableProperty]
     private TargetDamageInstanceViewModel? _selectedTargetDamageInstance;
@@ -74,7 +74,7 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
         get; private set;
     } = new();
 
-    public ObservableCollection<ActiveEncounterCreatureViewModel> Creatures
+    public ObservableCollection<ObservableActiveEncounterCreature> Creatures
     {
         get; private set;
     } = new();
@@ -105,7 +105,7 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
         Creatures.Clear();
 
         foreach (var creature in _activeEncounter.CreatureTurns)
-            Creatures.Add(new ActiveEncounterCreatureViewModel(creature));
+            Creatures.Add(new ObservableActiveEncounterCreature(creature));
 
         foreach (var combatLogString in _activeEncounter.Log.Reverse<string>())
             CombatLog.Add(combatLogString);
@@ -126,7 +126,7 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
     }
 
     [RelayCommand]
-    private void AddTarget(ActiveEncounterCreatureViewModel creature)
+    private void AddTarget(ObservableActiveEncounterCreature creature)
     {
         if (SelectedTargetDamageInstance != null)
         {
@@ -154,7 +154,7 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
         }
     }
 
-    private void DamageSourceChangeRequested(ActiveEncounterCreatureViewModel creature)
+    private void DamageSourceChangeRequested(ObservableActiveEncounterCreature creature)
     {
         DamageSourceCreature = creature;
         DamageInstances.Clear();
@@ -243,7 +243,7 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
 
             if (_activeEncounter.CreatureTurns.Count != Creatures.Count)
             {
-                var temp = new List<ActiveEncounterCreatureViewModel>(Creatures);
+                var temp = new List<ObservableActiveEncounterCreature>(Creatures);
                 Creatures.Clear();
                 foreach (var creature in temp)
                 {
@@ -327,7 +327,7 @@ public partial class ActiveEncounterViewModel : ObservableRecipient, INavigation
     {
         var orderedInitiative = await _activeEncounterService.RollInitiative(_activeEncounter);
 
-        var tempAECreatureList = new List<ActiveEncounterCreatureViewModel>(Creatures);
+        var tempAECreatureList = new List<ObservableActiveEncounterCreature>(Creatures);
         Creatures.Clear();
 
         foreach (var orderedCreature in orderedInitiative)

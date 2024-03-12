@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using EasyEncounters.Contracts.Services;
 using EasyEncounters.Core.Models;
+using EasyEncounters.Models;
 using EasyEncounters.ViewModels;
 
 namespace EasyEncounters.Services.Filter;
@@ -58,13 +59,13 @@ public class FilteringService : IFilteringService
         ICollection<FilterCriteria<T>> filterCriteria;
         ICollection<T> filtered = new List<T>();
 
-        if (typeof(T) == typeof(AbilityViewModel))
+        if (typeof(T) == typeof(Ability))
         {
             var abilityFilterValues = (AbilityFilter)filterValues;
             filterCriteria = (ICollection<FilterCriteria<T>>)abilityFilterValues.GenerateFilterCriteria(text);
             filtered = Filter(toFilter, filterCriteria);
 
-            abilityFilterValues.SearchSuggestions = (List<AbilityViewModel>)filtered;
+            abilityFilterValues.SearchSuggestions = (List<Ability>)filtered;
         }
         else if (typeof(T) == typeof(CreatureViewModel))
         {
@@ -82,13 +83,29 @@ public class FilteringService : IFilteringService
 
             encounterFilterValues.SearchSuggestions = (List<EncounterData>)filtered;
         }
+        else if (typeof(T) == typeof(Party))
+        {
+            var partyFilterValues = (PartyFilter)filterValues;
+            filterCriteria = (ICollection<FilterCriteria<T>>)partyFilterValues.GenerateFilterCriteria(text);
+            filtered = Filter(toFilter, filterCriteria);
+
+            partyFilterValues.SearchSuggestions = (List<Party>)filtered;
+        }
+        else if (typeof(T) == typeof(ObservableEncounter))
+        {
+            var observableEncounterFilterValues = (ObservableEncounterFilter)filterValues;
+            filterCriteria = (ICollection<FilterCriteria<T>>)observableEncounterFilterValues.GenerateFilterCriteria(text);
+            filtered = Filter(toFilter, filterCriteria);
+
+            observableEncounterFilterValues.SearchSuggestions =  (List<ObservableEncounter>) filtered;
+        }
 
         return filtered;
     }
 
     public FilterValues GetFilterValues<T>()
     {
-        if (typeof(T) == typeof(AbilityViewModel))
+        if (typeof(T) == typeof(Ability))
         {
             return new AbilityFilter();
         }
@@ -100,6 +117,14 @@ public class FilteringService : IFilteringService
         {
             return new CreatureFilter();
         }
+        else if (typeof(T) == typeof(Party))
+        {
+            return new PartyFilter();
+        }
+        else if (typeof(T) == typeof(ObservableEncounter))
+        {
+            return new ObservableEncounterFilter();
+        }    
         //default:
         throw new ArgumentException($"{nameof(T)} is not a supported FilterValue<T> type");
 
@@ -151,6 +176,32 @@ public class FilteringService : IFilteringService
         }
         return false;
     }
+
+    private bool MatchAFlag<T>(T item, Expression<Func<T, Enum>> expression, Enum flag)
+    {
+        if(expression is LambdaExpression lambdaBody)
+        {
+            var compiled = lambdaBody.Compile();
+            var value = (Enum?)compiled?.DynamicInvoke(item);
+
+            if(value != null && value.HasFlag(flag))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public ICollection<T> Filter<T>(ICollection<T> toFilter, Expression<Func<T, Enum>> expression, Enum flag)
+    {
+        var matches = new List<T>();
+        foreach (var item in toFilter)
+        {
+            if (MatchAFlag(item, expression, flag))
+                matches.Add(item);
+        }
+        return matches;
+    }
 }
 
 //todo: abstract class with subclasses
@@ -160,6 +211,7 @@ public class FilterCriteria<T>
     internal string? MatchString;
     internal IComparable? Maximum;
     internal IComparable? Minimum;
+    internal Enum? MatchFlag;
 
     public FilterCriteria(Expression<Func<T, IComparable>> expression, IComparable minimum, IComparable maximum)
     {
@@ -174,14 +226,37 @@ public class FilterCriteria<T>
         MatchString = matchString;
     }
 
+    public FilterCriteria(Expression<Func<T, IComparable>> expression, Enum matchFlag)
+    {
+        Expression = expression;
+        MatchFlag = matchFlag;
+    }
+
     public bool IsMatch(T item)
     {
         if (item != null)
         {
             if (MatchString != null)
                 return MatchAString(item);
+            else if (MatchFlag != null)
+                return MatchAFlag(item);
             else
                 return MatchARange(item);
+        }
+        return false;
+    }
+
+    private bool MatchAFlag(T item)
+    {
+        if (Expression is LambdaExpression lambdaBody)
+        {
+            var compiled = lambdaBody.Compile();
+            var value = (Enum?)compiled?.DynamicInvoke(item);
+
+            if (value != null && MatchFlag != null && value.HasFlag(MatchFlag))
+            {
+                return true;
+            }
         }
         return false;
     }

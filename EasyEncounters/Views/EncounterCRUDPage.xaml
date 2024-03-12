@@ -6,97 +6,31 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" MaxHeight="50" MinHeight="50" />
-            <RowDefinition Height="10*" />
-            <RowDefinition Height="*" MaxHeight="50" MinHeight="50" />
-        </Grid.RowDefinitions>
-        <TextBox x:Name="FilterByName"
-                    Grid.Row="0"
-                    PlaceholderText="Filter/Search"
-                    MinWidth="200"
-                    Margin="5">
-            <Interactivity:Interaction.Behaviors>
-                <Core:EventTriggerBehavior EventName="TextChanged">
-                    <Core:InvokeCommandAction Command="{x:Bind ViewModel.FilterCommand}" CommandParameter="{x:Bind FilterByName.Text, Mode=OneWay}" />
-                </Core:EventTriggerBehavior>
-            </Interactivity:Interaction.Behaviors>
-        </TextBox>
-        <ScrollViewer HorizontalScrollMode="Disabled"
-                      Grid.Row="1">
-            <ListView Margin="5,5,5,5"
-                        x:Name="EncountersListView"
-                        ItemsSource="{x:Bind ViewModel.Encounters, Mode=OneWay}"
-                        HorizontalContentAlignment="Stretch">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="DoubleTapped">
-                        <Core:InvokeCommandAction Command="{x:Bind ViewModel.EditEncounterCommand}" CommandParameter="{x:Bind EncountersListView.SelectedItem, Mode=OneWay}" />
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid HorizontalAlignment="Stretch"
-                                    Margin="5,5,5,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="4*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid.ContextFlyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Text="Edit" Command="{Binding RequestEditEncounterCommand}" />
-                                    <MenuFlyoutItem Text="Copy" Command="{Binding RequestCopyEncounterCommand}" />
-                                    <MenuFlyoutItem Text="Delete" Command="{Binding RequestDeleteEncounterCommand}" />
-                                </MenuFlyout>
-                            </Grid.ContextFlyout>
-                            <TextBlock Text="{Binding Encounter.Name}"
-                                        MinWidth="100"
-                                        Margin="5,5,5,5"
-                                        FontSize="18"
-                                        Grid.Row="0"
-                                        Grid.Column="0"
-                                        Grid.RowSpan="2"
-                                        VerticalAlignment="Center"></TextBlock>
-
-                            <TextBlock Text="Number Of Creatures" FontSize="8" Margin="5,5,5,5"
-                                        HorizontalAlignment="Center"
-                                        Grid.Row="0"
-                                        Grid.Column="1" />
-                            <TextBlock Text="{Binding Encounter.Creatures.Count}" Margin="5,5,5,5"
-                                        HorizontalAlignment="Center"
-                                        Grid.Row="1"
-                                        Grid.Column="1" />
-                            <TextBlock Text="Description" Margin="5,5,5,5" FontSize="8"
-                                        Grid.Row="0"
-                                        Grid.Column="2" />
-                            <TextBlock Text="{Binding Encounter.Description}" Margin="5,5,5,5"
-                                        Grid.Row="1"
-                                        Grid.Column="2" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </ScrollViewer>
-
-        <Button Command="{x:Bind ViewModel.AddEncounterCommand}"
-                Grid.Row="2"
-                VerticalAlignment="Bottom"
-                Margin="5,5,5,5"
-                KeyboardAcceleratorPlacementMode="Auto"
-                ToolTipService.ToolTip="Add a new encounter">
-            <Button.KeyboardAccelerators>
-                <KeyboardAccelerator Modifiers="Control" Key="N" />
-            </Button.KeyboardAccelerators>
-            <FontIcon Glyph="&#xF8AA;"></FontIcon>
-        </Button>
+        <usercontrols:EncounterGrid HasVisibleFilters="True"
+                                    FilterMinimumEncounterDifficulty="{x:Bind ViewModel.EncounterFilterValues.MinimumDifficulty, Mode=TwoWay}"
+                                    FilterMaximumEncounterDifficulty="{x:Bind ViewModel.EncounterFilterValues.MaximumDifficulty, Mode=TwoWay}"
+                                    FilterEncounterDifficultySource="{x:Bind ViewModel.EncounterFilterValues.Difficulties, Mode=OneWay}"
+                                    FilterCampaignSelected="{x:Bind ViewModel.EncounterFilterValues.CampaignName}"
+                                    FilterCampaignSource="{x:Bind ViewModel.Campaigns}"
+                                    FilterMinimumEnemies="{x:Bind ViewModel.EncounterFilterValues.MinimumEnemiesFilter, Mode=TwoWay}"
+                                    FilterMaximumEnemies="{x:Bind ViewModel.EncounterFilterValues.MaximumEnemiesFilter, Mode=TwoWay}"
+                                    ClearFiltersCommand="{x:Bind ViewModel.ClearFiltersCommand}"
+                                    Suggestions="{x:Bind ViewModel.EncounterFilterValues.SearchSuggestions, Mode=OneWay}"
+                                    FilterCommand="{x:Bind ViewModel.EncounterFilterCommand}"
+                                    GridDataSource="{x:Bind ViewModel.Encounters}"
+                                    SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
+                                    EditEncounterCommand="{x:Bind ViewModel.EditEncounterCommand}"
+                                    CopyEncounterCommand="{x:Bind ViewModel.CopyEncounterCommand}"
+                                    DeleteEncounterCommand="{x:Bind ViewModel.DeleteEncounterCommand}"
+                                    AddNewEncounterCommand="{x:Bind ViewModel.AddEncounterCommand}"
+                                    SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
+                                    SelectEncounterCommand="{x:Bind ViewModel.EditEncounterCommand}"
+                                    />
     </Grid>
 </Page>

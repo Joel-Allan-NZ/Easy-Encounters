@@ -1,7 +1,4 @@
-﻿using System.Security;
-using System.Text.RegularExpressions;
-using System.Xml.XPath;
-using EasyEncounters.Core.Contracts.Enums;
+﻿using EasyEncounters.Core.Contracts.Enums;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Helpers;
 
@@ -32,7 +29,7 @@ public class DiceService : IDiceService
             result += _randomService.RandomInteger(1, dieSize);
         }
 
-        if(modifier != DiceRollModifier.None)
+        if (modifier != DiceRollModifier.None)
         {
             var secondResult = Roll(dieSize, dieCount, DiceRollModifier.None);
 
@@ -61,11 +58,11 @@ public class DiceService : IDiceService
             result += ResolveTokenValue(tokens[0]);
         }
 
-        for(var i = 1; i<tokens.Length; i++)
+        for (var i = 1; i < tokens.Length; i++)
         {
             var parseType = GetParseType(tokens[i]);
 
-            if(parseType == DiceParseType.Other)
+            if (parseType == DiceParseType.Other)
             {
                 var tokenValue = ResolveTokenValue(tokens[i]);
 

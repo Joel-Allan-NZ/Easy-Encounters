@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="EasyEncounters.Views.CoreStatsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EasyEncounters.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:converters="using:CommunityToolkit.WinUI.UI.Converters"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:viewmodels="using:EasyEncounters.ViewModels" 
+    d:DataContext="{d:DesignInstance Type=viewmodels:CreatureEditNavigationPageViewModel}"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <converters:BoolToVisibilityConverter x:Key="IsNPCConverter" />
+        <DataTemplate x:Key="SmallHeaderStyle">
+            <TextBlock Text="{Binding}"
+                       FontSize="12"
+                       HorizontalAlignment="Center"/>
+        </DataTemplate>
+        <Style TargetType="NumberBox"
+               x:Key="AttributeStyle">
+            <Setter Target="FontSize" Value="18"/>
+            <Setter Target="MinWidth" Value="100"/>
+            <Setter Target="Margin" Value="5,2"/>
+            <Setter Target="HeaderTemplate" Value="{StaticResource SmallHeaderStyle}"/>
+            <Setter Target="HorizontalContentAlignment" Value="Center"/>
+            <Setter Target="HorizontalAlignment" Value="Center"/>
+            <Setter Target="Minimum" Value="0"/>
+            <Setter Target="Maximum" Value="30"/>
+            <Setter Target="AcceptsExpression" Value="False"/>
+        </Style>
+        <Style TargetType="NumberBox"
+               x:Key="SaveStyle">
+            <Setter Target="FontSize" Value="18"/>
+            <Setter Target="MinWidth" Value="100"/>
+            <Setter Target="Margin" Value="5,2"/>
+            <Setter Target="HeaderTemplate" Value="{StaticResource SmallHeaderStyle}"/>
+            <Setter Target="HorizontalContentAlignment" Value="Center"/>
+            <Setter Target="HorizontalAlignment" Value="Center"/>
+            <Setter Target="Minimum" Value="-5"/>
+            <Setter Target="Maximum" Value="30"/>
+            <Setter Target="AcceptsExpression" Value="False"/>
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <StackPanel>
+            <StackPanel Orientation="Horizontal"
+                        Margin="8,0">
+                <NumberBox Value="{Binding Creature.AC, Mode=TwoWay}"
+                           Margin="2,2,2,2"
+                           Header="Armor Class"
+                           HeaderTemplate="{StaticResource SmallHeaderStyle}"
+                           AcceptsExpression="True"
+                           FontSize="20"
+                           Minimum="0"
+                           Maximum="50"
+                           ValidationMode="InvalidInputOverwritten" />
+                <NumberBox Value="{Binding Creature.ProficiencyBonus, Mode=TwoWay}"
+                           Header="Proficiency Bonus"
+                           HeaderTemplate="{StaticResource SmallHeaderStyle}"
+                           Margin="8,2,2,2"
+                           FontSize="20"
+                           AcceptsExpression="True"
+                           Minimum="2"
+                           Maximum="20"
+                           ValidationMode="InvalidInputOverwritten" />
+                <NumberBox Value="{Binding Creature.InitiativeBonus, Mode=TwoWay}"  
+                           Margin="8,2,2,2"
+                           Header="Other Initiative Bonus"
+                           ToolTipService.ToolTip="Initiative Bonuses from other sources, like the Alert Feat"
+                           HeaderTemplate="{StaticResource SmallHeaderStyle}"
+                           AcceptsExpression="True"
+                           Minimum="0"
+                           Maximum="20"
+                           ValidationMode="InvalidInputOverwritten" />
+                <CheckBox IsChecked="{Binding Creature.InitiativeAdvantage, Mode=TwoWay}" 
+                          VerticalAlignment="Center"
+                          Content ="Rolls Initiative with advantage?"
+                          Margin="8,20,2,2" />
+            </StackPanel>
+            <StackPanel Margin="0,20">
+                <StackPanel Orientation="Horizontal">
+                    <NumberBox  Style="{StaticResource AttributeStyle}"
+                               Header="Strength:"
+                               Value="{Binding Creature.Strength, Mode=TwoWay}" />
+                    <NumberBox  Style="{StaticResource AttributeStyle}"
+                               Header="Dexterity:"
+                               Value="{Binding Creature.Dexterity, Mode=TwoWay}" />
+                    <NumberBox  Style="{StaticResource AttributeStyle}"
+                                Header="Constitution:"
+                                Value="{Binding Creature.Constitution, Mode=TwoWay}" />
+                    <NumberBox Style="{StaticResource AttributeStyle}"
+                                Header="Intelligence:"
+                                Value="{Binding Creature.Intelligence, Mode=TwoWay}" />
+                    <NumberBox  Style="{StaticResource AttributeStyle}"
+                                Header="Wisdom:"
+                                Value="{Binding Creature.Wisdom, Mode=TwoWay}" />
+                    <NumberBox  Style="{StaticResource AttributeStyle}"
+                                Header="Charisma:"
+                                Value="{Binding Creature.Charisma, Mode=TwoWay}" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <NumberBox Style="{StaticResource SaveStyle}"
+                                   Header="Strength Save:"
+                                   Value="{Binding Creature.StrengthSave, Mode=TwoWay}" />
+                <NumberBox Style="{StaticResource SaveStyle}"
+                                   Header="Dexterity Save:"
+                                   Value="{Binding Creature.DexteritySave, Mode=TwoWay}" />
+                <NumberBox Style="{StaticResource SaveStyle}"
+                                   Header="Constitution Save:"
+                                   Value="{Binding Creature.ConstitutionSave, Mode=TwoWay}" />
+                <NumberBox Style="{StaticResource SaveStyle}"
+                                   Header="Intelligence Save:"
+                                   Value="{Binding Creature.IntelligenceSave, Mode=TwoWay}" />
+                <NumberBox Style="{StaticResource SaveStyle}"
+                                   Header="Wisdom Save:"
+                                   Value="{Binding Creature.WisdomSave, Mode=TwoWay}" />
+                <NumberBox Style="{StaticResource SaveStyle}"
+                                   Header="Charisma Save:"
+                                   Value="{Binding Creature.CharismaSave, Mode=TwoWay}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                        Margin="0,30">
+                <NumberBox Value="{Binding Creature.MaxHP, Mode=TwoWay}"
+                           HeaderTemplate="{StaticResource SmallHeaderStyle}"
+                           Header="Max HP (fixed value)"
+                           Margin="8,2,2,2"
+                           ToolTipService.ToolTip="The creature's maximum HP when using fixed values rather than rolling dice."
+                           AcceptsExpression="True"
+                           Minimum="0"
+                           Maximum="10000"
+                           ValidationMode="InvalidInputOverwritten"
+                           Visibility="{Binding Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}"></NumberBox>
+                <TextBox Text="{Binding Creature.MaxHPString, Mode=TwoWay}"
+                         HeaderTemplate="{StaticResource SmallHeaderStyle}"
+                         Header="Max HP dice"
+                         ToolTipService.ToolTip="The dice value to roll for the creature's maximum health, e.g. 4d6+10"
+                         Visibility="{Binding Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}"
+                         Margin="8,2,2,2"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Header="Movement:"
+                         HeaderTemplate="{StaticResource SmallHeaderStyle}"
+                         PlaceholderText="Enter a movement string"
+                         Margin="8,2,2,2"
+                         Text="{Binding Creature.Movement, Mode=TwoWay}" />
+                <TextBox Text="{Binding Creature.Senses, Mode=TwoWay}"
+                         Header="Creature Sense"
+                         HeaderTemplate="{StaticResource SmallHeaderStyle}"
+                         ToolTipService.ToolTip="Special senses, like Darkvision (120 ft), TrueVision etc"
+                         PlaceholderText="Enter any special senses"
+                         AcceptsReturn="True"
+                         Margin="8,2,2,2"
+                         TextWrapping="Wrap"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

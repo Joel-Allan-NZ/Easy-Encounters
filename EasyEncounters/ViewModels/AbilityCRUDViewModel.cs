@@ -18,7 +18,7 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
     private readonly IDataService _dataService;
     private readonly IFilteringService _filteringService;
     private readonly INavigationService _navigationService;
-    private List<AbilityViewModel>? _abilityCache;
+    private List<Ability>? _abilityCache;
 
     [ObservableProperty]
     private AbilityFilter _abilityFilterValues;
@@ -28,15 +28,15 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         _dataService = dataService;
         _navigationService = navigationService;
         _filteringService = filteringService;
-        _abilityFilterValues = (AbilityFilter)filteringService.GetFilterValues<AbilityViewModel>();
+        _abilityFilterValues = (AbilityFilter)filteringService.GetFilterValues<Ability>();
 
         WeakReferenceMessenger.Default.Register<AbilityCRUDRequestMessage>(this, (r, m) =>
         {
-            _ = HandleCRUDRequest(m.Parameter.Ability, m.RequestType);
+            _ = HandleCRUDRequest(m.Parameter, m.RequestType);
         });
     }
 
-    public ObservableCollection<AbilityViewModel> Abilities
+    public ObservableCollection<Ability> Abilities
     {
         get; set;
     } = new();
@@ -51,11 +51,11 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
     {
         Abilities.Clear();
         foreach (var ability in await _dataService.GetAllSpellsAsync())
-            Abilities.Add(new AbilityViewModel(ability));
+            Abilities.Add(ability);
 
-        AbilityFilterValues = (AbilityFilter)_filteringService.GetFilterValues<AbilityViewModel>();
+        AbilityFilterValues = (AbilityFilter)_filteringService.GetFilterValues<Ability>();
 
-        _abilityCache = new List<AbilityViewModel>(Abilities);
+        _abilityCache = new List<Ability>(Abilities);
     }
 
     [RelayCommand]
@@ -74,7 +74,7 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
     private async Task AddAbility()
     {
         var ability = new Ability();
-        Abilities.Add(new AbilityViewModel(ability));
+        Abilities.Add(ability);
         await _dataService.SaveAddAsync(ability);
         EditAbility(ability);
     }
@@ -86,55 +86,14 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         {
             var copied = await _dataService.CopyAsync(ability as Ability);
             if (copied != null)
-                Abilities.Add(new AbilityViewModel(copied));
+                Abilities.Add(copied);
         }
     }
 
     [RelayCommand]
     private void DataGridSort(DataGridColumnEventArgs e)
     {
-        //OnSorting(e);
-        if (e.Column.Tag.ToString() == "AbilityName")
-        {
-            SortByPredicate(Abilities, x => x.Ability.Name, e.Column.SortDirection == DataGridSortDirection.Ascending);
-            //if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
-            //    SortAbilitiesByName(false);
-            //else
-            //    SortAbilitiesByName(true);
-        }
-        else if (e.Column.Tag.ToString() == "AbilityLevel")
-        {
-            SortByPredicate(Abilities, x => x.Ability.SpellLevel, e.Column.SortDirection == DataGridSortDirection.Ascending);
-        }
-        else if (e.Column.Tag.ToString() == "AbilityDamageType")
-        {
-            SortByPredicate(Abilities, x => x.Ability.DamageTypes, e.Column.SortDirection == DataGridSortDirection.Ascending);
-        }
-        else if (e.Column.Tag.ToString() == "AbilityResolutionType")
-        {
-            SortByPredicate(Abilities, x => x.Ability.Resolution, e.Column.SortDirection == DataGridSortDirection.Ascending);
-        }
-        else if (e.Column.Tag.ToString() == "AbilityConcentration")
-        {
-            SortByPredicate(Abilities, x => x.Ability.Concentration, e.Column.SortDirection == DataGridSortDirection.Ascending);
-        }
-        else if (e.Column.Tag.ToString() == "AbilityResolutionStat")
-        {
-            SortByPredicate(Abilities, x => x.Ability.SaveType, e.Column.SortDirection == DataGridSortDirection.Ascending);
-        }
-        else if (e.Column.Tag.ToString() == "AbilitySchool")
-        {
-            SortByPredicate(Abilities, x => x.Ability.MagicSchool, e.Column.SortDirection == DataGridSortDirection.Ascending);
-        }
-
-        if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
-        {
-            e.Column.SortDirection = DataGridSortDirection.Ascending;
-        }
-        else
-        {
-            e.Column.SortDirection = DataGridSortDirection.Descending;
-        }
+        AbilityFilterValues.SortCollection(Abilities, e);
     }
 
     [RelayCommand]
@@ -143,7 +102,7 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         if (parameter != null && parameter is Ability)
         {
             var toDelete = (Ability)parameter;
-            Abilities.Remove(Abilities.First(x => x.Ability == toDelete));
+            Abilities.Remove(Abilities.First(x => x == toDelete));
             await _dataService.DeleteAsync(toDelete);
         }
     }
@@ -154,10 +113,6 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         if (ability != null && ability is Ability)
         {
             _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
-        }
-        else if (ability != null && ability is AbilityViewModel)
-        {
-            _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ((AbilityViewModel)ability).Ability);
         }
     }
 
@@ -192,12 +147,10 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         }
     }
 
-    private void SortByPredicate<T, U>(ObservableCollection<T> collection, Func<T, U> expression, bool ascending)
+    [RelayCommand]
+    private void ClearFilters()
     {
-        IEnumerable<T> tmp = (ascending) ? collection.OrderBy(expression).ToList() : collection.OrderByDescending(expression).ToList();
-
-        collection.Clear();
-        foreach (var item in tmp)
-            collection.Add(item);
+        AbilityFilterValues.ResetFilter();
+        AbilityFilter("");
     }
 }

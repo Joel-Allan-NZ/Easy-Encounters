@@ -1,11 +1,12 @@
-﻿using EasyEncounters.Models;
+﻿using EasyEncounters.Core.Models;
+using EasyEncounters.Models;
 using EasyEncounters.ViewModels;
 
 namespace EasyEncounters.Messages;
 
-internal class AbilityCRUDRequestMessage : CRUDRequestMessage<AbilityViewModel>
+internal class AbilityCRUDRequestMessage : CRUDRequestMessage<Ability>
 {
-    public AbilityCRUDRequestMessage(AbilityViewModel abilityViewModel, CRUDRequestType requestType) : base(abilityViewModel, requestType)
+    public AbilityCRUDRequestMessage(Ability ability, CRUDRequestType requestType) : base(ability, requestType)
     {
     }
 }

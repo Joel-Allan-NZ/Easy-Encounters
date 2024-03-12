@@ -4,5 +4,5 @@ namespace EasyEncounters.Core.Contracts.Services;
 
 public interface IPartyXPService
 {
-    double[] CalculatePartyXPThresholds(Party party);
+    void CalculatePartyXPThresholds(Party party);
 }

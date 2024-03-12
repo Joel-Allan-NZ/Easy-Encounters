@@ -15,22 +15,39 @@
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
   <ItemGroup>
+    <Content Remove="Assets\Fonts\BOOKINSANITY BOLD ITALIC.OTF" />
+    <Content Remove="Assets\Fonts\BOOKINSANITY BOLD.OTF" />
+    <Content Remove="Assets\Fonts\BOOKINSANITY ITALIC.OTF" />
+    <Content Remove="Assets\Fonts\BOOKINSANITY.OTF" />
+    <Content Remove="Assets\Fonts\MRSEAV~9.TTF" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Styles\ValidatingStyles.xaml" />
     <None Remove="Views\AbilityCRUDPage.xaml" />
     <None Remove="Views\AbilityEditPage.xaml" />
     <None Remove="Views\ActiveEncounterPage.xaml" />
+    <None Remove="Views\AttacksAndAbilitiesPage.xaml" />
+    <None Remove="Views\BasicInfoPage.xaml" />
     <None Remove="Views\CampaignCRUDPage.xaml" />
     <None Remove="Views\CampaignSplashPage.xaml" />
+    <None Remove="Views\CoreStatsPage.xaml" />
     <None Remove="Views\CreatureCRUDPage.xaml" />
     <None Remove="Views\CreatureDisplayTabPage.xaml" />
+    <None Remove="Views\CreatureEditNavigationPage.xaml" />
     <None Remove="Views\CreatureEditPage.xaml" />
+    <None Remove="Views\CreatureEdit\SkillsPage.xaml" />
     <None Remove="Views\DealDamagePage.xaml" />
     <None Remove="Views\EncounterAddCreaturesTabPage.xaml" />
     <None Remove="Views\EncounterCRUDPage.xaml" />
     <None Remove="Views\EncounterDamageTabPage.xaml" />
     <None Remove="Views\EncounterEditPage.xaml" />
+    <None Remove="Views\EncounterEdit\BasicInfoContentEncounterPage.xaml" />
+    <None Remove="Views\EncounterEdit\CreaturesPage.xaml" />
+    <None Remove="Views\EncounterEdit\EncounterEditNavigationPage.xaml" />
+    <None Remove="Views\EncounterEdit\PartyAndDifficultyPage.xaml" />
     <None Remove="Views\EncounterTabPage.xaml" />
     <None Remove="Views\LogTabPage.xaml" />
+    <None Remove="Views\OptionalStatsPage.xaml" />
     <None Remove="Views\PartyCRUDPage.xaml" />
     <None Remove="Views\PartyEditPage.xaml" />
     <None Remove="Views\PartySelectPage.xaml" />
@@ -38,6 +55,9 @@
     <None Remove="Views\RunSessionPage.xaml" />
     <None Remove="Views\SpellGrid.xaml" />
     <None Remove="Views\TargetedDamagePage.xaml" />
+    <None Remove="Views\UserControls\CreatureGrid.xaml" />
+    <None Remove="Views\UserControls\EncounterGrid.xaml" />
+    <None Remove="Views\UserControls\PartyGrid.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -63,6 +83,45 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\EncounterEdit\CreaturesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\EncounterEdit\PartyAndDifficultyPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\EncounterEdit\BasicInfoContentEncounterPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\EncounterEdit\EncounterEditNavigationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\UserControls\EncounterGrid.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\UserControls\PartyGrid.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\UserControls\CreatureGrid.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\CreatureEdit\SkillsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\AttacksAndAbilitiesPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\OptionalStatsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\CoreStatsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\BasicInfoPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\CreatureEditNavigationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\EncounterAddCreaturesTabPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -149,6 +208,7 @@
   
   <ItemGroup>
     <Folder Include="SourceGenerators\" />
+    <Folder Include="Views\EncounterTabs\" />
   </ItemGroup>
 
 </Project>

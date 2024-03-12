@@ -249,7 +249,7 @@
   <data name="Condition_All_Short" xml:space="preserve">
     <value>All Conditions</value>
   </data>
-  <data name="Condition_Blind_Short" xml:space="preserve">
+  <data name="Condition_Blinded_Short" xml:space="preserve">
     <value>Blinded</value>
   </data>
   <data name="Condition_Charmed_Short" xml:space="preserve">
@@ -358,10 +358,10 @@
     <value>No Damage</value>
   </data>
   <data name="DamageType_NonMagicalPhysical_Short" xml:space="preserve">
-    <value>Bludgeoning, Piercing, or Slashing from Nonmagical attacks</value>
+    <value>Non-Magical Physical</value>
   </data>
   <data name="DamageType_NonSilveredPhysical_Short" xml:space="preserve">
-    <value>Bludgeoning, Piercing, or Slashing from Nonmagical attacks that aren't Silvered</value>
+    <value>Unsilvered Physical</value>
   </data>
   <data name="DamageType_Piercing_Short" xml:space="preserve">
     <value>Piercing</value>
@@ -668,7 +668,7 @@ The charmer has advantage on any ability check to interact socially with the cre
   <data name="Condition_Deafened_Description" xml:space="preserve">
     <value>A deafened creature can't hear and automatically fails any ability check that requires hearing.</value>
   </data>
-  <data name="Condition_Exhaustion_Description" xml:space="preserve">
+  <data name="Condition_Exhausted_Description" xml:space="preserve">
     <value>The first level of exhaustion causes the creature to have disadvantage on ability checks.</value>
   </data>
   <data name="Condition_Exhaustion2_Description" xml:space="preserve">
@@ -687,7 +687,7 @@ The charmer has advantage on any ability check to interact socially with the cre
     <value>The sixth level of exhaustion causes death.</value>
   </data>
   <data name="Condition_Frightened_Description" xml:space="preserve">
-    <value>A frightened creature has disadvantage on ability checks and attack rolls wile the source of its fear is within line of sight.
+    <value>A frightened creature has disadvantage on ability checks and attack rolls while the source of its fear is within line of sight.
 The creature can't willingly move closer to the source of its fear.</value>
   </data>
   <data name="Condition_Incapacitated_Description" xml:space="preserve">
@@ -735,5 +735,200 @@ The creature drops whatever it's holding and falls prone.
 The creature automatically fails Strength and Dexterity saving throws.
 Attack rolls against the creature have advantage.
 Any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature.</value>
+  </data>
+  <data name="Condition_Grappled_Description" xml:space="preserve">
+    <value>A grappled creature’s speed becomes 0, and it can’t benefit from any bonus to its speed.
+    The condition ends if the grappler is incapacitated (see the condition).
+    The condition also ends if an effect removes the grappled creature from the reach of the grappler or grappling effect, such as when a creature is hurled away by the thunderwave spell.</value>
+  </data>
+  <data name="Condition_Incapacitated_Short" xml:space="preserve">
+    <value>Incapacitated</value>
+  </data>
+  <data name="DamageType_Acid_Description" xml:space="preserve">
+    <value>Acid Damage - physical corrosion.</value>
+  </data>
+  <data name="DamageType_Bludgeoning_Description" xml:space="preserve">
+    <value>Bludgeoning Damage - blunt force whether from a weapon or gravity.</value>
+  </data>
+  <data name="DamageType_Cold_Description" xml:space="preserve">
+    <value>Cold Damage - chill, hypothermia etc.</value>
+  </data>
+  <data name="DamageType_Fire_Description" xml:space="preserve">
+    <value>Fire Damage - Fire = Hot.</value>
+  </data>
+  <data name="DamageType_Force_Description" xml:space="preserve">
+    <value>Force Damage - Pure magical energy focused into a damaging form without the need for pesky elements.</value>
+  </data>
+  <data name="DamageType_Lightning_Description" xml:space="preserve">
+    <value>Lightning Damage - Lightning bolts, electrical sparks, putting forks into the socket.</value>
+  </data>
+  <data name="DamageType_Necrotic_Description" xml:space="preserve">
+    <value>Necrotic Damage - typically dealt by undead, this damage type withers both matter and the soul.</value>
+  </data>
+  <data name="DamageType_NonMagicalPhysical_Description" xml:space="preserve">
+    <value>Bludgeoning, Piercing, or Slashing damage from a non-magical source.</value>
+  </data>
+  <data name="DamageType_NonSilveredPhysical_Description" xml:space="preserve">
+    <value>Bludgeoning, Piercing, or Slashing damage from a non-magical weapon that has not been silvered.</value>
+  </data>
+  <data name="DamageType_Piercing_Description" xml:space="preserve">
+    <value>Piercing Damage - Pointy things</value>
+  </data>
+  <data name="DamageType_Poison_Description" xml:space="preserve">
+    <value>Poison Damage - Venomous strings, toxic gases, and suspicious mushrooms.</value>
+  </data>
+  <data name="DamageType_Psychic_Description" xml:space="preserve">
+    <value>Psychic Damage - Mental abilities, and any that target the ego</value>
+  </data>
+  <data name="DamageType_Radiant_Description" xml:space="preserve">
+    <value>Radiant Damage - Holy energy that sears the flesh like fire and overloads the spirit with power.</value>
+  </data>
+  <data name="DamageType_Slashing_Description" xml:space="preserve">
+    <value>Slashing Damage - Claws, blades, and other cutting edges.</value>
+  </data>
+  <data name="DamageType_Thunder_Description" xml:space="preserve">
+    <value>Thunder Damage - Sound, particularly the concussive sort.</value>
+  </data>
+  <data name="ActionSpeed_Lair_Short" xml:space="preserve">
+    <value>Lair Action</value>
+  </data>
+  <data name="CreatureSkills_Acrobatics_Description" xml:space="preserve">
+    <value>Your Dexterity (Acrobatics) check covers your attempt to stay on your feet in a tricky situation, such as when you're trying to run across a sheet of ice, balance on a tightrope, or stay upright on a rocking ship's deck. The GM might also call for a Dexterity (Acrobatics) check to see if you can perform acrobatic stunts, including dives, rolls, somersaults, and flips.</value>
+  </data>
+  <data name="CreatureSkills_Acrobatics_Short" xml:space="preserve">
+    <value>Acrobatics</value>
+  </data>
+  <data name="CreatureSkills_AnimalHandling_Description" xml:space="preserve">
+    <value>When there is any question whether you can calm down a domesticated animal, keep a mount from getting spooked, or intuit an animal’s intentions, the GM might call for a Wisdom (Animal Handling) check. You also make a Wisdom (Animal Handling) check to control your mount when you attempt a risky maneuver.</value>
+  </data>
+  <data name="CreatureSkills_AnimalHandling_Short" xml:space="preserve">
+    <value>Animal Handling</value>
+  </data>
+  <data name="CreatureSkills_Arcana_Description" xml:space="preserve">
+    <value>Your Intelligence (Arcana) check measures your ability to recall lore about spells, magic items, eldritch symbols, magical traditions, the planes of existence, and the inhabitants of those planes.</value>
+  </data>
+  <data name="CreatureSkills_Arcana_Short" xml:space="preserve">
+    <value>Arcana</value>
+  </data>
+  <data name="CreatureSkills_Athletics_Description" xml:space="preserve">
+    <value>Your Strength (Athletics) check covers difficult situations you encounter while climbing, jumping, or swimming. Examples include the following activities:
+
+    You attempt to climb a sheer or slippery cliff, avoid hazards while scaling a wall, or cling to a surface while something is trying to knock you off.
+    You try to jump an unusually long distance or pull off a stunt midjump.
+    You struggle to swim or stay afloat in treacherous currents, storm-tossed waves, or areas of thick seaweed. Or another creature tries to push or pull you underwater or otherwise interfere with your swimming.</value>
+  </data>
+  <data name="CreatureSkills_Athletics_Short" xml:space="preserve">
+    <value>Athletics</value>
+  </data>
+  <data name="CreatureSkills_Deception_Description" xml:space="preserve">
+    <value>Your Charisma (Deception) check determines whether you can convincingly hide the truth, either verbally or through your actions. This deception can encompass everything from misleading others through ambiguity to telling outright lies. Typical situations include trying to fast-talk a guard, con a merchant, earn money through gambling, pass yourself off in a disguise, dull someone's suspicions with false assurances, or maintain a straight face while telling a blatant lie.</value>
+  </data>
+  <data name="CreatureSkills_Deception_Short" xml:space="preserve">
+    <value>Deception</value>
+  </data>
+  <data name="CreatureSkills_History_Description" xml:space="preserve">
+    <value>Your Intelligence (History) check measures your ability to recall lore about historical events, legendary people, ancient kingdoms, past disputes, recent wars, and lost civilizations.</value>
+  </data>
+  <data name="CreatureSkills_History_Short" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="CreatureSkills_Insight_Description" xml:space="preserve">
+    <value>Your Wisdom (Insight) check decides whether you can determine the true intentions of a creature, such as when searching out a lie or predicting someone’s next move. Doing so involves gleaning clues from body language, speech habits, and changes in mannerisms.</value>
+  </data>
+  <data name="CreatureSkills_Insight_Short" xml:space="preserve">
+    <value>Insight</value>
+  </data>
+  <data name="CreatureSkills_Intimidation_Description" xml:space="preserve">
+    <value>When you attempt to influence someone through overt threats, hostile actions, and physical violence, the GM might ask you to make a Charisma (Intimidation) check. Examples include trying to pry information out of a prisoner, convincing street thugs to back down from a confrontation, or using the edge of a broken bottle to convince a sneering vizier to reconsider a decision.</value>
+  </data>
+  <data name="CreatureSkills_Intimidation_Short" xml:space="preserve">
+    <value>Intimidation</value>
+  </data>
+  <data name="CreatureSkills_Investigation_Description" xml:space="preserve">
+    <value>When you look around for clues and make deductions based on those clues, you make an Intelligence (Investigation) check. You might deduce the location of a hidden object, discern from the appearance of a wound what kind of weapon dealt it, or determine the weakest point in a tunnel that could cause it to collapse. Poring through ancient scrolls in search of a hidden fragment of knowledge might also call for an Intelligence (Investigation) check.</value>
+  </data>
+  <data name="CreatureSkills_Investigation_Short" xml:space="preserve">
+    <value>Investigation</value>
+  </data>
+  <data name="CreatureSkills_Medicine_Description" xml:space="preserve">
+    <value>A Wisdom (Medicine) check lets you try to stabilize a dying companion or diagnose an illness.</value>
+  </data>
+  <data name="CreatureSkills_Medicine_Short" xml:space="preserve">
+    <value>Medicine</value>
+  </data>
+  <data name="CreatureSkills_Nature_Description" xml:space="preserve">
+    <value>Your Intelligence (Nature) check measures your ability to recall lore about terrain, plants and animals, the weather, and natural cycles.</value>
+  </data>
+  <data name="CreatureSkills_Nature_Short" xml:space="preserve">
+    <value>Nature</value>
+  </data>
+  <data name="CreatureSkills_Perception_Description" xml:space="preserve">
+    <value>Your Wisdom (Perception) check lets you spot, hear, or otherwise detect the presence of something. It measures your general awareness of your surroundings and the keenness of your senses. For example, you might try to hear a conversation through a closed door, eavesdrop under an open window, or hear monsters moving stealthily in the forest. Or you might try to spot things that are obscured or easy to miss, whether they are orcs lying in ambush on a road, thugs hiding in the shadows of an alley, or candlelight under a closed secret door.</value>
+  </data>
+  <data name="CreatureSkills_Perception_Short" xml:space="preserve">
+    <value>Perception</value>
+  </data>
+  <data name="CreatureSkills_Performance_Description" xml:space="preserve">
+    <value>Your Charisma (Performance) check determines how well you can delight an audience with music, dance, acting, storytelling, or some other form of entertainment.</value>
+  </data>
+  <data name="CreatureSkills_Performance_Short" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="CreatureSkills_Religion_Description" xml:space="preserve">
+    <value>Your Intelligence (Religion) check measures your ability to recall lore about deities, rites and prayers, religious hierarchies, holy symbols, and the practices of secret cults.</value>
+  </data>
+  <data name="CreatureSkills_Religion_Short" xml:space="preserve">
+    <value>Religion</value>
+  </data>
+  <data name="CreatureSkills_SleightOfHand_Description" xml:space="preserve">
+    <value>Whenever you attempt an act of legerdemain or manual trickery, such as planting something on someone else or concealing an object on your person, make a Dexterity (Sleight of Hand) check. The GM might also call for a Dexterity (Sleight of Hand) check to determine whether you can lift a coin purse off another person or slip something out of another person's pocket.</value>
+  </data>
+  <data name="CreatureSkills_SleightOfHand_Short" xml:space="preserve">
+    <value>Sleight of Hand</value>
+  </data>
+  <data name="CreatureSkills_Stealth_Description" xml:space="preserve">
+    <value>Make a Dexterity (Stealth) check when you attempt to conceal yourself from enemies, slink past guards, slip away without being noticed, or sneak up on someone without being seen or heard.</value>
+  </data>
+  <data name="CreatureSkills_Stealth_Short" xml:space="preserve">
+    <value>Stealth</value>
+  </data>
+  <data name="CreatureSkills_Survival_Description" xml:space="preserve">
+    <value>The GM might ask you to make a Wisdom (Survival) check to follow tracks, hunt wild game, guide your group through frozen wastelands, identify signs that owlbears live nearby, predict the weather, or avoid quicksand and other natural hazards.</value>
+  </data>
+  <data name="CreatureSkills_Survival_Short" xml:space="preserve">
+    <value>Survival</value>
+  </data>
+  <data name="CreatureSkillLevel_Expertise_Description" xml:space="preserve">
+    <value>Gains twice the proficiency bonus as an added bonus to the skill</value>
+  </data>
+  <data name="CreatureSkillLevel_Expertise_Short" xml:space="preserve">
+    <value>Expertise</value>
+  </data>
+  <data name="CreatureSkillLevel_HalfProficient_Description" xml:space="preserve">
+    <value>Gains half the proficiency bonus (rounded down) as an added bonus to the skill</value>
+  </data>
+  <data name="CreatureSkillLevel_HalfProficient_Short" xml:space="preserve">
+    <value>Half Proficiency</value>
+  </data>
+  <data name="CreatureSkillLevel_None_Description" xml:space="preserve">
+    <value>No added bonus to the skill from proficiency</value>
+  </data>
+  <data name="CreatureSkillLevel_None_Short" xml:space="preserve">
+    <value>No Proficiency</value>
+  </data>
+  <data name="CreatureSkillLevel_Proficient_Description" xml:space="preserve">
+    <value>Gains the full proficiency bonus as an added bonus to the skill</value>
+  </data>
+  <data name="CreatureSkillLevel_Proficient_Short" xml:space="preserve">
+    <value>Proficiency</value>
+  </data>
+  <data name="CreatureSkills_Persuasion_Description" xml:space="preserve">
+    <value>When you attempt to influence someone or a group of people with tact, social graces, or good nature, the GM might ask you to make a Charisma (Persuasion) check. Typically, you use persuasion when acting in good faith, to foster friendships, make cordial requests, or exhibit proper etiquette. Examples of persuading others include convincing a chamberlain to let your party see the king, negotiating peace between warring tribes, or inspiring a crowd of townsfolk.</value>
+  </data>
+  <data name="CreatureSkills_Persuasion_Short" xml:space="preserve">
+    <value>Persuasion</value>
+  </data>
+  <data name="CreatureType_Any_Short" xml:space="preserve">
+    <value>Any/All</value>
   </data>
 </root>

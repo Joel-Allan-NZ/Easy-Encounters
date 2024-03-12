@@ -14,6 +14,15 @@ public class CreatureService : ICreatureService
         _abilityService = abilityService;
     }
 
+    public Creature Create()
+    {
+        return new Creature()
+        {
+            Abilities = new(),
+            SpellSlots = new Dictionary<int, int>()
+    };
+    }
+
     public Creature DeepCopy(Creature source)
     {
         var clone = new Creature(source);

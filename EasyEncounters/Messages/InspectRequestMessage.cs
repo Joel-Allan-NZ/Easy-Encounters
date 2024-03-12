@@ -4,12 +4,12 @@ namespace EasyEncounters.Messages;
 
 public class InspectRequestMessage
 {
-    public InspectRequestMessage(ActiveEncounterCreatureViewModel creature)
+    public InspectRequestMessage(ObservableActiveEncounterCreature creature)
     {
         Parameter = creature;
     }
 
-    public ActiveEncounterCreatureViewModel Parameter
+    public ObservableActiveEncounterCreature Parameter
     {
         get; private set;
     }

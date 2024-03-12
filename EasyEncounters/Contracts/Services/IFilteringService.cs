@@ -15,6 +15,8 @@ public interface IFilteringService
 
     ICollection<T> Filter<T>(ICollection<T> toFilter, FilterValues filterValues, string text);
 
+    ICollection<T> Filter<T>(ICollection<T> toFilter, Expression<Func<T, Enum>> expression, Enum flag);
+
     /// <summary>
     /// Get an appropriate FilterValues object for the selected type.
     /// </summary>

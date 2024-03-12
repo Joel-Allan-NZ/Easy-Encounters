@@ -15,7 +15,7 @@ public sealed partial class CreatureCRUDPage : Page
     public CreatureCRUDPage()
     {
         ViewModel = App.GetService<CreatureCRUDViewModel>();
-        ViewModel.Sorting += Sorting;
+        //ViewModel.Sorting += Sorting;
         this.InitializeComponent();
     }
 
@@ -24,14 +24,14 @@ public sealed partial class CreatureCRUDPage : Page
         get;
     }
 
-    private void Sorting(object? sender, DataGridColumnEventArgs e)
-    {
-        foreach (var dgColumn in CreatureListDG.Columns)
-        {
-            if (dgColumn.Tag.ToString() != e.Column.Tag.ToString())
-            {
-                dgColumn.SortDirection = null;
-            }
-        }
-    }
+    //private void Sorting(object? sender, DataGridColumnEventArgs e)
+    //{
+    //    foreach (var dgColumn in CreatureListDG.Columns)
+    //    {
+    //        if (dgColumn.Tag.ToString() != e.Column.Tag.ToString())
+    //        {
+    //            dgColumn.SortDirection = null;
+    //        }
+    //    }
+    //}
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Page
+    x:Name="CreatureEditView"
     x:Class="EasyEncounters.Views.CreatureEditPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -15,10 +16,17 @@
         <ResourceDictionary>
             <converters:BoolToVisibilityConverter x:Key="IsNPCConverter" />
             <helpers:EnumToStringConverter x:Key="EnumToStringConverter" />
+            <helpers:EnumToDescriptionStringConverter x:Key="EnumToDescriptionConverter" />
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid>
+    <!--<Grid>
+        <Grid.Resources>
+            <XamlUICommand x:Name="EditSpell"
+                       Command="{x:Bind ViewModel.EditAbilityCommand}">
+            </XamlUICommand>
+            <XamlUICommand x:Name="DeleteSpell" Command="{x:Bind ViewModel.DeleteAbilityCommand}"/>
+        </Grid.Resources>
         <ScrollViewer>
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal"
@@ -45,6 +53,46 @@
                                      VerticalAlignment="Bottom">
                         <FontIcon Glyph="&#xF6FA;" />
                     </HyperlinkButton>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal"
+                            BorderThickness="2"
+                            CornerRadius="10"
+                            Padding="12"
+                            BorderBrush="BlanchedAlmond">
+                    <ComboBox Header="Alignment"
+                              Margin="5"
+                              ItemsSource="{x:Bind ViewModel.CreatureAlignments}"
+                              SelectedItem="{x:Bind ViewModel.Creature.Alignment, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <ComboBox Header="Size"
+                              Margin="5"
+                              ItemsSource="{x:Bind ViewModel.CreatureSizeClasses}"
+                              SelectedItem="{x:Bind ViewModel.Creature.Size, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <StackPanel Orientation="Vertical">
+                        <ComboBox Header="Creature Type"
+                              Margin="5"
+                              ItemsSource="{x:Bind ViewModel.CreatureTypes}"
+                              SelectedItem="{x:Bind ViewModel.Creature.CreatureType, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <TextBox Text="{x:Bind ViewModel.Creature.CreatureSubtype, Mode=TwoWay}"
+                                 PlaceholderText="Creature Subtype"/>
+                    </StackPanel>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"
                             BorderThickness="2"
@@ -234,6 +282,12 @@
                              PlaceholderText="Enter a movement string"
                              Margin="5"
                              Text="{x:Bind ViewModel.Creature.Movement, Mode=TwoWay}" />
+                    <TextBox Text="{x:Bind ViewModel.Creature.Senses, Mode=TwoWay}"
+                             Header="Creature Sense"
+                             ToolTipService.ToolTip="Special senses, like Darkvision (120 ft), TrueVision etc"
+                             PlaceholderText="Enter any special senses"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"/>
                     <ToggleButton IsChecked="{x:Bind ViewModel.Creature.DMControl}" Content="Is an NPC?" x:DefaultBindMode="TwoWay" />
                     <TextBlock Text="Max HP (fixed):" Margin="2,2,2,2"
                                Visibility="{x:Bind ViewModel.Creature.DMControl, Mode=OneWay, Converter={StaticResource IsNPCConverter}}" />
@@ -499,7 +553,7 @@
                                                Orientation="Horizontal">
                             <ToggleButton Content="Blinded"
                                   Margin="2,2,2,2"
-                                  IsChecked="{x:Bind ViewModel.ConditionImmunities.Blinded, Mode=TwoWay}" />
+                                  IsChecked="{x:Bind ViewModel.ConditionImmunities.Blinded, Mode=TwoWay}"/>
                             <ToggleButton Content="Charmed"
                                   Margin="2,2,2,2"
                                   IsChecked="{x:Bind ViewModel.ConditionImmunities.Charmed, Mode=TwoWay}" />
@@ -553,29 +607,30 @@
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Grid MaxHeight="100">
+                                <Grid.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="Edit" Command="{StaticResource EditSpell}" CommandParameter="{Binding}"/>
+                                        <MenuFlyoutItem Text="Delete" Command="{StaticResource DeleteSpell}" CommandParameter="{Binding}"/>
+                                    </MenuFlyout>
+                                </Grid.ContextFlyout>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="2*" />
                                 </Grid.ColumnDefinitions>
-                                <Grid.ContextFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem Text="Edit" Command="{Binding EditAbilityRequestedCommand}" />
-                                        <MenuFlyoutItem Text="Delete" Command="{Binding DeleteAbilityRequestedCommand}" />
-                                    </MenuFlyout>
-                                </Grid.ContextFlyout>
-                                <!--TODO: proper formatting for the ability area to show all relevant information-->
+
+                                TODO: proper formatting for the ability area to show all relevant information
 
                                 <TextBlock Margin="2"
                                            Grid.Column="0"
-                                        Text="{Binding Ability.Name}" />
+                                        Text="{Binding Name}" />
                                 <TextBlock Margin="2"
                                            Grid.Column="1"
-                                           Text="{Binding Ability.DamageTypes}" />
+                                           Text="{Binding DamageTypes}" />
                                 <ScrollViewer Margin="2"
                                            Grid.Column="2">
                                     <TextBlock
-                                           Text="{Binding Ability.EffectDescription}"
+                                           Text="{Binding EffectDescription}"
                                             TextWrapping="Wrap" />
                                 </ScrollViewer>
                             </Grid>
@@ -583,7 +638,7 @@
                     </ListView.ItemTemplate>
                 </ListView>
                 <Button Content="Add New Ability"
-                        Command="{x:Bind ViewModel.AddCreatureAbilityCommand}"
+                        Command="{x:Bind ViewModel.AddAbilityCommand}"
                         Margin="2" />
                 <Expander Header="Spells"
                           HorizontalAlignment="Stretch"
@@ -634,5 +689,5 @@
                 Command="{x:Bind ViewModel.CommitChangesCommand}">
             <FontIcon Glyph="&#xF16C;"></FontIcon>
         </Button>
-    </Grid>
+    </Grid>-->
 </Page>

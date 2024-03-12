@@ -6,8 +6,9 @@ using EasyEncounters.Core.Services.Models;
 using EasyEncounters.Services;
 using EasyEncounters.Services.Filter;
 using EasyEncounters.ViewModels;
+using EasyEncounters.ViewModels.EncounterTabs;
 using EasyEncounters.Views;
-
+using EasyEncounters.Views.EncounterEdit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
@@ -79,8 +80,8 @@ public partial class App : Application
             services.AddTransient<RunEncounterPage>();
             //services.AddTransient<DealDamageViewModel>();
             //services.AddTransient<DealDamagePage>();
-            services.AddTransient<CreatureEditViewModel>();
-            services.AddTransient<CreatureEditPage>();
+            //services.AddTransient<CreatureEditViewModel>();
+            //services.AddTransient<CreatureEditPage>();
             services.AddTransient<CreatureCRUDViewModel>();
             services.AddTransient<CreatureCRUDPage>();
             services.AddTransient<CampaignCRUDViewModel>();
@@ -111,6 +112,10 @@ public partial class App : Application
             services.AddTransient<CreatureDisplayTabViewModel>();
             services.AddTransient<LogTabPage>();
             services.AddTransient<LogTabViewModel>();
+            services.AddTransient<CreatureEditNavigationPageViewModel>();
+            services.AddTransient<CreatureEditNavigationPage>();
+            services.AddTransient<EncounterEditNavigationViewModel>();
+            services.AddTransient<EncounterEditNavigationPage>();
 
             //Experimental:
             services.AddTransient<EncounterAddCreaturesTabPage>();

@@ -117,16 +117,17 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
             Parties.Add(party);
 
         ExpectedDifficulty = EncounterDifficulty.None;
-
+        CreatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<CreatureViewModel>();
+        CreatureFilterValues.ResetFilter();
         Creatures.CollectionChanged += PartyOrCreaturesChanged;
 
-        CreatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<CreatureViewModel>();
+        
     }
 
-    protected virtual void OnSorting(DataGridColumnEventArgs e)
-    {
-        Sorting?.Invoke(this, e);
-    }
+    //protected virtual void OnSorting(DataGridColumnEventArgs e)
+    //{
+    //    Sorting?.Invoke(this, e);
+    //}
 
     [RelayCommand]
     private void AddCreature(object obj)
@@ -179,30 +180,7 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
     [RelayCommand]
     private void DataGridSort(DataGridColumnEventArgs e)
     {
-        OnSorting(e);
-        if (e.Column.Tag.ToString() == "CreatureName")
-        {
-            if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
-                SortCreaturesByName(false);
-            else
-                SortCreaturesByName(true);
-        }
-        else if (e.Column.Tag.ToString() == "CreatureCR")
-        {
-            if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
-                SortCreaturesByCR(false);
-            else
-                SortCreaturesByCR(true);
-        }
-
-        if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
-        {
-            e.Column.SortDirection = DataGridSortDirection.Ascending;
-        }
-        else
-        {
-            e.Column.SortDirection = DataGridSortDirection.Descending;
-        }
+        CreatureFilterValues.SortCollection(Creatures, e);
     }
 
     partial void OnSelectedPartyChanged(Party? value) => SetDifficulty();
@@ -250,31 +228,52 @@ public partial class EncounterEditViewModel : ObservableRecipient, INavigationAw
         }
     }
 
-    private void SortCreaturesByCR(bool ascending)
+    [RelayCommand]
+    private void ClearCreatureFilter()
     {
-        IEnumerable<CreatureViewModel> tmp;
-
-        if (!ascending)
-            tmp = Creatures.OrderBy(x => x.Creature.LevelOrCR).ToList();
-        else
-            tmp = Creatures.OrderByDescending(x => x.Creature.LevelOrCR).ToList();
-
-        Creatures.Clear();
-        foreach (var creature in tmp)
-            Creatures.Add(creature);
+        CreatureFilterValues.ResetFilter();
+        CreatureFilter("");
     }
 
-    private void SortCreaturesByName(bool ascending)
+    [RelayCommand]
+    private async Task CopyCreature(object parameter)
     {
-        IEnumerable<CreatureViewModel> tmp;
-
-        if (!ascending)
-            tmp = Creatures.OrderBy(x => x.Creature.Name).ToList();
-        else
-            tmp = Creatures.OrderByDescending(x => x.Creature.Name).ToList();
-
-        Creatures.Clear();
-        foreach (var creature in tmp)
-            Creatures.Add(creature);
+        if (parameter != null && parameter is Creature)
+        {
+            var copied = await _dataService.CopyAsync(parameter as Creature);
+            if (copied != null)
+            {
+                var creature = new CreatureViewModel(copied);
+                Creatures.Add(creature);
+                _creatureCache?.Add(creature);
+            }
+        }
     }
+
+    [RelayCommand]
+    private async Task DeleteCreature(object parameter)
+    {
+        if (parameter != null && parameter is Creature)
+        {
+            var creature = (Creature)parameter;
+            var creatureVM = Creatures.First(x => x.Creature == creature);
+            Creatures.Remove(creatureVM);
+            _creatureCache?.Remove(creatureVM);
+            await _dataService.DeleteAsync(creature);
+        }
+    }
+
+    [RelayCommand]
+    private void EditCreature(object parameter)
+    {
+        if (parameter is CreatureViewModel)
+        {
+            //todo: pass a copy of the creature rather than the original, so changes are discarded if user hits back button rather than committing changes.
+            //_navigationService.NavigateTo(typeof(CreatureEditViewModel).FullName!, ((CreatureViewModel)parameter).Creature);
+
+            //experiemental:
+            _navigationService.NavigateTo(typeof(CreatureEditNavigationPageViewModel).FullName!, ((CreatureViewModel)parameter).Creature);
+        }
+    }
+
 }

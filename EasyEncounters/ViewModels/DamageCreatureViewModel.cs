@@ -13,7 +13,7 @@ namespace EasyEncounters.ViewModels
     public partial class DamageCreatureViewModel : ObservableRecipient
     {
         [ObservableProperty]
-        private ActiveEncounterCreatureViewModel _activeEncounterCreatureViewModel;
+        private ObservableActiveEncounterCreature _activeEncounterCreatureViewModel;
 
         [ObservableProperty]
         private IList<DamageVolume> _damageVolumes = Enum.GetValues(typeof(DamageVolume)).Cast<DamageVolume>().ToList();
@@ -21,7 +21,7 @@ namespace EasyEncounters.ViewModels
         [ObservableProperty]
         private DamageVolume _selectedDamageVolume;
 
-        public DamageCreatureViewModel(ActiveEncounterCreatureViewModel creatureVM)
+        public DamageCreatureViewModel(ObservableActiveEncounterCreature creatureVM)
         {
             SelectedDamageVolume = DamageVolume.Normal;
             ActiveEncounterCreatureViewModel = creatureVM;

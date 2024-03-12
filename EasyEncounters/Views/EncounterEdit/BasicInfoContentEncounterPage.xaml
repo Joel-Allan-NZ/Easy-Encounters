@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="EasyEncounters.Views.EncounterEdit.BasicInfoContentEncounterPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EasyEncounters.Views.EncounterEdit"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:helpers="using:EasyEncounters.Helpers"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <helpers:DoubleToStringConverter x:Key="DoubleToStringConverter" />
+        <helpers:EnumToStringConverter x:Key="EnumToStringConverter" />
+        <helpers:BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <Style TargetType="TextBox" x:Key="TextBoxHeader">
+            <Setter Target="HeaderTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"
+                                   FontSize="10"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <TextBox Header="Encounter Name"
+                    Style="{StaticResource TextBoxHeader}"
+                    Grid.Row="0"
+                    Text="{Binding Encounter.Encounter.Name}"
+                    Margin="5"/>
+            <TextBox Header="Encounter Description"
+                    Style="{StaticResource TextBoxHeader}"
+                    Grid.Row="1"
+                    PlaceholderText="Description..."
+                    Margin="5,5,5,5"
+                    TextWrapping="Wrap"
+                    AcceptsReturn="True"
+                    Text="{Binding  Encounter.Encounter.Description, Mode=TwoWay}" />
+            <TextBox Header="Encounter Plan"
+                     Style="{StaticResource TextBoxHeader}"
+                     PlaceholderText="Enter any encounter-running notes here"
+                     Margin="5"
+                     TextWrapping="Wrap"
+                     AcceptsReturn="True"/>
+            <CheckBox Content="Is this encounter only for a specific campaign?"
+                      IsChecked="{Binding Encounter.IsCampaignOnlyEncounter, Mode=TwoWay}"/>
+            <ComboBox ItemsSource="{Binding Campaigns, Mode=OneWay}"
+                      SelectedItem="{Binding Encounter.Encounter.Campaign, Mode=TwoWay}"
+                      Header="Select a Campaign:"
+                      Visibility="{Binding Encounter.IsCampaignOnlyEncounter, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <!--<TextBlock Text="Expected Difficulty:"
+                       FontSize="10"/>
+            <TextBlock
+                        Text="{Binding ExpectedDifficulty, Mode=OneWay, Converter={StaticResource EnumToStringConverter}}"/>-->
+        </StackPanel>
+    </Grid>
+</Page>

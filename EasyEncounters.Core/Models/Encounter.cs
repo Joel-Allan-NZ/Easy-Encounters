@@ -7,7 +7,7 @@ namespace EasyEncounters.Core.Models;
 /// </summary>
 public class Encounter : Persistable
 {
-    public Encounter(string name = "default", List<Creature>? creatures = null, string description = "", double adjustedEncounterXP = -1, Campaign? campaign = null)
+    public Encounter(string name = "default", List<Creature>? creatures = null, string description = "", double adjustedEncounterXP = -1, Campaign? campaign = null, bool isCampaignOnlyEncounter = false)
     {
         Creatures = creatures ?? new List<Creature>();
         Name = name;
@@ -15,6 +15,7 @@ public class Encounter : Persistable
         Description = description ?? "";
         AdjustedEncounterXP = adjustedEncounterXP;
         Campaign = campaign;
+        IsCampaignOnlyEncounter = isCampaignOnlyEncounter;
     }
 
     /// <summary>
@@ -30,6 +31,14 @@ public class Encounter : Persistable
     /// The Campaign this encounter was designed for, if any
     /// </summary>
     public Campaign? Campaign
+    {
+        get; set;
+    }
+
+    /// <summary>
+    /// Whether or not the encounter is explicitly designed for a specific campaign.
+    /// </summary>
+    public bool IsCampaignOnlyEncounter
     {
         get; set;
     }

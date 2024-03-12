@@ -1,6 +1,4 @@
-﻿
-using System.Drawing.Drawing2D;
-using EasyEncounters.Core.Contracts.Services;
+﻿using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Helpers;
 using EasyEncounters.Core.Services.Models;
 
@@ -9,7 +7,7 @@ using Microsoft.Extensions.Options;
 //using Windows.Storage;
 
 namespace EasyEncounters.Core.Services;
-
+#nullable enable
 public class LocalSettingsService : ILocalSettingsService
 {
     private const string _defaultApplicationDataFolder = "EasyEncounters\\ApplicationData";
@@ -28,7 +26,7 @@ public class LocalSettingsService : ILocalSettingsService
         _fileService = fileService;
         _options = options.Value;
 
-       // _applicationDataFolder = 
+        // _applicationDataFolder = 
 
         _applicationDataFolder = Path.Combine(_localApplicationData, _options.ApplicationDataFolder ?? _defaultApplicationDataFolder);
         _localsettingsFile = _options.LocalSettingsFile ?? _defaultLocalSettingsFile;
@@ -36,7 +34,7 @@ public class LocalSettingsService : ILocalSettingsService
         //_settings = new Dictionary<string, object>();
     }
 
-    public async Task<T> ReadSettingAsync<T>(string key)
+    public async Task<T?> ReadSettingAsync<T>(string key)
     {
         if (RuntimeHelper.IsMSIX)
         {
@@ -73,9 +71,13 @@ public class LocalSettingsService : ILocalSettingsService
         {
             await InitializeAsync();
 
-            _settings.Settings[key] = await Json.StringifyAsync(value);
+            if (_settings != null)
+            {
+                _settings.Settings[key] = await Json.StringifyAsync(value);
 
-            await _fileService.SaveAsync(_applicationDataFolder, _localsettingsFile, _settings);
+                await _fileService.SaveAsync(_applicationDataFolder, _localsettingsFile, _settings);
+            }
+
         }
     }
 
@@ -83,6 +85,8 @@ public class LocalSettingsService : ILocalSettingsService
     {
         if (!_isInitialized)
         {
+            _settings ??= new LocalSettings();
+
             _settings.Settings = await Task.Run(() => _fileService.Read<Dictionary<string, object>>(_applicationDataFolder, _localsettingsFile)) ?? new Dictionary<string, object>();
 
             _isInitialized = true;

@@ -1,7 +1,4 @@
-﻿
-using System.CodeDom;
-using System.Drawing;
-using EasyEncounters.Core.Contracts;
+﻿using EasyEncounters.Core.Contracts;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
@@ -137,7 +134,7 @@ public class DataService : IDataService
         await RefreshCacheAsync();
 
         return _cached?.Creatures;
-    } 
+    }
 
     public async Task<IEnumerable<Encounter>> GetAllEncountersAsync()
     {
@@ -223,14 +220,14 @@ public class DataService : IDataService
 
     private IPersistable CopyEncounter(Encounter encounter)
     {
-        var res = new Encounter(encounter.Name, new List<Creature>(encounter.Creatures), encounter.Description);
+        var res = new Encounter(encounter.Name, new List<Creature>(encounter.Creatures), encounter.Description, encounter.AdjustedEncounterXP, encounter.Campaign, encounter.IsCampaignOnlyEncounter);
         _cached.Encounters.Add(res);
         return res;
     }
 
     private IPersistable CopyParty(Party party)
     {
-        var res = new Party(party.Campaign, party.Name, new List<Creature>(party.Members));
+        var res = new Party(party.Campaign, party.Name, new List<Creature>(party.Members), (double[])party.PartyXPThresholds.Clone(), party.PartyDescription);
         _cached.Parties.Add(res);
         return res;
     }

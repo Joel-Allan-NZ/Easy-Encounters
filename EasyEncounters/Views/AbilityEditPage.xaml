@@ -305,6 +305,7 @@
                  HorizontalAlignment="Stretch"
                  Text="{x:Bind ViewModel.ObservableAbility.EffectDescription, Mode=TwoWay}"
                  TextWrapping="Wrap"
+                 AcceptsReturn="True"
                  Header="Spell Description:" />
             </StackPanel>
             <!--Bottom Row-->
@@ -313,6 +314,10 @@
                 Command="{x:Bind ViewModel.CommitChangesCommand}"
                 VerticalAlignment="Bottom"
                 Margin="5"
-                HorizontalAlignment="Right" />
+                HorizontalAlignment="Right">
+            <Button.KeyboardAccelerators>
+                <KeyboardAccelerator Modifiers="Control" Key="S" />
+            </Button.KeyboardAccelerators>
+        </Button>
     </Grid>
 </Page>

@@ -3,9 +3,9 @@ using EasyEncounters.ViewModels;
 
 namespace EasyEncounters.Messages;
 
-public class DamageSourceSelectedMessage : ValueChangedMessage<ActiveEncounterCreatureViewModel>
+public class DamageSourceSelectedMessage : ValueChangedMessage<ObservableActiveEncounterCreature>
 {
-    public DamageSourceSelectedMessage(ActiveEncounterCreatureViewModel value) : base(value)
+    public DamageSourceSelectedMessage(ObservableActiveEncounterCreature value) : base(value)
     {
     }
 }

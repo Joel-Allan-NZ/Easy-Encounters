@@ -4,12 +4,12 @@ namespace EasyEncounters.Messages;
 
 public class EncounterCreatureChangedMessage
 {
-    public EncounterCreatureChangedMessage(IList<ActiveEncounterCreatureViewModel> creatures)
+    public EncounterCreatureChangedMessage(IList<ObservableActiveEncounterCreature> creatures)
     {
         Creatures = creatures;
     }
 
-    public IList<ActiveEncounterCreatureViewModel> Creatures
+    public IList<ObservableActiveEncounterCreature> Creatures
     {
         get; private set;
     }

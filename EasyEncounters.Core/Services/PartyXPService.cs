@@ -10,7 +10,7 @@ public class PartyXPService : IPartyXPService
     /// and returns the range of thresholds in order of difficulty, including an unofficial "Very Difficult"
     /// </summary>
     /// <returns>Array of int in order of encounter difficulty</returns>
-    public double[] CalculatePartyXPThresholds(Party party)
+    public void CalculatePartyXPThresholds(Party party)
     {
         var result = new double[6] { 0, 0, 0, 0, 0, double.MaxValue };
         foreach (var c in party.Members)
@@ -22,7 +22,7 @@ public class PartyXPService : IPartyXPService
             }
         }
         result[4] = result[3] * 1.5;
-        return result;
+        party.PartyXPThresholds = result;
     }
 
     /// <summary>

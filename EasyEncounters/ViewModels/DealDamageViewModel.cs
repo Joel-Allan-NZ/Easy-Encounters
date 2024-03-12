@@ -17,7 +17,7 @@ public partial class DealDamageViewModel : ObservableRecipient, INavigationAware
     private ActiveEncounter? _activeEncounter;
 
     [ObservableProperty]
-    private ActiveEncounterCreatureViewModel? _sourceCreature;
+    private ObservableActiveEncounterCreature? _sourceCreature;
 
     //public ObservableCollection<ActiveEncounterCreatureViewModel> Targets = new();
     private IList<DamageCreatureViewModel> _targets;

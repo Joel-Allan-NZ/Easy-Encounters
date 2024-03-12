@@ -2,8 +2,9 @@
 
 using EasyEncounters.Contracts.Services;
 using EasyEncounters.ViewModels;
+using EasyEncounters.ViewModels.EncounterTabs;
 using EasyEncounters.Views;
-
+using EasyEncounters.Views.EncounterEdit;
 using Microsoft.UI.Xaml.Controls;
 
 namespace EasyEncounters.Services;
@@ -24,7 +25,7 @@ public class PageService : IPageService
         Configure<RunEncounterViewModel, RunEncounterPage>();
         //Configure<DealDamageViewModel, DealDamagePage>();
         Configure<CreatureCRUDViewModel, CreatureCRUDPage>();
-        Configure<CreatureEditViewModel, CreatureEditPage>();
+        //Configure<CreatureEditViewModel, CreatureEditPage>();
         Configure<PartyCRUDViewModel, PartyCRUDPage>();
         Configure<PartyEditViewModel, PartyEditPage>();
         Configure<CampaignCRUDViewModel, CampaignCRUDPage>();
@@ -39,9 +40,10 @@ public class PageService : IPageService
         Configure<CreatureDisplayTabViewModel, CreatureDisplayTabPage>();
         Configure<EncounterDamageTabViewModel, EncounterDamageTabPage>();
         Configure<LogTabViewModel, LogTabPage>();
-
+        Configure<CreatureEditNavigationPageViewModel, CreatureEditNavigationPage>();
         //experimental:
         Configure<EncounterAddCreaturesTabViewModel, EncounterAddCreaturesTabPage>();
+        Configure<EncounterEditNavigationViewModel, EncounterEditNavigationPage>();
     }
 
     public Type GetPageType(string key)

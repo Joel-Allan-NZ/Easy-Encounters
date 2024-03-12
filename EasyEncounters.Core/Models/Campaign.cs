@@ -37,4 +37,6 @@ public class Campaign : Persistable
     {
         return Id.GetHashCode();
     }
+
+    public override string ToString() => Name;
 }

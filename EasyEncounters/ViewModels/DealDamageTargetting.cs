@@ -5,10 +5,10 @@ namespace EasyEncounters.ViewModels
     internal class DealDamageTargetting
     {
         internal ActiveEncounter Encounter;
-        internal ActiveEncounterCreatureViewModel Source;
-        internal IEnumerable<ActiveEncounterCreatureViewModel> Targets;
+        internal ObservableActiveEncounterCreature Source;
+        internal IEnumerable<ObservableActiveEncounterCreature> Targets;
 
-        public DealDamageTargetting(ActiveEncounter encounter, ActiveEncounterCreatureViewModel source, IEnumerable<ActiveEncounterCreatureViewModel> targets)
+        public DealDamageTargetting(ActiveEncounter encounter, ObservableActiveEncounterCreature source, IEnumerable<ObservableActiveEncounterCreature> targets)
         {
             Source = source;
             Targets = targets;

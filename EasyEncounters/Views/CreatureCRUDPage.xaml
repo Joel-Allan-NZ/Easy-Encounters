@@ -8,231 +8,34 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:helpers="using:EasyEncounters.Helpers"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
         <helpers:DoubleToStringConverter x:Key="DoubleToStringConverter" />
     </Page.Resources>
-
     <Grid>
-        <Grid.Resources>
-            <ResourceDictionary>
-                <SolidColorBrush x:Key="DataGridCellFocusVisualPrimaryBrush" Color="Transparent" />
-                <SolidColorBrush x:Key="DataGridCellFocusVisualSecondaryBrush" Color="Transparent" />
-                <DataTemplate x:Key="RowDetailsTemplate">
-                    <StackPanel>
-                        <TextBlock Text="{Binding Creature.Description}"
-                               TextWrapping="Wrap" />
-                    </StackPanel>
-                </DataTemplate>
-            </ResourceDictionary>
-        </Grid.Resources>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="10*" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <StackPanel Name="DataGridFilterBox"
-                    Orientation="Horizontal"
-                    Margin="0"
-                    Grid.Row="0"
-                    Background="{ThemeResource SystemAltHighColor}">
-            <CommandBar DefaultLabelPosition="Right"
-                            VerticalAlignment="Center"
-                            Background="Transparent">
-                <AppBarButton Icon="Filter"
-                                  Label="Filter"
-                                  AllowFocusOnInteraction="True"
-                                  Width="80">
-                    <AppBarButton.Flyout>
-                        <Flyout>
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock Text="Challenge Rating:" />
-                                </StackPanel>
-                                <StackPanel Orientation="Vertical">
-                                    <StackPanel Orientation="Horizontal">
-                                        <NumberBox Value="{x:Bind ViewModel.MinimumCRFilter, Mode=TwoWay}"
-                                                       HorizontalAlignment="Left"
-                                                       Minimum="0"
-                                                       Maximum="30"
-                                                       AcceptsExpression="True"
-                                                       Margin="2" />
-                                        <TextBlock Text="-"
-                                                       Margin="2"
-                                                       VerticalAlignment="Center" />
-                                        <NumberBox Value="{x:Bind ViewModel.MaximumCRFilter, Mode=TwoWay}"
-                                                       HorizontalAlignment="Left"
-                                                       AcceptsExpression="True"
-                                                       Minimum="0"
-                                                       Maximum="30"
-                                                       Margin="2" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </StackPanel>
-                        </Flyout>
-                    </AppBarButton.Flyout>
-                </AppBarButton>
-            </CommandBar>
-            <AutoSuggestBox x:Name="SearchBox"
-                            HorizontalAlignment="Stretch"
-                            MinWidth="200"
-                            QueryIcon="Find"
-                            VerticalAlignment="Center"
-                            ItemsSource="{x:Bind ViewModel.SearchSuggestions, Mode=OneWay}"
-                            TextMemberPath="Creature.Name"
-                            DisplayMemberPath="Creature.Name"
-                            FontSize="20"
-                            Margin="5,0,0,0">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="QuerySubmitted">
-                        <Core:EventTriggerBehavior.Actions>
-                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.CreatureFilterCommand}" CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}" />
-                        </Core:EventTriggerBehavior.Actions>
-                    </Core:EventTriggerBehavior>
-                    <Core:EventTriggerBehavior EventName="TextChanged">
-                        <Core:EventTriggerBehavior.Actions>
-                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.SearchTextChangeCommand}" CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}" />
-                        </Core:EventTriggerBehavior.Actions>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-            </AutoSuggestBox>
-            <CommandBar DefaultLabelPosition="Right"
-                        Background="Transparent"
-                        VerticalAlignment="Center"
-                        Margin="0,0,8,0">
-                <AppBarButton Label="Search"
-                              Command="{x:Bind ViewModel.CreatureFilterCommand}"
-                              CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}" />
-            </CommandBar>
-        </StackPanel>
-        <controls:DataGrid Grid.Row="1"
-                           x:Name="CreatureListDG"
-                           IsReadOnly="True"
-                           SelectionMode="Single"
-                           GridLinesVisibility="Horizontal"
-                           RowDetailsTemplate="{StaticResource RowDetailsTemplate}"
-                           Margin="0"
-                           ItemsSource="{x:Bind ViewModel.Creatures}"
-                           AutoGenerateColumns="False">
-            <Interactivity:Interaction.Behaviors>
-                <Core:EventTriggerBehavior EventName="Sorting">
-                    <Core:InvokeCommandAction Command="{x:Bind ViewModel.DataGridSortCommand}" />
-                </Core:EventTriggerBehavior>
-                <Core:EventTriggerBehavior EventName="DoubleTapped">
-                    <Core:InvokeCommandAction Command="{x:Bind ViewModel.EditCreatureCommand}" CommandParameter="{x:Bind CreatureListDG.SelectedItem, Mode=OneWay}" />
-                </Core:EventTriggerBehavior>
-            </Interactivity:Interaction.Behaviors>
-            <controls:DataGrid.RowStyle>
-                <Style TargetType="controls:DataGridRow">
-                    <Setter Property="controls:DataGridRow.ContextFlyout">
-                        <Setter.Value>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Text="Edit" Command="{Binding RequestEditCreatureCommand}" />
-                                <MenuFlyoutItem Text="Copy" Command="{Binding RequestCopyCreatureCommand}" />
-                                <MenuFlyoutItem Text="Delete" Command="{Binding RequestDeleteCreatureCommand}" />
-                            </MenuFlyout>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </controls:DataGrid.RowStyle>
-            <controls:DataGrid.Columns>
-                <controls:DataGridTextColumn Header="Name"
-                                             Tag="CreatureName"
-                                             Binding="{Binding Creature.Name}"
-                                             CanUserSort="True" />
-                <controls:DataGridTextColumn Header="Challenge Rating"
-                                             Tag="CreatureCR"
-                                             Binding="{Binding Creature.LevelOrCR, Converter={StaticResource DoubleToStringConverter}}"
-                                             CanUserSort="True" />
-            </controls:DataGrid.Columns>
-        </controls:DataGrid>
-        <!--<StackPanel Orientation="Horizontal"
-                    Grid.Row="0">
-                <TextBox x:Name="FilterByName"
-                            PlaceholderText="Filter/Search"
-                            MinWidth="200"
-                            Margin="5">
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="TextChanged">
-                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.FilterCommand}" CommandParameter="{x:Bind FilterByName.Text, Mode=OneWay}" />
-                        </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
-                </TextBox>
-            </StackPanel>
-            <ListView Margin="5,5,5,5"
-                      Grid.Row="1"
-                          x:Name="CreaturesListView"
-                          ItemsSource="{x:Bind ViewModel.Creatures, Mode=OneWay}"
-                          HorizontalContentAlignment="Stretch"
-                          VerticalContentAlignment="Stretch">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="DoubleTapped">
-                        <Core:InvokeCommandAction Command="{x:Bind ViewModel.EditCreatureCommand}" CommandParameter="{x:Bind CreaturesListView.SelectedItem, Mode=OneWay}" />
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid HorizontalAlignment="Stretch"
-                                  VerticalAlignment="Stretch"
-                                        Margin="5,5,5,5">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="4*" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid.ContextFlyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Text="Edit" Command="{Binding RequestEditCreatureCommand}" />
-                                    <MenuFlyoutItem Text="Copy" Command="{Binding RequestCopyCreatureCommand}" />
-                                    <MenuFlyoutItem Text="Delete" Command="{Binding RequestDeleteCreatureCommand}" />
-                                </MenuFlyout>
-                            </Grid.ContextFlyout>
-                            <TextBlock Text="{Binding Creature.Name}"
-                                           MinWidth="100"
-                                           Margin="5,5,5,5"
-                                           Grid.Column="0"
-                                           Grid.Row="0"
-                                           Grid.RowSpan="2"
-                                           FontSize="18"
-                                           VerticalAlignment="Center"></TextBlock>
-
-                            <TextBlock Text="Level/CR" FontSize="8" Margin="5,5,5,5"
-                                            HorizontalAlignment="Center"
-                                           Grid.Column="1"
-                                           Grid.Row="0" />
-                            <TextBlock Text="{Binding Creature.LevelOrCR, Converter={StaticResource DoubleToStringConverter}}" Margin="5,5,5,5"
-                                           HorizontalAlignment="Center"
-                                           Grid.Column="1"
-                                           Grid.Row="1" />
-                            <TextBlock Text="Description"
-                                           Margin="5,5,5,5"
-                                           FontSize="8"
-                                           Grid.Row="0"
-                                           Grid.Column="2" />
-                            <TextBlock Text="{Binding Creature.Description}"
-                                           Margin="5,5,5,5"
-                                           Grid.Row="1"
-                                           Grid.Column="2" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>-->
-        <Button Command="{x:Bind ViewModel.AddNewCreatureCommand}"
-                Grid.Row="2"
-                    VerticalAlignment="Bottom"
-                    Margin="5,5,5,5"
-                    KeyboardAcceleratorPlacementMode="Auto"
-                    ToolTipService.ToolTip="Add a new creature">
-            <Button.KeyboardAccelerators>
-                <KeyboardAccelerator Modifiers="Control" Key="N" />
-            </Button.KeyboardAccelerators>
-            <FontIcon Glyph="&#xF8AA;"></FontIcon>
-        </Button>
+        <usercontrols:CreatureGrid AddNewCreatureCommand="{x:Bind ViewModel.AddNewCreatureCommand}"
+                                   ClearFiltersCommand="{x:Bind ViewModel.ClearFiltersCommand}"
+                                   CopyCreatureCommand="{x:Bind ViewModel.CopyCreatureCommand}"
+                                   DeleteCreatureCommand="{x:Bind ViewModel.DeleteCreatureCommand}"
+                                   EditCreatureCommand="{x:Bind ViewModel.EditCreatureCommand}"
+                                   SelectCreatureCommand="{x:Bind ViewModel.EditCreatureCommand}"
+                                   FilterAlignmentSelected="{x:Bind ViewModel.CreatureFilterValues.CreatureAlignmentFilterSelected, Mode=TwoWay}"
+                                   FilterAlignmentSource="{x:Bind ViewModel.CreatureFilterValues.Alignments}"
+                                   FilterCommand="{x:Bind ViewModel.CreatureFilterCommand}"
+                                   FilterCreatureTypeSelected="{x:Bind ViewModel.CreatureFilterValues.CreatureTypeFilterSelected, Mode=TwoWay}"
+                                   FilterCreatureTypeSource="{x:Bind ViewModel.CreatureFilterValues.CreatureTypes}"
+                                   FilterMaximumCR="{x:Bind ViewModel.CreatureFilterValues.MaximumCRFilter, Mode=TwoWay}"
+                                   FilterMaximumSize="{x:Bind ViewModel.CreatureFilterValues.MaxCreatureSizeClassFilter, Mode=TwoWay}"
+                                   FilterMinimumCR="{x:Bind ViewModel.CreatureFilterValues.MinimumCRFilter, Mode=TwoWay}"
+                                   FilterMinimumSize="{x:Bind ViewModel.CreatureFilterValues.MinCreatureSizeClassFilter, Mode=TwoWay}"
+                                   FilterSizeSource="{x:Bind ViewModel.CreatureFilterValues.SizeClasses}"
+                                   GridDataSource="{x:Bind ViewModel.Creatures}"
+                                   SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
+                                   InteractableRows="True"
+                                   SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
+                                   Suggestions="{x:Bind ViewModel.CreatureFilterValues.SearchSuggestions, Mode=OneWay}"/>
     </Grid>
 </Page>

@@ -5,7 +5,7 @@ namespace EasyEncounters.Messages;
 
 public class AbilityDamageRequestMessage
 {
-    public AbilityDamageRequestMessage(ObservableActiveAbility? ability, ActiveEncounterCreatureViewModel source)
+    public AbilityDamageRequestMessage(ObservableActiveAbility? ability, ObservableActiveEncounterCreature source)
     {
         Ability = ability;
         SourceCreature = source;
@@ -16,7 +16,7 @@ public class AbilityDamageRequestMessage
         get; private set;
     }
 
-    public ActiveEncounterCreatureViewModel SourceCreature
+    public ObservableActiveEncounterCreature SourceCreature
     {
         get; private set;
     }

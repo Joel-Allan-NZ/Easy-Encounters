@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace EasyEncounters.Core.Helpers;
+﻿namespace EasyEncounters.Core.Helpers;
 public static class StringExtensions
 {
     /// <summary>
@@ -23,7 +17,7 @@ public static class StringExtensions
 
         var results = new List<string>();
         var lastSplit = 0;
-        for(var i = 0; i < str.Length; i++)
+        for (var i = 0; i < str.Length; i++)
         {
             if (separators.Contains(str[i]))
             {
@@ -32,7 +26,13 @@ public static class StringExtensions
                 lastSplit = i;
             }
         }
-        results.Add(str[(lastSplit + 1)..]);
+        if (results.Count > 0)
+        {
+            results.Add(str[(lastSplit + 1)..]);
+        }
+        else
+            results.Add(str);
+        
         return results.ToArray();
     }
 
@@ -60,7 +60,12 @@ public static class StringExtensions
                 lastSplit = i;
             }
         }
-        results.Add(str[(lastSplit + 1)..]);
+        if (results.Count > 0)
+        {
+            results.Add(str[(lastSplit + 1)..]);
+        }
+        else
+            results.Add(str);
         return results.ToArray();
     }
 }

@@ -15,7 +15,6 @@ public sealed partial class EncounterEditPage : Page
     public EncounterEditPage()
     {
         ViewModel = App.GetService<EncounterEditViewModel>();
-        ViewModel.Sorting += Sorting;
         this.InitializeComponent();
     }
 
@@ -24,14 +23,4 @@ public sealed partial class EncounterEditPage : Page
         get;
     }
 
-    private void Sorting(object? sender, DataGridColumnEventArgs e)
-    {
-        foreach (var dgColumn in CreatureListDG.Columns)
-        {
-            if (dgColumn.Tag.ToString() != e.Column.Tag.ToString())
-            {
-                dgColumn.SortDirection = null;
-            }
-        }
-    }
 }

@@ -12,5 +12,11 @@ public static class ResourceExtensions
         return GetLocalized(resourceName);
     }
 
+    public static string GetEnumerationDescription(Enum enumeration)
+    {
+        var resourceName = string.Concat(enumeration.GetType().Name, "_", enumeration, "_Description");
+        return GetLocalized(resourceName);
+    }
+
     public static string GetLocalized(this string resourceKey) => _resourceLoader.GetString(resourceKey);
 }

@@ -1,5 +1,4 @@
-﻿using System.Text;
-using EasyEncounters.Core.Contracts.Enums;
+﻿using EasyEncounters.Core.Contracts.Enums;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
@@ -35,7 +34,7 @@ public class ActiveEncounterService : IActiveEncounterService
 
         var nameSuffixDigit = inProgress.ActiveCreatures.Count(x => x.Name == creatureToAdd.Name);
 
-        activeCreatureToAdd.EncounterName = $"{creatureToAdd.Name} {nameSuffixDigit}";
+        activeCreatureToAdd.EncounterName = nameSuffixDigit == 0 ? creatureToAdd.Name : $"{creatureToAdd.Name} {nameSuffixDigit}";
 
         inProgress.ActiveCreatures.Add(activeCreatureToAdd);
         inProgress.CreatureTurns.Add(activeCreatureToAdd);
@@ -108,7 +107,7 @@ public class ActiveEncounterService : IActiveEncounterService
 
     public async Task<IEnumerable<ActiveEncounterCreature>> RollInitiative(ActiveEncounter activeEncounter)
     {
-        foreach (var unrolled in activeEncounter.ActiveCreatures.Where(x => x.Initiative != -100 && x.DMControl))
+        foreach (var unrolled in activeEncounter.ActiveCreatures.Where(x => x.Initiative == -100 && x.DMControl))
         {
             RollInitiative(unrolled);
         }
@@ -166,7 +165,7 @@ public class ActiveEncounterService : IActiveEncounterService
             //encounters. Gets messy with rests, but that's a future issue
         }
 
-        result.CurrentHP = result.MaxHP;
+        result.CurrentHP = result.EncounterMaxHP;
 
         AddActiveAbilities(creature, result);
 

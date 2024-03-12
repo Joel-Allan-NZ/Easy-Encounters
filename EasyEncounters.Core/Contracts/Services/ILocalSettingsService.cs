@@ -1,5 +1,5 @@
 ﻿namespace EasyEncounters.Core.Contracts.Services;
-
+#nullable enable
 public interface ILocalSettingsService
 {
     Task<T?> ReadSettingAsync<T>(string key);

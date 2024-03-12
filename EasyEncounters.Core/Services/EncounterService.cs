@@ -31,7 +31,8 @@ public class EncounterService : IEncounterService
         {
             monsterXPTotal += MonsterXPFromCR(creature.LevelOrCR);
         }
-        return monsterXPTotal * EncounterSizeMulitiplier(EffectiveMonsterCount(encounter));
+        encounter.AdjustedEncounterXP = monsterXPTotal * EncounterSizeMulitiplier(EffectiveMonsterCount(encounter));
+        return encounter.AdjustedEncounterXP;
     }
 
     public EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, double[] partyXPThreshold)
@@ -48,7 +49,7 @@ public class EncounterService : IEncounterService
 
         var thresholdCount = partyXPThreshold.Count(x => encounter.AdjustedEncounterXP > x);
 
-        return (EncounterDifficulty)thresholdCount+1;
+        return (EncounterDifficulty)thresholdCount + 1;
     }
 
     public EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, Party party)
@@ -70,7 +71,11 @@ public class EncounterService : IEncounterService
         return data;
     }
 
-    public double[] GetPartyXPThreshold(Party party) => _partyXPService.CalculatePartyXPThresholds(party);
+    public double[] GetPartyXPThreshold(Party party)
+    {
+        _partyXPService.CalculatePartyXPThresholds(party); //TODO:deprecate
+        return party.PartyXPThresholds;
+    }
 
     public void RemoveCreature(Encounter encounter, Creature creature)
     {

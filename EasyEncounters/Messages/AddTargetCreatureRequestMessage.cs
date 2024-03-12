@@ -2,9 +2,9 @@
 
 namespace EasyEncounters.Messages;
 
-internal class AddTargetCreatureRequestMessage : EventRaisedMessage<ActiveEncounterCreatureViewModel>
+internal class AddTargetCreatureRequestMessage : EventRaisedMessage<ObservableActiveEncounterCreature>
 {
-    public AddTargetCreatureRequestMessage(ActiveEncounterCreatureViewModel parameter) : base(parameter)
+    public AddTargetCreatureRequestMessage(ObservableActiveEncounterCreature parameter) : base(parameter)
     {
     }
 }

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="EasyEncounters.Views.CreatureEdit.SkillsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EasyEncounters.Views.CreatureEdit"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:viewmodels="using:EasyEncounters.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:CreatureEditNavigationPageViewModel}"
+    mc:Ignorable="d"
+    xmlns:helpers="using:EasyEncounters.Helpers" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <helpers:EnumToDescriptionStringConverter x:Key="EnumToDescriptionConverter" />
+        <helpers:EnumToStringConverter x:Key="EnumToStringConverter" />
+    </Page.Resources>
+
+    <StackPanel>
+        <Grid>
+            <Grid.Resources>
+                <SolidColorBrush x:Key="DataGridCellFocusVisualPrimaryBrush" Color="Transparent" />
+                <SolidColorBrush x:Key="DataGridCellFocusVisualSecondaryBrush" Color="Transparent" />
+            </Grid.Resources>
+
+            <GridView ItemsSource="{Binding Skills.Pairs}"
+                      Margin="5">
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid MaximumRowsOrColumns="3" Orientation="Horizontal"                
+                                                           HorizontalAlignment="Stretch"
+                                                           VerticalAlignment="Stretch"/>
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Key, Converter={StaticResource EnumToStringConverter}}"
+                                       FontSize="16"
+                                       ToolTipService.ToolTip="{Binding Key, Converter={StaticResource EnumToDescriptionConverter}}"
+                                       MinWidth="200">
+                            </TextBlock>
+                            <ComboBox ItemsSource="{Binding Items}"
+                                      MinWidth="150"
+                                      Margin="0,0,10,0"
+                                      SelectedItem="{Binding Value, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </Grid>
+        <TextBox Header="Tool Proficiencies" 
+                Text="{Binding Creature.ToolSkills, Mode=TwoWay}"                     
+                TextWrapping="Wrap"
+                AcceptsReturn="True"/>
+    </StackPanel>
+</Page>
