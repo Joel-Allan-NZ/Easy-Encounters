@@ -75,7 +75,7 @@ public class ActiveEncounterService : IActiveEncounterService
 
     public async Task EndEncounterAsync(ActiveEncounter activeEncounter)
     {
-        await _dataService.WriteLog(activeEncounter.Log);
+        await _dataService.WriteLogAsync(activeEncounter.Log);
         await _dataService.ClearActiveEncounterAsync();
         await _logService.EndEncounterLog();
     }

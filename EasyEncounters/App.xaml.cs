@@ -35,7 +35,6 @@ public partial class App : Application
             // Services
             services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
             services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
-            services.AddTransient<IWebViewService, WebViewService>();
             services.AddTransient<INavigationViewService, NavigationViewService>();
 
             services.AddSingleton<IActivationService, ActivationService>();
@@ -45,11 +44,9 @@ public partial class App : Application
             services.AddSingleton<ITabService, TabService>();
             services.AddSingleton<ICreatureService, CreatureService>();
             services.AddSingleton<IAbilityService, AbilityService>();
-            //services.AddSingleton<IConditionService, ConditionService>();
             services.AddSingleton<IFilteringService, FilteringService>();
 
             // Core Services
-            //services.AddSingleton<ISampleDataService, SampleDataService>();
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IDataService, DataService>();
             services.AddSingleton<IRandomService, RandomService>();
@@ -62,10 +59,6 @@ public partial class App : Application
             // Views and ViewModels
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<SettingsPage>();
-            //services.AddTransient<ListDetailsViewModel>();
-            //services.AddTransient<ListDetailsPage>();
-            //services.AddTransient<WebViewViewModel>();
-            //services.AddTransient<WebViewPage>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();
@@ -74,14 +67,8 @@ public partial class App : Application
             services.AddTransient<CampaignSplashPage>();
             services.AddTransient<PartySelectViewModel>();
             services.AddTransient<PartySelectPage>();
-            services.AddTransient<RunSessionViewModel>();
-            services.AddTransient<RunSessionPage>();
-            services.AddTransient<RunEncounterViewModel>();
-            services.AddTransient<RunEncounterPage>();
-            //services.AddTransient<DealDamageViewModel>();
-            //services.AddTransient<DealDamagePage>();
-            //services.AddTransient<CreatureEditViewModel>();
-            //services.AddTransient<CreatureEditPage>();
+            services.AddTransient<EncounterSelectViewModel>();
+            services.AddTransient<EncounterSelectPage>();
             services.AddTransient<CreatureCRUDViewModel>();
             services.AddTransient<CreatureCRUDPage>();
             services.AddTransient<CampaignCRUDViewModel>();
@@ -94,14 +81,8 @@ public partial class App : Application
             services.AddTransient<EncounterEditPage>();
             services.AddTransient<EncounterCRUDViewModel>();
             services.AddTransient<EncounterCRUDPage>();
-            //services.AddTransient<TargetedDamagePage>();
-            //services.AddTransient<TargetedDamageViewModel>();
-            //services.AddTransient<ActiveEncounterViewModel>();
-            //services.AddTransient<ActiveEncounterPage>();
             services.AddTransient<EncounterTabPage>();
             services.AddTransient<EncounterTabViewModel>();
-            //services.AddTransient<CreatureAbilityViewModel>();
-            //services.AddTransient<CreatureAbilityPage>();
             services.AddTransient<AbilityEditPage>();
             services.AddTransient<AbilityEditViewModel>();
             services.AddTransient<AbilityCRUDPage>();
@@ -116,10 +97,10 @@ public partial class App : Application
             services.AddTransient<CreatureEditNavigationPage>();
             services.AddTransient<EncounterEditNavigationViewModel>();
             services.AddTransient<EncounterEditNavigationPage>();
-
-            //Experimental:
             services.AddTransient<EncounterAddCreaturesTabPage>();
             services.AddTransient<EncounterAddCreaturesTabViewModel>();
+
+
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

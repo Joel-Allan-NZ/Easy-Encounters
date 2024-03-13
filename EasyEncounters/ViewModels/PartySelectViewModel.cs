@@ -44,6 +44,6 @@ public partial class PartySelectViewModel : ObservableRecipient, INavigationAwar
     [RelayCommand]
     private void PartySelected(Party party)
     {
-        _navigationService.NavigateTo(typeof(RunSessionViewModel).FullName!, party);
+        _navigationService.NavigateTo(typeof(EncounterSelectViewModel).FullName!, party);
     }
 }

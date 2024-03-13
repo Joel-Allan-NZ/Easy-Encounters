@@ -59,10 +59,6 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
         {
             AddCreatures(m.CreaturesToAdd);
         });
-        //WeakReferenceMessenger.Default.Register<LogMessageLogged>(this, (r, m) =>
-        //{
-        //    DamageLogged(m.LogMessages);
-        //});
         Tabs.Add(_tabService.OpenTab(typeof(LogTabViewModel).FullName!, null, "Log", false));
     }
 
@@ -137,7 +133,7 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
         {
             msg.Add(await _activeEncounterService.DealDamageAsync(_activeEncounter, new DamageInstance(target.ActiveEncounterCreatureViewModel.Creature, request.SourceCreature, request.DamageType,
                 target.SelectedDamageVolume, request.BaseDamage)));
-            //msg.Add(_activeEncounterService.DealDamage(Encounter, SourceCreature.Creature, target.ActiveEncounterCreatureViewModel.Creature, SelectedDamageType, Damage));
+
             target.ActiveEncounterCreatureViewModel.CurrentHP = target.ActiveEncounterCreatureViewModel.Creature.CurrentHP; //hax. TODO: better.
         }
 
@@ -164,7 +160,7 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
         if (_activeEncounter == null)
             return;
 
-        var current = await _activeEncounterService.EndCurrentTurnAsync(_activeEncounter); /*$"{_activeEncounter.ActiveTurn?.EncounterName ?? "A creature"} ends their turn.";*/
+        var current = await _activeEncounterService.EndCurrentTurnAsync(_activeEncounter); 
 
         if (_activeEncounter.CreatureTurns.Count != Creatures.Count)
         {
@@ -203,7 +199,7 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
                     creature.Targeted = false;
             }
         }
-        //string next = $"{_activeEncounter.ActiveTurn?.EncounterName ?? "Another creature"}'s turn";
+
         WeakReferenceMessenger.Default.Send(new LogMessageLogged(new List<string>() { current }));
         WeakReferenceMessenger.Default.Send(new EncounterCreatureChangedMessage(Creatures));
     }
@@ -229,7 +225,6 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
                 if (creature.IsWrapperFor(orderedCreature))
                 {
                     //todo: improve this hacky fix
-                    //creature.Initiative = orderedCreature.Initiative;
                     Creatures.Add(creature);
                     var ph = creature.Initiative;
                     creature.Initiative = 1;
@@ -270,8 +265,7 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
     {
         if (obj != null && obj is ObservableActiveEncounterCreature)
         {
-            //var aecVM = obj as ActiveEncounterCreatureViewModel;
-
+        
             var openTab = Tabs.FirstOrDefault(x => x.TabName == obj.Creature.EncounterName);
 
             if (openTab == null)
@@ -305,14 +299,6 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
             ((EncounterDamageTabViewModel)openTab).SelectedAbility = abilityVM;
             ((EncounterDamageTabViewModel)openTab).HasSelectedAbility = abilityVM != null;
             ((EncounterDamageTabViewModel)openTab).SelectedDamageType = abilityVM?.DamageType ?? Core.Models.Enums.DamageType.None;
-            //if (abilityVM != null)
-            //{
-            //    ((EncounterDamageTabViewModel)openTab).SelectedAbility = abilityVM;
-            //    ((EncounterDamageTabViewModel)openTab).HasSelectedAbility = true;
-            //    ((EncounterDamageTabViewModel)openTab).SelectedDamageType = abilityVM.DamageType;
-            //}
-            //else
-            //((EncounterDamageTabViewModel)openTab).HasSelectedAbility = false;
         }
         SelectedTab = openTab;
     }

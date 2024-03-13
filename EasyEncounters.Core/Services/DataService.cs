@@ -198,7 +198,7 @@ public class DataService : IDataService
         await DefaultSave();
     }
 
-    public async Task WriteLog(IEnumerable<string> log)
+    public async Task WriteLogAsync(IEnumerable<string> log)
     {
         await _fileService.AppendAsync(_modelOptionsService.SavePath, logFile, log);
     }
@@ -368,5 +368,21 @@ public class DataService : IDataService
     private async Task DefaultSave()
     {
         await _fileService.SaveAsync(_modelOptionsService.SavePath, jsonFile, _cached);
+    }
+
+    public async Task<IEnumerable<Encounter>> GetCampaignEncountersAsync(Campaign campaign, bool includeGeneralEncounters)
+    {
+        await RefreshCacheAsync();
+
+        if (includeGeneralEncounters)
+        {
+            return _cached?.Encounters.Where(x=> x.Campaign == null ||  x.Campaign.Equals(campaign) || !x.IsCampaignOnlyEncounter);
+        }
+        else
+        {
+            return _cached?.Encounters.Where(x => x.Campaign == null || x.Campaign.Equals(campaign));
+        }
+
+        
     }
 }

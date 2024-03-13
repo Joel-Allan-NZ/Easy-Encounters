@@ -57,20 +57,6 @@ public class EncounterService : IEncounterService
         return DetermineDifficultyForParty(encounter, GetPartyXPThreshold(party));
     }
 
-    public IEnumerable<EncounterData> GenerateEncounterData(Party party, IEnumerable<Encounter> encounters)
-    {
-        List<EncounterData> data = new();
-
-        var partyXPThreshold = GetPartyXPThreshold(party);
-
-        foreach (var encounter in encounters)
-        {
-            data.Add(new EncounterData(encounter, party, DetermineDifficultyForParty(encounter, partyXPThreshold)));
-        }
-
-        return data;
-    }
-
     public double[] GetPartyXPThreshold(Party party)
     {
         _partyXPService.CalculatePartyXPThresholds(party); //TODO:deprecate

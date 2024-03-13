@@ -219,6 +219,17 @@ public sealed partial class EncounterGrid : UserControl
     }
 
 
+    public bool InteractableRows
+    {
+        get => (bool)GetValue(InteractableRowsProperty);
+        set => SetValue(InteractableRowsProperty, value);
+    }
+
+    // Using a DependencyProperty as the backing store for InteractableRows.  This enables animation, styling, binding, etc...s
+    public static readonly DependencyProperty InteractableRowsProperty =
+        DependencyProperty.Register("InteractableRows", typeof(bool), typeof(EncounterGrid), new PropertyMetadata(false));
+
+
 
     public bool HasVisibleFilters
     {

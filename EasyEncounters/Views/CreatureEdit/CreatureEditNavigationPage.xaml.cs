@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Animation;
 using Microsoft.UI.Xaml.Navigation;
+using Windows.Devices.PointOfService;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 
@@ -63,6 +64,10 @@ public sealed partial class CreatureEditNavigationPage : Page
 
             case nameof(AttacksAndAbilitiesContent):
                 ContentFrame.NavigateToType(typeof(AttacksAndAbilitiesPage), null, navOptions);
+                break;
+
+            case nameof(CRAdviceContent):
+                ContentFrame.NavigateToType(typeof(DMCRAdvicePage), null, navOptions);
                 break;
         }
     }

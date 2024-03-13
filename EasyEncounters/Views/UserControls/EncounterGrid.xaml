@@ -26,6 +26,19 @@
                            TextWrapping="Wrap" />
                     </StackPanel>
                 </DataTemplate>
+                <Style TargetType="controls:DataGridRow" x:Key="ModifiableEncounterRow">
+                    <Setter Target="ContextFlyout">
+                        <Setter.Value>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="Edit" Command="{x:Bind EditEncounterCommand}" CommandParameter="{Binding}"/>
+                                <MenuFlyoutItem Text="Copy" Command="{x:Bind CopyEncounterCommand}" CommandParameter="{Binding}"/>
+                                <MenuFlyoutItem Text="Delete" Command="{x:Bind DeleteEncounterCommand}" CommandParameter="{Binding}"/>
+                            </MenuFlyout>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+                <Style TargetType="controls:DataGridRow" x:Key="NotModifiableEncounterRow">
+                </Style>
             </ResourceDictionary>
         </Grid.Resources>
         <Grid.RowDefinitions>
@@ -170,20 +183,21 @@
                 <Core:EventTriggerBehavior EventName="DoubleTapped">
                     <Core:InvokeCommandAction Command="{x:Bind SelectEncounterCommand}" CommandParameter="{x:Bind EncounterDG.SelectedItem, Mode=OneWay}" />
                 </Core:EventTriggerBehavior>
+                <Core:DataTriggerBehavior Binding="{x:Bind InteractableRows}"
+                           ComparisonCondition="Equal"
+                           Value="False">
+                    <Core:ChangePropertyAction TargetObject="{Binding ElementName=EncounterDG}"
+                                PropertyName="RowStyle"
+                                Value="{StaticResource NotModifiableEncounterRow}"/>
+                </Core:DataTriggerBehavior>
+                <Core:DataTriggerBehavior Binding="{x:Bind InteractableRows}"
+                           ComparisonCondition="Equal"
+                           Value="True">
+                    <Core:ChangePropertyAction TargetObject="{Binding ElementName=EncounterDG}"
+                                PropertyName="RowStyle"
+                                Value="{StaticResource ModifiableEncounterRow}"/>
+                </Core:DataTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
-            <controls:DataGrid.RowStyle>
-                <Style TargetType="controls:DataGridRow">
-                    <Setter Property="controls:DataGridRow.ContextFlyout">
-                        <Setter.Value>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Text="Edit" Command="{x:Bind EditEncounterCommand}" CommandParameter="{Binding}"/>
-                                <MenuFlyoutItem Text="Copy" Command="{x:Bind CopyEncounterCommand}" CommandParameter="{Binding}"/>
-                                <MenuFlyoutItem Text="Delete" Command="{x:Bind DeleteEncounterCommand}" CommandParameter="{Binding}"/>
-                            </MenuFlyout>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </controls:DataGrid.RowStyle>
             <controls:DataGrid.Columns>
                 <controls:DataGridTextColumn Header="Name"
                                          Tag="EncounterName"
@@ -196,16 +210,17 @@
                 <controls:DataGridTextColumn Header="Campaign"
                                              Tag="EncounterCampaign"
                                              Binding="{Binding Encounter.Campaign}"
-                                             CanUserSort="False"/>
+                                             CanUserSort="True"/>
                 <controls:DataGridTextColumn Header="Difficulty"
                                              Tag="EncounterDifficulty"
-                                             Binding="{Binding EncounterDifficulty}"
+                                             Binding="{Binding EncounterDifficulty, Converter={StaticResource EnumToStringConverter}}"
                                              CanUserSort="True"/>
 
             </controls:DataGrid.Columns>
         </controls:DataGrid>
         <Button Command="{x:Bind AddNewEncounterCommand}"
-            Grid.Row="2"
+                Visibility="{x:Bind InteractableRows}"
+                Grid.Row="2"
                 VerticalAlignment="Bottom"
                 Margin="5,5,5,5"
                 KeyboardAcceleratorPlacementMode="Auto"

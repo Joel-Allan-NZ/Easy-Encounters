@@ -18,9 +18,6 @@
         <Style x:Key="StatblockTitleStyle" TargetType="HyperlinkButton">
             <Setter Property="FontFamily" Value="{StaticResource StatBlockTitle}"/>
         </Style>
-        <Style x:Key="RedContentStyle" TargetType="TextBlock">
-            <Setter Property="FontFamily" Value="{StaticResource StatBlockContent}"/>
-        </Style>
         <Style x:Key="BlackContentStyle" TargetType="TextBlock">
             <Setter Property="FontFamily" Value="{StaticResource StatBlockContent}"/>
         </Style>
@@ -64,7 +61,7 @@
                     Grid.Column="0"
                     MaxWidth="400">
             <StackPanel>
- 
+
                 <Expander HorizontalAlignment="Stretch"
                           x:Name="ConditionsExpander">
                     <Expander.Resources>
@@ -102,36 +99,36 @@
                 </Expander>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Armour Class:"
-                       Style="{StaticResource RedContentStyle}"
+                       Style="{StaticResource BlackContentStyle}"
                        FontWeight="Medium"
                                  Margin="2" />
                     <TextBlock Text="{x:Bind ViewModel.Creature.AC}"
-                               Style="{StaticResource RedContentStyle}"
+                               Style="{StaticResource BlackContentStyle}"
                                Margin="2" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Hit Points:"
                        FontWeight="Medium"
-                               Style="{StaticResource RedContentStyle}"
+                               Style="{StaticResource BlackContentStyle}"
                                  Margin="2" />
                     <TextBlock Text="{x:Bind ViewModel.CreatureVM.CurrentHP, Mode=OneWay}"
-                               Style="{StaticResource RedContentStyle}"
+                               Style="{StaticResource BlackContentStyle}"
                                  Margin="2" />
                     <TextBlock Text="/" 
-                               Style="{StaticResource RedContentStyle}"
+                               Style="{StaticResource BlackContentStyle}"
                                Margin="2" />
                     <TextBlock Text="{x:Bind ViewModel.Creature.EncounterMaxHP}"
-                               Style="{StaticResource RedContentStyle}"
+                               Style="{StaticResource BlackContentStyle}"
                            Margin="2" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="Speed:"
                        FontWeight="Medium"
-                               Style="{StaticResource RedContentStyle}"
+                               Style="{StaticResource BlackContentStyle}"
                                  Margin="2" />
                     <TextBlock Text="{x:Bind ViewModel.Creature.Movement, Mode=OneWay}"
                            TextWrapping="Wrap"
-                               Style="{StaticResource RedContentStyle}"
+                               Style="{StaticResource BlackContentStyle}"
                                  Margin="2" />
                 </StackPanel>
                 <NavigationViewItemSeparator></NavigationViewItemSeparator>
@@ -139,185 +136,201 @@
                     HorizontalAlignment="Center">
                     <StackPanel>
                         <TextBlock Text="STR"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            FontWeight="Medium"
                            Margin="10,2,10,2" />
                         <TextBlock Text="{x:Bind ViewModel.Creature.Strength}"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            HorizontalTextAlignment="Center"
                            Margin="0" />
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="DEX"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            FontWeight="Medium"
                            Margin="10,2,10,2" />
                         <TextBlock Text="{x:Bind ViewModel.Creature.Dexterity}"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            HorizontalTextAlignment="Center"
                            Margin="0" />
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="CON"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            FontWeight="Medium"
                            Margin="10,2,10,2" />
                         <TextBlock Text="{x:Bind ViewModel.Creature.Constitution}"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            HorizontalTextAlignment="Center"
                            Margin="0" />
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="INT"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            FontWeight="Medium"
                            Margin="10,2,10,2" />
                         <TextBlock Text="{x:Bind ViewModel.Creature.Intelligence}"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            HorizontalTextAlignment="Center"
                            Margin="0" />
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="WIS"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            FontWeight="Medium"
                            Margin="10,2,10,2" />
                         <TextBlock Text="{x:Bind ViewModel.Creature.Wisdom}"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            HorizontalTextAlignment="Center"
                            Margin="0" />
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="CHA"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            FontWeight="Medium"
                            Margin="10,2,10,2" />
                         <TextBlock Text="{x:Bind ViewModel.Creature.Charisma}"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            HorizontalTextAlignment="Center"
                            Margin="0" />
                     </StackPanel>
                 </StackPanel>
                 <TextBlock Margin="5"
-                           Style="{StaticResource RedContentStyle}"
+                           Style="{StaticResource BlackContentStyle}"
                        Text="Saves:" />
                 <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center">
                     <StackPanel>
                         <TextBlock Text="STR"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                             FontWeight="Medium"
                            Margin="10,2,10,2" />
                         <TextBlock Text="{x:Bind ViewModel.Creature.StrengthSave}"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                                HorizontalAlignment="Center" />
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="DEX"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            FontWeight="Medium"
                            Margin="10,2,10,2" />
 
                         <TextBlock Text="{x:Bind ViewModel.Creature.DexteritySave}"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                                HorizontalAlignment="Center" />
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="CON"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            FontWeight="Medium"
                            Margin="10,2,10,2" />
                         <TextBlock Text="{x:Bind ViewModel.Creature.ConstitutionSave}"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                                HorizontalAlignment="Center" />
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="INT"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            FontWeight="Medium"
                            Margin="10,2,10,2" />
                         <TextBlock Text="{x:Bind ViewModel.Creature.IntelligenceSave}"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                                HorizontalAlignment="Center" />
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="WIS"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            FontWeight="Medium"
                            Margin="10,2,10,2" />
                         <TextBlock Text="{x:Bind ViewModel.Creature.WisdomSave}"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                                HorizontalAlignment="Center" />
                     </StackPanel>
                     <StackPanel>
                         <TextBlock Text="CHA"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                            FontWeight="Medium"
                            Margin="10,2,10,2" />
                         <TextBlock Text="{x:Bind ViewModel.Creature.CharismaSave}"
-                                   Style="{StaticResource RedContentStyle}"
+                                   Style="{StaticResource BlackContentStyle}"
                                HorizontalAlignment="Center" />
                     </StackPanel>
                 </StackPanel>
                 <NavigationViewItemSeparator></NavigationViewItemSeparator>
                 <StackPanel Orientation="Horizontal"
+                            Visibility="{x:Bind ViewModel.CreatureVM.HasSkills, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <TextBlock Margin="2"
+                               Text="Skills:"
+                               FontWeight="Medium"
+                               Style="{StaticResource BlackContentStyle}"/>
+                    <TextBlock Margin="2"
+                               Text="{x:Bind ViewModel.CreatureVM.SkillsString}"
+                               TextWrapping="Wrap"
+                               MaxWidth="380"
+                               Style="{StaticResource BlackContentStyle}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal"
                     Visibility="{x:Bind ViewModel.CreatureVM.HasVulnerabilities, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock Margin="2"
                        Text="Damage Vulnerabilities:" 
-                               Style="{StaticResource RedContentStyle}"/>
+                               Style="{StaticResource BlackContentStyle}"/>
                     <TextBlock Margin="2"
                        Text="{x:Bind ViewModel.Creature.Vulnerability}"
                        TextWrapping="Wrap" 
-                               Style="{StaticResource RedContentStyle}"/>
+                               MaxWidth="290"
+                               Style="{StaticResource BlackContentStyle}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"
                     Visibility="{x:Bind ViewModel.CreatureVM.HasResists, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock Margin="2"
                        Text="Damage Resistances:"
                                FontWeight="Medium"
-                               Style="{StaticResource RedContentStyle}"/>
+                               Style="{StaticResource BlackContentStyle}"/>
                     <TextBlock Margin="2"
                        Text="{x:Bind ViewModel.Creature.Resistance}"
-                               Style="{StaticResource RedContentStyle}"
+                               Style="{StaticResource BlackContentStyle}"
+                               MaxWidth="290"
                        TextWrapping="Wrap" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"
                     Visibility="{x:Bind ViewModel.CreatureVM.HasImmunities, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock Margin="2"
-                               Style="{StaticResource RedContentStyle}"
+                               Style="{StaticResource BlackContentStyle}"
                                FontWeight="Medium"
                        Text="Damage Immunities:" />
                     <TextBlock Margin="2"
                        Text="{x:Bind ViewModel.Creature.Immunity}"
-                               Style="{StaticResource RedContentStyle}"
+                               MaxWidth="290"
+                               Style="{StaticResource BlackContentStyle}"
                        TextWrapping="Wrap" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"
                     Visibility="{x:Bind ViewModel.CreatureVM.HasConditionImmunities, Converter={StaticResource BoolToVisibilityConverter}}">
                     <TextBlock Margin="2"
-                               Style="{StaticResource RedContentStyle}"
+                               MaxWidth="290"
+                               Style="{StaticResource BlackContentStyle}"
                                FontWeight="Medium"
                        Text="Condition Immunities:" />
                     <TextBlock Margin="2"
                        Text="{x:Bind ViewModel.Creature.ConditionImmunities}"
-                               Style="{StaticResource RedContentStyle}"
+                               Style="{StaticResource BlackContentStyle}"
                            TextWrapping="Wrap" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Margin="2"
-                               Style="{StaticResource RedContentStyle}"
+                               Style="{StaticResource BlackContentStyle}"
                                FontWeight="Medium"
                        Text="Challenge" />
                     <TextBlock Margin="2"
                        Text="{x:Bind ViewModel.Creature.LevelOrCR}" 
-                               Style="{StaticResource RedContentStyle}"/>
+                               Style="{StaticResource BlackContentStyle}"/>
                     <TextBlock Margin="10,2,2,2"
                        Text="Proficiency Bonus"
-                               Style="{StaticResource RedContentStyle}"
+                               Style="{StaticResource BlackContentStyle}"
                                FontWeight="Medium"/>
                     <TextBlock Margin="2"
                        Text="{x:Bind ViewModel.Creature.ProficiencyBonus}" 
-                               Style="{StaticResource RedContentStyle}"/>
+                               Style="{StaticResource BlackContentStyle}"/>
                 </StackPanel>
                 <NavigationViewItemSeparator></NavigationViewItemSeparator>
                 <StackPanel Visibility="{x:Bind ViewModel.CreatureVM.HasFeatures, Converter={StaticResource BoolToVisibilityConverter}}">
@@ -421,97 +434,117 @@
                        VerticalAlignment="Top"
                                    Value="{x:Bind ViewModel.CreatureVM.SpellSlots.NinthLevel, Mode=TwoWay}" />
             </StackPanel>
-            <Button Command="{x:Bind ViewModel.RequestDamageCommand}"
-                    Margin="5"
-                    Content="Other Ability" />
-            <TextBlock Margin="2"
+            <TextBlock Margin="10"
                        Text="{x:Bind ViewModel.Creature.AttackDescription}"
                        Style="{StaticResource BlackContentStyle}"
                        TextWrapping="Wrap" />
-            <!--<ScrollViewer VerticalScrollMode="Enabled">-->
 
-            <!--</ScrollViewer>-->
         </StackPanel>
-        <ListView Margin="2"
-                  Grid.Row="1"
-                  Grid.Column="1"
-
-                      ItemsSource="{x:Bind ViewModel.Abilities, Mode=OneWay}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <Expander HorizontalAlignment="Stretch">
-                        <Expander.Header>
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Text="{Binding Name}"
+        <ScrollViewer
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="2">
+            <StackPanel >
+                <Expander HorizontalAlignment="Stretch"
+                      Margin="15,0,12,0">
+                    <Expander.Header>
+                        <TextBlock Text="Other/Custom Ability"
+                               FontWeight="Medium"/>
+                    </Expander.Header>
+                    <Expander.ContextFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Text="Use" Command="{x:Bind ViewModel.RequestDamageCommand}" />
+                        </MenuFlyout>
+                    </Expander.ContextFlyout>
+                    <Expander.Content>
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Margin="2"
+                            Style="{StaticResource BlackContentStyle}"
+                            Text="Use a custom or otherwise unlisted ability. Ideal for any damage from this creature that doesn't neatly fit into an existing ability."
+                            TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Expander.Content>
+                </Expander>
+                <ListView 
+                  ItemsSource="{x:Bind ViewModel.Abilities, Mode=OneWay}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Expander HorizontalAlignment="Stretch">
+                                <Expander.Header>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{Binding Name}"
                                            Style="{StaticResource BlackContentStyle}"
                                                    FontWeight="Medium" />
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding ActionSpeed, Converter={StaticResource EnumToStringConverter}}"
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding ActionSpeed, Converter={StaticResource EnumToStringConverter}}"
                                                    FontSize="10"
                                                Style="{StaticResource BlackContentStyle}"
                                                    Margin="0,0,0,0" />
-                                    <TextBlock Text="Concentration"
+                                            <TextBlock Text="Concentration"
                                                        FontSize="10"
                                                Style="{StaticResource BlackContentStyle}"
                                                        Margin="10,0,0,0"
                                                        Visibility="{Binding Concentration, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                    <TextBlock Text="{Binding SpellLevel, Converter={StaticResource EnumToStringConverter}}"
+                                            <TextBlock Text="{Binding SpellLevel, Converter={StaticResource EnumToStringConverter}}"
                                                        Margin="10,0,0,0"
                                                Style="{StaticResource BlackContentStyle}"
                                                        FontSize="10"
                                                        Visibility="{Binding IsSpell, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                    <TextBlock Text="{Binding Resolution, Converter={StaticResource EnumToStringConverter}}"
+                                            <TextBlock Text="{Binding Resolution, Converter={StaticResource EnumToStringConverter}}"
                                                Style="{StaticResource BlackContentStyle}"
                                                        Margin="10,0,0,0"
                                                        FontSize="10" />
-                                </StackPanel>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Margin="2"
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Margin="2"
                                        Text="{Binding SpellCastComponents}"
                                                        FontStyle="Italic"
                                                Style="{StaticResource BlackContentStyle}"
                                                        FontSize="10"
                                        Visibility="{Binding IsSpell, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                    <TextBlock Text="{Binding TargetDistance}"
+                                            <TextBlock Text="{Binding TargetDistance}"
                                                        Visibility="{Binding NeedsRangeValue, Converter={StaticResource BoolToVisibilityConverter}}"
                                                Style="{StaticResource BlackContentStyle}"
                                                        FontSize="10"
                                                        Margin="2" />
-                                    <TextBlock Text="{Binding TargetDistanceType, Converter={StaticResource EnumToStringConverter}}"
+                                            <TextBlock Text="{Binding TargetDistanceType, Converter={StaticResource EnumToStringConverter}}"
                                                        FontSize="10"
                                                Style="{StaticResource BlackContentStyle}"
                                                        Margin="2" />
-                                    <TextBlock Text="{Binding TargetSize}"
+                                            <TextBlock Text="{Binding TargetSize}"
                                                        FontSize="10"
                                                Style="{StaticResource BlackContentStyle}"
                                                        Margin="2"
                                                        Visibility="{Binding NeedsArea, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                    <TextBlock Text="{Binding TargetAreaType}"
+                                            <TextBlock Text="{Binding TargetAreaType}"
                                                        FontSize="10"
                                                Style="{StaticResource BlackContentStyle}"
                                                        Margin="2"
                                                        Visibility="{Binding NeedsArea, Converter={StaticResource BoolToVisibilityConverter}}" />
-                                </StackPanel>
-                            </StackPanel>
-                        </Expander.Header>
-                        <Expander.ContextFlyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Text="Use" Command="{Binding UseAbilityRequestedCommand}" />
-                            </MenuFlyout>
-                        </Expander.ContextFlyout>
-                        <Expander.Content>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Expander.Header>
+                                <Expander.ContextFlyout>
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem Text="Use" Command="{Binding UseAbilityRequestedCommand}" />
+                                    </MenuFlyout>
+                                </Expander.ContextFlyout>
+                                <Expander.Content>
 
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Margin="2"
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Margin="2"
                                            Style="{StaticResource BlackContentStyle}"
                                        Text="{Binding EffectDescription}"
                                        TextWrapping="Wrap" />
-                            </StackPanel>
-                        </Expander.Content>
-                    </Expander>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                                    </StackPanel>
+                                </Expander.Content>
+                            </Expander>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+            </StackPanel>
+        </ScrollViewer>
         <!--</StackPanel>-->
     </Grid>
 </Page>

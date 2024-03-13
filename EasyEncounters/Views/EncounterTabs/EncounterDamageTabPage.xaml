@@ -109,12 +109,6 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <Grid.ContextFlyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Text="Add Selected Targets"
-                                                Command="{Binding AddTargetRequestedCommand}" />
-                            </MenuFlyout>
-                        </Grid.ContextFlyout>
                         <TextBlock Margin="2"
                                    Text="{Binding Creature.EncounterName}" />
                         <StackPanel Margin="5,0,5,0"
@@ -174,10 +168,6 @@
                   HorizontalAlignment="Stretch"
                   Margin="2" />
         </StackPanel>
-        <!--Selected Targets-->
-        <!--<ScrollViewer Grid.Row="1"
-                      Grid.Column="2"
-                      MaxHeight="600">-->
         <ListView Name="SelectedTargets"
                       ItemsSource="{x:Bind ViewModel.Targets, Mode=OneWay}"
                       Grid.Column="2"
@@ -186,12 +176,6 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <StackPanel.ContextFlyout>
-                            <MenuFlyout>
-                                <MenuFlyoutItem Text="Remove"
-                                                    Command="{Binding RemoveTargetRequestedCommand}" />
-                            </MenuFlyout>
-                        </StackPanel.ContextFlyout>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.EncounterName}"
                                            FontSize="30" />
@@ -205,21 +189,74 @@
                                               IsChecked="{Binding ActiveEncounterCreatureViewModel.Concentrating, Mode=TwoWay}" />
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Armour Class:"
-                       FontWeight="Medium"
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Armour Class:"
+                                 FontWeight="Medium"
                                  Margin="2" />
-                            <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.AC}"
+                                    <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.AC}"
                                  Margin="2" />
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Hit Points:"
-                       FontWeight="Medium"
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Hit Points:"
+                                 FontWeight="Medium"
                                  Margin="2" />
-                            <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.CurrentHP, Mode=OneWay}"
-                                 Margin="2" />
-                            <TextBlock Text="/" Margin="2" />
-                            <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.EncounterMaxHP}"
-                           Margin="2" />
+                                    <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.CurrentHP, Mode=OneWay}"
+                                       Margin="2" />
+                                    <TextBlock Text="/" Margin="2" />
+                                    <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.EncounterMaxHP}"
+                                       Margin="2" />
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal"
+                                            Margin="20,0"
+                                            HorizontalAlignment="Center">
+                                    <StackPanel>
+                                        <TextBlock Text="STR"
+                                            FontWeight="Medium"
+                                            Margin="10,2,10,2" />
+                                        <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.StrengthSave}"
+                                                HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <TextBlock Text="DEX"
+                                            FontWeight="Medium"
+                                            Margin="10,2,10,2" />
+
+                                        <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.DexteritySave}"
+                                                HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <TextBlock Text="CON"
+                                            FontWeight="Medium"
+                                            Margin="10,2,10,2" />
+                                        <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.ConstitutionSave}"
+                                                HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <TextBlock Text="INT"
+                                            FontWeight="Medium"
+                                            Margin="10,2,10,2" />
+                                        <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.IntelligenceSave}"
+                                                HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <TextBlock Text="WIS"
+                                            FontWeight="Medium"
+                                            Margin="10,2,10,2" />
+                                        <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.WisdomSave}"
+                                                HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                    <StackPanel>
+                                        <TextBlock Text="CHA"
+                                            FontWeight="Medium"
+                                            Margin="10,2,10,2" />
+                                        <TextBlock Text="{Binding ActiveEncounterCreatureViewModel.Creature.CharismaSave}"
+                                                HorizontalAlignment="Center" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </StackPanel>
                         </StackPanel>
                         <ComboBox Name="selectDamageVolume"
                                       Grid.Column="3"

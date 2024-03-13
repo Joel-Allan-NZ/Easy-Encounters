@@ -196,18 +196,18 @@
                 <Core:EventTriggerBehavior EventName="DoubleTapped">
                     <Core:InvokeCommandAction Command="{x:Bind SelectCreatureCommand}" CommandParameter="{x:Bind CreatureDG.SelectedItem, Mode=OneWay}" />
                 </Core:EventTriggerBehavior>
-                <Core:DataTriggerBehavior Binding="{x:Bind InteractableRows}"
+                <Core:DataTriggerBehavior Binding="{x:Bind InteractableRows, Mode=OneWay}"
                                           ComparisonCondition="Equal"
                                           Value="False">
                     <Core:ChangePropertyAction TargetObject="{Binding ElementName=CreatureDG}"
-                                               PropertyName="Style"
+                                               PropertyName="RowStyle"
                                                Value="{StaticResource NotModifiableCreatureRow}"/>
                 </Core:DataTriggerBehavior>
-                <Core:DataTriggerBehavior Binding="{x:Bind InteractableRows}"
+                <Core:DataTriggerBehavior Binding="{x:Bind InteractableRows, Mode=OneWay}"
                                           ComparisonCondition="Equal"
                                           Value="True">
                     <Core:ChangePropertyAction TargetObject="{Binding ElementName=CreatureDG}"
-                                               PropertyName="Style"
+                                               PropertyName="RowStyle"
                                                Value="{StaticResource ModifiableCreatureRow}"/>
                 </Core:DataTriggerBehavior>
             </Interactivity:Interaction.Behaviors>

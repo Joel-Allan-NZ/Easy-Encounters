@@ -16,32 +16,23 @@ public class PageService : IPageService
     public PageService()
     {
         Configure<MainViewModel, MainPage>();
-        //Configure<WebViewViewModel, WebViewPage>();
-        //Configure<ListDetailsViewModel, ListDetailsPage>();
         Configure<SettingsViewModel, SettingsPage>();
         Configure<CampaignSplashViewModel, CampaignSplashPage>();
         Configure<PartySelectViewModel, PartySelectPage>();
-        Configure<RunSessionViewModel, RunSessionPage>();
-        Configure<RunEncounterViewModel, RunEncounterPage>();
-        //Configure<DealDamageViewModel, DealDamagePage>();
+        Configure<EncounterSelectViewModel, EncounterSelectPage>();
         Configure<CreatureCRUDViewModel, CreatureCRUDPage>();
-        //Configure<CreatureEditViewModel, CreatureEditPage>();
         Configure<PartyCRUDViewModel, PartyCRUDPage>();
         Configure<PartyEditViewModel, PartyEditPage>();
         Configure<CampaignCRUDViewModel, CampaignCRUDPage>();
         Configure<EncounterCRUDViewModel, EncounterCRUDPage>();
         Configure<EncounterEditViewModel, EncounterEditPage>();
-        //Configure<TargetedDamageViewModel, TargetedDamagePage>();
-        //Configure<ActiveEncounterViewModel, ActiveEncounterPage>();
         Configure<EncounterTabViewModel, EncounterTabPage>();
         Configure<AbilityCRUDViewModel, AbilityCRUDPage>();
         Configure<AbilityEditViewModel, AbilityEditPage>();
-        //Configure<CreatureAbilityViewModel, CreatureAbilityPage>();
         Configure<CreatureDisplayTabViewModel, CreatureDisplayTabPage>();
         Configure<EncounterDamageTabViewModel, EncounterDamageTabPage>();
         Configure<LogTabViewModel, LogTabPage>();
         Configure<CreatureEditNavigationPageViewModel, CreatureEditNavigationPage>();
-        //experimental:
         Configure<EncounterAddCreaturesTabViewModel, EncounterAddCreaturesTabPage>();
         Configure<EncounterEditNavigationViewModel, EncounterEditNavigationPage>();
     }

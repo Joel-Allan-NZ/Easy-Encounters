@@ -19,8 +19,9 @@ public class CreatureService : ICreatureService
         return new Creature()
         {
             Abilities = new(),
-            SpellSlots = new Dictionary<int, int>()
-    };
+            SpellSlots = new Dictionary<int, int>(),
+            Id = Guid.NewGuid()
+        };
     }
 
     public Creature DeepCopy(Creature source)
@@ -60,6 +61,59 @@ public class CreatureService : ICreatureService
             CreatureAttributeType.Wisdom => creature.Wisdom,
             CreatureAttributeType.Charisma => creature.Charisma,
             _ => 0
+        };
+    }
+
+    public CreatureSkillLevel GetSkillProficiencyLevel(Creature creature, CreatureSkills skill)
+    {
+        if (creature.Expertise.HasFlag(skill))
+        {
+            return CreatureSkillLevel.Expertise;
+        }
+        if (creature.Proficient.HasFlag(skill))
+        {
+            return CreatureSkillLevel.Proficient;
+        }
+        if (creature.HalfProficient.HasFlag(skill))
+        {
+            return CreatureSkillLevel.HalfProficient;
+        }
+        return CreatureSkillLevel.None;
+    }
+
+    public int GetSkillBonusTotal(Creature creature, CreatureSkills skill, CreatureSkillLevel proficiencyLevel)
+    {
+        var statBonus = GetAttributeBonusValue(creature, GetBaseSkillAttributeType(skill));
+
+        var proficiencyBonus = (int)proficiencyLevel / 2 * creature.ProficiencyBonus;
+
+        return statBonus + proficiencyBonus;
+    }
+
+    private static CreatureAttributeType GetBaseSkillAttributeType(CreatureSkills skill)
+    {
+        return skill switch
+        {
+            CreatureSkills.Acrobatics => CreatureAttributeType.Dexterity,
+            CreatureSkills.AnimalHandling => CreatureAttributeType.Wisdom,
+            CreatureSkills.Arcana => CreatureAttributeType.Intelligence,
+            CreatureSkills.Athletics => CreatureAttributeType.Strength,
+            CreatureSkills.Deception => CreatureAttributeType.Charisma,
+            CreatureSkills.History => CreatureAttributeType.Intelligence,
+            CreatureSkills.Insight => CreatureAttributeType.Wisdom,
+            CreatureSkills.Intimidation => CreatureAttributeType.Charisma,
+            CreatureSkills.Investigation => CreatureAttributeType.Intelligence,
+            CreatureSkills.Medicine => CreatureAttributeType.Wisdom,
+            CreatureSkills.Nature => CreatureAttributeType.Intelligence,
+            CreatureSkills.Perception => CreatureAttributeType.Wisdom,
+            CreatureSkills.Performance => CreatureAttributeType.Charisma,
+            CreatureSkills.Persuasion => CreatureAttributeType.Charisma,
+            CreatureSkills.Religion => CreatureAttributeType.Intelligence,
+            CreatureSkills.SleightOfHand => CreatureAttributeType.Dexterity,
+            CreatureSkills.Stealth => CreatureAttributeType.Dexterity,
+            CreatureSkills.Survival => CreatureAttributeType.Wisdom,
+            CreatureSkills.None => CreatureAttributeType.None,
+            _ => throw new ArgumentException($"{skill} is not a valid skill")
         };
     }
 }

@@ -22,17 +22,5 @@ public interface IEncounterService
 
     EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, Party party);
 
-    //EncounterDifficulty DetermineDifficultyForParty(Encounter encounter, double[] partyXPThreshold);
-
-    IEnumerable<EncounterData> GenerateEncounterData(Party party, IEnumerable<Encounter> encounters);
-    ///// <summary>
-    ///// Calculate the party's XP thresholds; the poiints where an encounter's total XP could be expected
-    ///// to change in relative difficulty. IE the XP value where you'd expect an encounter's difficulty to jump from Trivial to Easy, 
-    ///// Easy to Medium etc.
-    ///// </summary>
-    ///// <param name="party"></param>
-    ///// <returns></returns>
-    //double[] GetPartyXPThreshold(Party party);
-
     void RemoveCreature(Encounter encounter, Creature creature);
 }

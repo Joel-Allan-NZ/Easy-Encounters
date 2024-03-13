@@ -56,6 +56,9 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
     private SpellSlotViewModel? _spellSlots;
 
     [ObservableProperty]
+    private CRDifficultyGuide _difficultyGuide;
+
+    [ObservableProperty]
     private ObservableEnumKeyValuePairs<CreatureSkills, CreatureSkillLevel> _skills;
 
     public CreatureEditNavigationPageViewModel(INavigationService navigationService, IDataService dataService, IFilteringService filteringService)
@@ -63,6 +66,7 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
         _navigationService = navigationService;
         _filteringService = filteringService;
         _dataService = dataService;
+        _difficultyGuide = new CRDifficultyGuide();
     }
     public ObservableCollection<Ability> CreatureAbilities
     {
@@ -177,7 +181,7 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
     private async Task AddAbility()
     {
         var ability = new Ability();
-        Spells.Add(ability);
+        CreatureAbilities.Add(ability);
         await _dataService.SaveAddAsync(ability);
         await EditAbility(ability);
     }

@@ -14,11 +14,8 @@ using Microsoft.UI.Xaml;
 
 namespace EasyEncounters.ViewModels;
 
-public partial class ObservableActiveEncounterCreature : ObservableRecipient //todo: wrapper proxies for health etc, so tabs can show them accurately.
+public partial class ObservableActiveEncounterCreature : ObservableRecipient 
 {
-    //[ObservableProperty]
-    //private ConditionsHelper _conditions;
-
     public ObservableCollection<ConditionStatus> Conditions
     {
         get; private set;
@@ -45,6 +42,12 @@ public partial class ObservableActiveEncounterCreature : ObservableRecipient //t
     [ObservableProperty]
     private Thickness targetVisibility;
 
+    [ObservableProperty]
+    private string _skillsString;
+
+    [ObservableProperty]
+    private bool _hasSkills;
+
     public ObservableActiveEncounterCreature(ActiveEncounterCreature creature)
     {
         this.Creature = creature;
@@ -59,7 +62,24 @@ public partial class ObservableActiveEncounterCreature : ObservableRecipient //t
         EnumString = creature.ActiveConditions.ToString();
         SetCreatureInfoString();
 
+    }
 
+    public void HandleSkills(IEnumerable<KeyValuePair<CreatureSkills, int>> bonuses)
+    {
+        SkillsString = "";
+        foreach(var bonus in bonuses)
+        {
+            SkillsString += $"{ResourceExtensions.GetEnumerationString(bonus.Key)} +{bonus.Value}, "; 
+        }
+        if (SkillsString.Length > 0)
+        {
+            SkillsString = SkillsString[..^2];
+            HasSkills = true;
+        }
+        else
+        {
+            HasSkills = false;
+        }
     }
 
     private void SetCreatureInfoString()

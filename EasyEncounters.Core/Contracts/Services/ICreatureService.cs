@@ -28,4 +28,8 @@ public interface ICreatureService
     /// <param name="creatureAttributeType"></param>
     /// <returns></returns>
     int GetAttributeTypeValue(Creature creature, CreatureAttributeType creatureAttributeType);
+
+    int GetSkillBonusTotal(Creature creature, CreatureSkills skill, CreatureSkillLevel proficiencyLevel);
+
+    CreatureSkillLevel GetSkillProficiencyLevel(Creature creature, CreatureSkills skill);
 }

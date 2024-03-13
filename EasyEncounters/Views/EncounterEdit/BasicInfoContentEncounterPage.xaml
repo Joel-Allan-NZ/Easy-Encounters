@@ -30,7 +30,7 @@
             <TextBox Header="Encounter Name"
                     Style="{StaticResource TextBoxHeader}"
                     Grid.Row="0"
-                    Text="{Binding Encounter.Encounter.Name}"
+                    Text="{Binding Encounter.Encounter.Name, Mode=TwoWay}"
                     Margin="5"/>
             <TextBox Header="Encounter Description"
                     Style="{StaticResource TextBoxHeader}"

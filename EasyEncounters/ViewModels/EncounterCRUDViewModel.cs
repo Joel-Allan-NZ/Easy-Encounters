@@ -70,21 +70,21 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
         _encounterCache?.Add(observable);
         await _dataService.SaveAddAsync(observable.Encounter);
 
-        EditEncounter(observable.Encounter);
+        EditEncounter(observable);
     }
 
     [RelayCommand]
     private async Task CopyEncounter(object parameter)
     {
-        if (parameter != null && parameter is Encounter)
+        if (parameter != null && parameter is ObservableEncounter encounter)
         {
-            var copied = await _dataService.CopyAsync(parameter as Encounter);
+            var copied = await _dataService.CopyAsync(encounter.Encounter);
 
             if (copied != null)
             {
-                ObservableEncounter encounter = new(copied);
-                Encounters.Add(encounter);
-                _encounterCache?.Add(encounter);
+                ObservableEncounter observableEncounter = new(copied);
+                Encounters.Add(observableEncounter);
+                _encounterCache?.Add(observableEncounter);
             }
         }
     }
@@ -92,23 +92,18 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
     [RelayCommand]
     private async Task DeleteEncounter(object parameter)
     {
-        if (parameter != null && parameter is Encounter encounter)
+        if (parameter != null && parameter is ObservableEncounter encounter)
         {
-            var encounterToRemove = Encounters.First(x => x.Encounter == encounter);
+            var encounterToRemove = Encounters.First(x => x.Encounter == encounter.Encounter);
             Encounters.Remove(encounterToRemove);
             _encounterCache?.Remove(encounterToRemove);
-            await _dataService.DeleteAsync(encounter);
+            await _dataService.DeleteAsync(encounter.Encounter);
         }
     }
 
     [RelayCommand]
     private void EditEncounter(object parameter)
     {
-        //if (parameter != null && parameter is Encounter)
-        //{
-        //    _navigationService.NavigateTo(typeof(EncounterEditNavigationViewModel).FullName!, parameter);
-        //}
-        //else
         if (parameter != null && parameter is ObservableEncounter model)
         {
             _navigationService.NavigateTo(typeof(EncounterEditNavigationViewModel).FullName!, model);

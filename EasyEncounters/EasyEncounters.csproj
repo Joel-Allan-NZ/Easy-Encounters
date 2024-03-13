@@ -15,6 +15,20 @@
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Messages\TargetedDamageCopyRequestMessage.cs" />
+    <Compile Remove="Messages\TargetedDamageDeleteRequestMessage.cs" />
+    <Compile Remove="ViewModels\ActiveEncounterViewModel.cs" />
+    <Compile Remove="ViewModels\DealDamageTargetting.cs" />
+    <Compile Remove="ViewModels\DealDamageViewModel.cs" />
+    <Compile Remove="ViewModels\RunEncounterViewModel.cs" />
+    <Compile Remove="ViewModels\TargetDamageInstanceViewModel.cs" />
+    <Compile Remove="ViewModels\TargetedDamageViewModel.cs" />
+    <Compile Remove="Views\ActiveEncounterPage.xaml.cs" />
+    <Compile Remove="Views\DealDamagePage.xaml.cs" />
+    <Compile Remove="Views\RunEncounterPage.xaml.cs" />
+    <Compile Remove="Views\TargetedDamagePage.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Remove="Assets\Fonts\BOOKINSANITY BOLD ITALIC.OTF" />
     <Content Remove="Assets\Fonts\BOOKINSANITY BOLD.OTF" />
     <Content Remove="Assets\Fonts\BOOKINSANITY ITALIC.OTF" />
@@ -35,6 +49,7 @@
     <None Remove="Views\CreatureDisplayTabPage.xaml" />
     <None Remove="Views\CreatureEditNavigationPage.xaml" />
     <None Remove="Views\CreatureEditPage.xaml" />
+    <None Remove="Views\CreatureEdit\DMCRAdvicePage.xaml" />
     <None Remove="Views\CreatureEdit\SkillsPage.xaml" />
     <None Remove="Views\DealDamagePage.xaml" />
     <None Remove="Views\EncounterAddCreaturesTabPage.xaml" />
@@ -45,6 +60,7 @@
     <None Remove="Views\EncounterEdit\CreaturesPage.xaml" />
     <None Remove="Views\EncounterEdit\EncounterEditNavigationPage.xaml" />
     <None Remove="Views\EncounterEdit\PartyAndDifficultyPage.xaml" />
+    <None Remove="Views\EncounterSelectPage.xaml" />
     <None Remove="Views\EncounterTabPage.xaml" />
     <None Remove="Views\LogTabPage.xaml" />
     <None Remove="Views\OptionalStatsPage.xaml" />
@@ -52,7 +68,6 @@
     <None Remove="Views\PartyEditPage.xaml" />
     <None Remove="Views\PartySelectPage.xaml" />
     <None Remove="Views\RunEncounterPage.xaml" />
-    <None Remove="Views\RunSessionPage.xaml" />
     <None Remove="Views\SpellGrid.xaml" />
     <None Remove="Views\TargetedDamagePage.xaml" />
     <None Remove="Views\UserControls\CreatureGrid.xaml" />
@@ -83,6 +98,9 @@
     <None Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\CreatureEdit\DMCRAdvicePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\EncounterEdit\CreaturesPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -146,12 +164,6 @@
     <Page Update="Views\EncounterTabPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\ActiveEncounterPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\TargetedDamagePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Update="Views\EncounterEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -173,13 +185,7 @@
     <Page Update="Views\CreatureCRUDPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\DealDamagePage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\RunEncounterPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\RunSessionPage.xaml">
+    <Page Update="Views\EncounterSelectPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\PartySelectPage.xaml">
@@ -200,6 +206,13 @@
   
   <ItemGroup>
     <CustomAdditionalCompileInputs Remove="Views\SpellGrid.xaml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Page Remove="Views\ActiveEncounterPage.xaml" />
+    <Page Remove="Views\DealDamagePage.xaml" />
+    <Page Remove="Views\RunEncounterPage.xaml" />
+    <Page Remove="Views\TargetedDamagePage.xaml" />
   </ItemGroup>
   
   <ItemGroup>

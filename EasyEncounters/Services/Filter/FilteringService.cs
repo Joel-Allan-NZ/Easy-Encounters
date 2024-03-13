@@ -75,14 +75,6 @@ public class FilteringService : IFilteringService
 
             creatureFilterValues.SearchSuggestions = (List<CreatureViewModel>)filtered;
         }
-        else if (typeof(T) == typeof(EncounterData))
-        {
-            var encounterFilterValues = (EncounterFilter)filterValues;
-            filterCriteria = (ICollection<FilterCriteria<T>>)encounterFilterValues.GenerateFilterCriteria(text);
-            filtered = Filter(toFilter, filterCriteria);
-
-            encounterFilterValues.SearchSuggestions = (List<EncounterData>)filtered;
-        }
         else if (typeof(T) == typeof(Party))
         {
             var partyFilterValues = (PartyFilter)filterValues;
@@ -108,10 +100,6 @@ public class FilteringService : IFilteringService
         if (typeof(T) == typeof(Ability))
         {
             return new AbilityFilter();
-        }
-        else if (typeof(T) == typeof(EncounterData))
-        {
-            return new EncounterFilter();
         }
         else if (typeof(T) == typeof(CreatureViewModel))
         {

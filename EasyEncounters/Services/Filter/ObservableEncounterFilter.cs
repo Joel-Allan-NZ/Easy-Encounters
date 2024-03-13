@@ -84,6 +84,7 @@ public partial class ObservableEncounterFilter : FilterValues
             "EncounterName" => new(x => x.Encounter.Name),
             "EncounterDifficulty" => new(x => x.EncounterDifficulty),
             "EncounterEnemyCount" => new(x => x.Encounter.Creatures.Count),
+            "EncounterCampaign" => new(x => x.Encounter.Campaign?.Name ?? "Any"),
             _ => throw new Exception("Not a valid tag name")
         };
 

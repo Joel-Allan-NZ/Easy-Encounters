@@ -28,5 +28,7 @@ public interface IDataService
 
     Task SaveAddAsync<T>(T entity) where T : IPersistable;
 
-    Task WriteLog(IEnumerable<string> log);
+    Task WriteLogAsync(IEnumerable<string> log);
+
+    Task<IEnumerable<Encounter>> GetCampaignEncountersAsync(Campaign campaign, bool includeGeneralEncounters);
 }

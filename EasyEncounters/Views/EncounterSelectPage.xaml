@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="EasyEncounters.Views.EncounterSelectPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:behaviors="using:EasyEncounters.Behaviors"
+    xmlns:helpers="using:EasyEncounters.Helpers"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <helpers:EnumToStringConverter x:Key="EnumToStringConverter" />
+    </Page.Resources>
+    <Grid>
+
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{x:Bind ViewModel.Party.Name}"
+                       Margin="5"/>
+            <TextBlock Text="{x:Bind ViewModel.Party.Campaign.Name}"
+                       Margin="5"/>
+        </StackPanel>
+
+        <usercontrols:EncounterGrid HasVisibleFilters="True"
+                                FilterMinimumEncounterDifficulty="{x:Bind ViewModel.EncounterFilterValues.MinimumDifficulty, Mode=TwoWay}"
+                                FilterMaximumEncounterDifficulty="{x:Bind ViewModel.EncounterFilterValues.MaximumDifficulty, Mode=TwoWay}"
+                                FilterEncounterDifficultySource="{x:Bind ViewModel.EncounterFilterValues.Difficulties, Mode=OneWay}"
+                                FilterCampaignSelected="{x:Bind ViewModel.EncounterFilterValues.CampaignName}"
+                                FilterMinimumEnemies="{x:Bind ViewModel.EncounterFilterValues.MinimumEnemiesFilter, Mode=TwoWay}"
+                                FilterMaximumEnemies="{x:Bind ViewModel.EncounterFilterValues.MaximumEnemiesFilter, Mode=TwoWay}"
+                                ClearFiltersCommand="{x:Bind ViewModel.ClearFiltersCommand}"
+                                Suggestions="{x:Bind ViewModel.EncounterFilterValues.SearchSuggestions, Mode=OneWay}"
+                                FilterCommand="{x:Bind ViewModel.EncounterFilterCommand}"
+                                GridDataSource="{x:Bind ViewModel.Encounters}"
+                                SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
+                                AddNewEncounterCommand="{x:Bind ViewModel.AddEncounterCommand}"
+                                SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
+                                SelectEncounterCommand="{x:Bind ViewModel.SelectEncounterCommand}"
+                                InteractableRows="False"
+                                />
+
+
+    </Grid>
+</Page>

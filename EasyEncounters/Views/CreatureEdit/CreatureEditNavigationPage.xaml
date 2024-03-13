@@ -49,6 +49,7 @@
                 <NavigationViewItem Content="Optional Stats" x:Name="OptionalStatsContent" />
                 <NavigationViewItem Content="Skills" x:Name="SkillsContent"/>
                 <NavigationViewItem Content="Attacks and Abilities" x:Name="AttacksAndAbilitiesContent" />
+                <NavigationViewItem Content="CR Advice" x:Name="CRAdviceContent"/>
             </NavigationView.MenuItems>
 
             <Frame x:Name="ContentFrame" 
