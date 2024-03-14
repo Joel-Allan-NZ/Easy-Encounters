@@ -46,7 +46,7 @@
     <Grid>
         <StackPanel>
             <StackPanel Orientation="Horizontal"
-                        Margin="8,0">
+                        Margin="5,10,0,0">
                 <NumberBox Value="{Binding Creature.AC, Mode=TwoWay}"
                            Margin="2,2,2,2"
                            Header="Armor Class"

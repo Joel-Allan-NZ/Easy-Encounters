@@ -183,11 +183,11 @@ public partial class ObservableActiveEncounterCreature : ObservableRecipient
         return (this.Creature.Equals(creature));
     }
 
-    [RelayCommand]
-    private void AddTargetRequested()
-    {
-        WeakReferenceMessenger.Default.Send(new AddTargetCreatureRequestMessage(this));
-    }
+    //[RelayCommand]
+    //private void AddTargetRequested()
+    //{
+    //    WeakReferenceMessenger.Default.Send(new AddTargetCreatureRequestMessage(this));
+    //}
 
     [RelayCommand]
     private void DamageRequested()

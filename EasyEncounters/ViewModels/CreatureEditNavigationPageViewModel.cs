@@ -102,11 +102,6 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
                 CreatureAbilities.Add(ability);
             }
 
-            WeakReferenceMessenger.Default.Register<AbilityCRUDRequestMessage>(this, (r, m) =>
-            {
-                HandleAbilityCRUDRequest(m.Parameter, m.RequestType);
-            });
-
             SpellSlots = new SpellSlotViewModel(Creature.SpellSlots);
 
             var spells = await _dataService.GetAllSpellsAsync();
@@ -186,21 +181,6 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
         await EditAbility(ability);
     }
 
-    private void HandleAbilityCRUDRequest(Ability ability, CRUDRequestType requestType)
-    {
-        if (requestType == CRUDRequestType.Edit)
-        {
-            _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
-        }
-        else if (requestType == CRUDRequestType.Delete)
-        {
-            CreatureAbilities.Remove(ability);
-        }
-        else if (requestType == CRUDRequestType.Add)
-        {
-            CreatureAbilities.Add(ability);
-        }
-    }
     [RelayCommand]
     private async Task CommitChanges(object obj)
     {

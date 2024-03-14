@@ -77,8 +77,6 @@ public partial class App : Application
             services.AddTransient<PartyEditPage>();
             services.AddTransient<PartyCRUDViewModel>();
             services.AddTransient<PartyCRUDPage>();
-            services.AddTransient<EncounterEditViewModel>();
-            services.AddTransient<EncounterEditPage>();
             services.AddTransient<EncounterCRUDViewModel>();
             services.AddTransient<EncounterCRUDPage>();
             services.AddTransient<EncounterTabPage>();

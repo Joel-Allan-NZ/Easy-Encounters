@@ -116,7 +116,6 @@ public partial class AbilityEditViewModel : ObservableRecipient, INavigationAwar
         if (ObservableAbility.SpellLevel != SpellLevel.NotASpell)
             await _dataService.SaveAddAsync(_ability);
 
-        WeakReferenceMessenger.Default.Send(new AbilityCRUDRequestMessage(_ability, CRUDRequestType.Edit));
 
         if (_navigationService.CanGoBack)
             _navigationService.GoBack();

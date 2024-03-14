@@ -15,22 +15,4 @@ public partial class CreatureViewModel : ObservableRecipient
     {
         Creature = creature;
     }
-
-    [RelayCommand]
-    private void RequestCopyCreature()
-    {
-        WeakReferenceMessenger.Default.Send(new CreatureCopyRequestMessage(this));
-    }
-
-    [RelayCommand]
-    private void RequestDeleteCreature()
-    {
-        WeakReferenceMessenger.Default.Send(new CreatureDeleteRequestMessage(this));
-    }
-
-    [RelayCommand]
-    private void RequestEditCreature()
-    {
-        WeakReferenceMessenger.Default.Send(new CreatureEditRequestMessage(this));
-    }
 }

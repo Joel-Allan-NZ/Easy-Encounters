@@ -8,14 +8,22 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
     mc:Ignorable="d"
+    xmlns:behaviors="using:EasyEncounters.Behaviors"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="50"/>
         </Grid.RowDefinitions>
-        <usercontrols:PartyGrid AddNewPartyCommand="{x:Bind ViewModel.AddNewPartyCommand}"
+        <Grid Background="{ThemeResource SystemAltHighColor}"
+              Grid.Row="0">
+                <TextBlock Text="Manage Parties"
+                       Margin="10"
+                       Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
+            </Grid>
+            <usercontrols:PartyGrid AddNewPartyCommand="{x:Bind ViewModel.AddNewPartyCommand}"
                                 CopyPartyCommand="{x:Bind ViewModel.CopyPartyCommand}"
                                 DataGridSource="{x:Bind ViewModel.Parties}"
                                 DeletePartyCommand="{x:Bind ViewModel.DeletePartyCommand}"
@@ -24,18 +32,8 @@
                                 SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
                                 SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
                                 Suggestions="{x:Bind ViewModel.PartyFilterValues.SearchSuggestions, Mode=OneWay}"
+                                    Grid.Row="1"
                                 />
 
-        <Button Command="{x:Bind ViewModel.AddNewPartyCommand}"
-                VerticalAlignment="Bottom"
-                Margin="5"
-                Grid.Row="1"
-                KeyboardAcceleratorPlacementMode="Auto"
-                ToolTipService.ToolTip="Add a new party">
-            <Button.KeyboardAccelerators>
-                <KeyboardAccelerator Modifiers="Control" Key="N" />
-            </Button.KeyboardAccelerators>
-            <FontIcon Glyph="&#xF8AA;"></FontIcon>
-        </Button>
     </Grid>
 </Page>

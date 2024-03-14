@@ -8,14 +8,19 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:viewmodels="using:EasyEncounters.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:CreatureEditNavigationPageViewModel}"
     mc:Ignorable="d"
-    xmlns:helpers="using:EasyEncounters.Helpers" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:helpers="using:EasyEncounters.Helpers" 
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls" 
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
         <helpers:EnumToDescriptionStringConverter x:Key="EnumToDescriptionConverter" />
         <helpers:EnumToStringConverter x:Key="EnumToStringConverter" />
+        <helpers:SkillLevelToGlyphConverter x:Key="SkillLevelToGlyphConverter"/>
+        <helpers:SkillLevelToFontColorConverter x:Key="SkillLevelToColorConverter"/>
     </Page.Resources>
 
-    <StackPanel>
+    <StackPanel Margin="5,10,0,0">
         <Grid>
             <Grid.Resources>
                 <SolidColorBrush x:Key="DataGridCellFocusVisualPrimaryBrush" Color="Transparent" />
@@ -23,35 +28,80 @@
             </Grid.Resources>
 
             <GridView ItemsSource="{Binding Skills.Pairs}"
+                      SelectionMode="None"
                       Margin="5">
+                <GridView.Resources>
+                    <Style TargetType="TextBlock"
+                           x:Name="ColorEnum">
+                        <Setter Target="IsColorFontEnabled"
+                                Value="True"/>
+                        <Setter Target="Foreground"
+                                Value="{Binding Converter={StaticResource SkillLevelToColorConverter}}"/>
+                    </Style>
+                </GridView.Resources>
                 <GridView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsWrapGrid MaximumRowsOrColumns="3" Orientation="Horizontal"                
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid MaximumRowsOrColumns="3" Orientation="Horizontal"                
                                                            HorizontalAlignment="Stretch"
                                                            VerticalAlignment="Stretch"/>
-                    </ItemsPanelTemplate>
-                </GridView.ItemsPanel>
-                <GridView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Key, Converter={StaticResource EnumToStringConverter}}"
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Key, Converter={StaticResource EnumToStringConverter}}"
                                        FontSize="16"
                                        ToolTipService.ToolTip="{Binding Key, Converter={StaticResource EnumToDescriptionConverter}}"
-                                       MinWidth="200">
-                            </TextBlock>
-                            <ComboBox ItemsSource="{Binding Items}"
-                                      MinWidth="150"
+                                       MinWidth="150">
+                                </TextBlock>
+                                <ComboBox ItemsSource="{Binding Items}"
+                                      MinWidth="180"
                                       Margin="0,0,10,0"
                                       SelectedItem="{Binding Value, Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                        <!--<Interactivity:Interaction.Behaviors>
+                                            <Core:DataTriggerBehavior Binding="{Binding Value, Converter={StaticResource EnumToStringConverter}, Mode=OneWay}"
+                                              ComparisonCondition="Equal"
+                                              Value="Expertise">
+                                                <Core:ChangePropertyAction TargetObject="{Binding ElementName=SkillLevelGlyphTextBox}"
+                                                   PropertyName="Foreground"
+                                                   Value="{StaticResource AccentTextFillColorPrimaryBrush}"/>
+                                            </Core:DataTriggerBehavior>
+                                            <Core:DataTriggerBehavior Binding="{Binding Value, Converter={StaticResource EnumToStringConverter}, Mode=OneWay}"
+                                              ComparisonCondition="NotEqual"
+                                              Value="Expertise">
+                                                <Core:ChangePropertyAction TargetObject="{Binding ElementName=SkillLevelGlyphTextBox}"
+                                                   PropertyName="Foreground"
+                                                   Value="{StaticResource SystemColorWindowTextColor}"/>
+                                            </Core:DataTriggerBehavior>
+                                        </Interactivity:Interaction.Behaviors>-->
+                                        <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding Converter={StaticResource SkillLevelToGlyphConverter}}"
+                                                       FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                       IsColorFontEnabled="True"
+                                                       Foreground="{Binding Converter={StaticResource SkillLevelToColorConverter}}"
+                                                       Margin="0,0,5,0"
+                                                       x:Name="SkillLevelGlyphTextBox"
+                                                       FontSize="16"/>
+                                                <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"
+                                                           FontSize="12"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                                <!--<RadioButtons ItemsSource="{Binding Items}"
+                                          MaxColumns="4"
+                                          SelectedItem="{Binding Value, Mode=TwoWay}">
+                                <RadioButtons.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
                                     </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </StackPanel>
-                    </DataTemplate>
-                </GridView.ItemTemplate>
+                                </RadioButtons.ItemTemplate>
+                            </RadioButtons>-->
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
             </GridView>
         </Grid>
         <TextBox Header="Tool Proficiencies" 

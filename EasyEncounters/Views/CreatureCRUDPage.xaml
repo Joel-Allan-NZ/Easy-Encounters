@@ -10,13 +10,27 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
+    xmlns:behaviors="using:EasyEncounters.Behaviors"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
         <helpers:DoubleToStringConverter x:Key="DoubleToStringConverter" />
     </Page.Resources>
     <Grid>
-        <usercontrols:CreatureGrid AddNewCreatureCommand="{x:Bind ViewModel.AddNewCreatureCommand}"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Background="{ThemeResource SystemAltHighColor}"
+              Grid.Row="0">
+            <TextBlock Text="Manage Creatures"
+                    Margin="10"
+                    Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
+        </Grid>
+        <usercontrols:CreatureGrid Grid.Row="1"
+            AddNewCreatureCommand="{x:Bind ViewModel.AddNewCreatureCommand}"
                                    ClearFiltersCommand="{x:Bind ViewModel.ClearFiltersCommand}"
                                    CopyCreatureCommand="{x:Bind ViewModel.CopyCreatureCommand}"
                                    DeleteCreatureCommand="{x:Bind ViewModel.DeleteCreatureCommand}"

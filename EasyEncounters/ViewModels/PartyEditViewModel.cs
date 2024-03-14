@@ -34,10 +34,10 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
         var dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
         _filterTimer = dispatcherQueue.CreateTimer();
 
-        WeakReferenceMessenger.Default.Register<CreatureDeleteRequestMessage>(this, (r, m) =>
-        {
-            RemoveCreature(m.Parameter.Creature);
-        });
+        //WeakReferenceMessenger.Default.Register<CreatureDeleteRequestMessage>(this, (r, m) =>
+        //{
+        //    RemoveCreature(m.Parameter.Creature);
+        //});
     }
 
     public ObservableCollection<Campaign> Campaigns

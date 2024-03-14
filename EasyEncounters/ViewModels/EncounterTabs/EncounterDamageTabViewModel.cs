@@ -41,10 +41,10 @@ public partial class EncounterDamageTabViewModel : ObservableRecipientTab //Obse
             UpdateCreatures(m.Creatures);
         });
 
-        WeakReferenceMessenger.Default.Register<AddTargetCreatureRequestMessage>(this, (r, m) =>
-        {
-            AddTargets(SelectedCreatures);
-        });
+        //WeakReferenceMessenger.Default.Register<AddTargetCreatureRequestMessage>(this, (r, m) =>
+        //{
+        //    AddTargets(SelectedCreatures);
+        //});
         //test to see if we need to raise events for creature changes
         //WeakReferenceMessenger.Default.Register<>
     }

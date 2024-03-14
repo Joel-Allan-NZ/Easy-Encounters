@@ -55,7 +55,6 @@
     <None Remove="Views\EncounterAddCreaturesTabPage.xaml" />
     <None Remove="Views\EncounterCRUDPage.xaml" />
     <None Remove="Views\EncounterDamageTabPage.xaml" />
-    <None Remove="Views\EncounterEditPage.xaml" />
     <None Remove="Views\EncounterEdit\BasicInfoContentEncounterPage.xaml" />
     <None Remove="Views\EncounterEdit\CreaturesPage.xaml" />
     <None Remove="Views\EncounterEdit\EncounterEditNavigationPage.xaml" />
@@ -162,9 +161,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\EncounterTabPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Update="Views\EncounterEditPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Update="Views\EncounterCRUDPage.xaml">

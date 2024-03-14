@@ -21,10 +21,7 @@
                 <FontIcon Glyph="&#xE74D;" />
             </Button>
         </DataTemplate>
-
-
     </Page.Resources>
-
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -53,8 +50,8 @@
                                              Binding="{Binding Key.Creature.Name, Mode=OneWay}"
                                              IsReadOnly="True"
                                              CanUserSort="False" />
-                <controls:DataGridTextColumn Header="Name"
-                                             Tag="CreatureName"
+                <controls:DataGridTextColumn Header="Challenge Rating"
+                                             Tag="CreatureCR"
                                              Binding="{Binding Key.Creature.LevelOrCR, Mode=OneWay}"
                                              IsReadOnly="True"
                                              CanUserSort="False" />

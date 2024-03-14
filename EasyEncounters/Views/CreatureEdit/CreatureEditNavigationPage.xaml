@@ -11,31 +11,35 @@
     behaviors:NavigationViewHeaderBehavior.HeaderMode="Never"
     
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <Grid>
+    <Grid Background="{ThemeResource SystemAltHighColor}">
         <Grid.RowDefinitions>
             <RowDefinition Height="55"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock FontSize="40"
+        <Grid Grid.Row="0"
+              Background="{ThemeResource SystemAltHighColor}">
+            <TextBlock FontSize="40"
+                        Grid.Row="0"
+                        FontWeight="Bold"
+                        Text="{x:Bind ViewModel.Creature.Name}"
+                        FontFamily="{StaticResource StatBlockTitle}"
+                        Margin="5"/>
+            <Button HorizontalAlignment="Right"
                     Grid.Row="0"
-                    FontWeight="Bold"
-                    Text="{x:Bind ViewModel.Creature.Name}"
-                    FontFamily="{StaticResource StatBlockTitle}"
-                    Margin="5"/>
-        <Button HorizontalAlignment="Right"
-                Grid.Row="0"
-                VerticalAlignment="Top"
-                Margin="0,10,0,0"
-                Command="{x:Bind ViewModel.CommitChangesCommand}">
-            <Button.KeyboardAccelerators>
-                <KeyboardAccelerator Modifiers="Control" Key="S" />
-            </Button.KeyboardAccelerators>
-            <FontIcon Glyph="&#xE74E;"></FontIcon>
-        </Button>
+                    VerticalAlignment="Top"
+                    Margin="0,10,0,0"
+                    Command="{x:Bind ViewModel.CommitChangesCommand}">
+                <Button.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="Control" Key="S" />
+                </Button.KeyboardAccelerators>
+                <FontIcon Glyph="&#xE74E;"></FontIcon>
+            </Button>
+        </Grid>
 
         <NavigationView x:Name="rootNavigationView" 
+                        Background="{ThemeResource SystemAltHighColor}"
                         Grid.Row="1"
-                        Margin="10,0,0,0"
+                        Margin="0,0,0,0"
                         IsTitleBarAutoPaddingEnabled="True"
                         ItemInvoked="NavView_ItemInvoked"
                         Loaded="NavView_Loaded"
@@ -44,11 +48,11 @@
                         PaneDisplayMode="Top"
                         IsBackEnabled="False">
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="Basic Information" x:Name="BasicInfoContent" />
+                <NavigationViewItem Content="Basic Information" x:Name="BasicInfoContent"/>
                 <NavigationViewItem Content="Core Stats" x:Name="CoreStatsContent" />
                 <NavigationViewItem Content="Optional Stats" x:Name="OptionalStatsContent" />
                 <NavigationViewItem Content="Skills" x:Name="SkillsContent"/>
-                <NavigationViewItem Content="Attacks and Abilities" x:Name="AttacksAndAbilitiesContent" />
+                <NavigationViewItem Content="Attacks and Abilities" x:Name="AttacksAndAbilitiesContent"/>
                 <NavigationViewItem Content="CR Advice" x:Name="CRAdviceContent"/>
             </NavigationView.MenuItems>
 

@@ -8,10 +8,22 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
+    xmlns:behaviors="using:EasyEncounters.Behaviors"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource SystemAltHighColor}"
+              Grid.Row="0">
+                <TextBlock Text="Manage Encounters"
+                       Margin="10"
+                       Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
+            </Grid>
         <usercontrols:EncounterGrid HasVisibleFilters="True"
                                     FilterMinimumEncounterDifficulty="{x:Bind ViewModel.EncounterFilterValues.MinimumDifficulty, Mode=TwoWay}"
                                     FilterMaximumEncounterDifficulty="{x:Bind ViewModel.EncounterFilterValues.MaximumDifficulty, Mode=TwoWay}"
@@ -32,6 +44,7 @@
                                     SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
                                     SelectEncounterCommand="{x:Bind ViewModel.EditEncounterCommand}"
                                     InteractableRows="True"
+                                    Grid.Row="1"
                                     />
     </Grid>
 </Page>

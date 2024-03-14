@@ -8,11 +8,25 @@
     xmlns:helpers="using:EasyEncounters.Helpers"
     xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        xmlns:behaviors="using:EasyEncounters.Behaviors"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
     mc:Ignorable="d">
     <Page.Resources>
         <helpers:EnumToStringConverter x:Key="EnumToStringConverter" />
     </Page.Resources>
-    <usercontrols:SpellGrid
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Background="{ThemeResource SystemAltHighColor}"
+              Grid.Row="0">
+                <TextBlock Text="Manage Spells"
+                       Margin="10"
+                       Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
+            </Grid>
+        <usercontrols:SpellGrid
+            Grid.Row="1"
         FilterSpellLevelSource="{x:Bind ViewModel.AbilityFilterValues.SpellLevels}"
         FilterMinimumSpellLevel="{x:Bind ViewModel.AbilityFilterValues.MinimumSpellLevelFilter, Mode=TwoWay}"
         FilterMaximumSpellLevel="{x:Bind ViewModel.AbilityFilterValues.MaximumSpellLevelFilter, Mode=TwoWay}"
@@ -37,4 +51,6 @@
         CopySpellCommand="{x:Bind ViewModel.CopyAbilityCommand}"
         DeleteSpellCommand="{x:Bind ViewModel.DeleteAbilityCommand}"
         AddSpellCommand="{x:Bind ViewModel.AddAbilityCommand}" />
+    </Grid>
+
 </Page>

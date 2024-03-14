@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
+using EasyEncounters.Models;
 
 namespace EasyEncounters.ViewModels;
 
@@ -16,7 +17,7 @@ public partial class CampaignCRUDViewModel : ObservableRecipient, INavigationAwa
         _dataService = dataService;
     }
 
-    public ObservableCollection<Campaign> Campaigns
+    public ObservableCollection<ObservableCampaign> Campaigns
     {
         get; private set;
     } = new();
@@ -33,7 +34,17 @@ public partial class CampaignCRUDViewModel : ObservableRecipient, INavigationAwa
         Campaigns.Clear();
         foreach (var campaign in await _dataService.GetAllCampaignsAsync())
         {
-            Campaigns.Add(campaign);
+            ObservableCampaign observable = new(campaign);
+            observable.PropertyChanged += OnCampaignPropertyChanged;
+            Campaigns.Add(observable);
+        }
+    }
+
+    private async void OnCampaignPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if(sender is not null and ObservableCampaign observable)
+        {
+            await _dataService.SaveAddAsync(observable.Campaign);
         }
     }
 
@@ -41,6 +52,7 @@ public partial class CampaignCRUDViewModel : ObservableRecipient, INavigationAwa
     private async Task AddNewCampaign()
     {
         var campaign = new Campaign();
+        Campaigns.Add(new(campaign));
         await _dataService.SaveAddAsync(campaign);
     }
 }

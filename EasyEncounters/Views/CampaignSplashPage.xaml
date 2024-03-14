@@ -8,10 +8,18 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     mc:Ignorable="d"
+    xmlns:behaviors="using:EasyEncounters.Behaviors"
+    behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
         <StackPanel>
+            <Grid Background="{ThemeResource SystemAltHighColor}">
+                <TextBlock Text="Run a Campaign Session"
+                       Margin="10"
+                       Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
+            </Grid>
+            <ScrollViewer>
             <ListView ItemsSource="{x:Bind ViewModel.Campaigns, Mode=OneWay}"
                       x:Name="CampaignList"
                       HorizontalContentAlignment="Stretch">
@@ -40,6 +48,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            </ScrollViewer>
         </StackPanel>
     </Grid>
 </Page>

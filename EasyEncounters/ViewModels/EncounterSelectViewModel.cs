@@ -76,7 +76,7 @@ public partial class EncounterSelectViewModel : ObservableRecipient, INavigation
     [RelayCommand]
     private void AddEncounter()
     {
-        _navigationService.NavigateTo(typeof(EncounterEditViewModel).FullName!, null);
+        _navigationService.NavigateTo(typeof(EncounterEditNavigationViewModel).FullName!, null);
     }
 
 

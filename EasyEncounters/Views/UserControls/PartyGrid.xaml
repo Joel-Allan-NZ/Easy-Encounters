@@ -46,6 +46,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="10*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Name="DataGridFilterBox"
                 Orientation="Horizontal"
@@ -131,5 +132,16 @@
                                              CanUserSort="True"/>
             </controls:DataGrid.Columns>
         </controls:DataGrid>
+        <Button Command="{x:Bind AddNewPartyCommand}"
+            Grid.Row="2"
+                VerticalAlignment="Bottom"
+                Margin="5,5,5,5"
+                KeyboardAcceleratorPlacementMode="Auto"
+                ToolTipService.ToolTip="Add a new spell">
+            <Button.KeyboardAccelerators>
+                <KeyboardAccelerator Modifiers="Control" Key="N" />
+            </Button.KeyboardAccelerators>
+            <FontIcon Glyph="&#xF8AA;"></FontIcon>
+        </Button>
     </Grid>
 </UserControl>

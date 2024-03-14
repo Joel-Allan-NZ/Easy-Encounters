@@ -29,11 +29,6 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         _navigationService = navigationService;
         _filteringService = filteringService;
         _abilityFilterValues = (AbilityFilter)filteringService.GetFilterValues<Ability>();
-
-        WeakReferenceMessenger.Default.Register<AbilityCRUDRequestMessage>(this, (r, m) =>
-        {
-            _ = HandleCRUDRequest(m.Parameter, m.RequestType);
-        });
     }
 
     public ObservableCollection<Ability> Abilities
@@ -113,22 +108,6 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         if (ability != null && ability is Ability)
         {
             _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
-        }
-    }
-
-    private async Task HandleCRUDRequest(Ability ability, CRUDRequestType requestType)
-    {
-        if (requestType == CRUDRequestType.Delete)
-        {
-            await DeleteAbility(ability);
-        }
-        else if (requestType == CRUDRequestType.Edit)
-        {
-            EditAbility(ability);
-        }
-        else if (requestType == CRUDRequestType.Copy)
-        {
-            await CopyAbility(ability);
         }
     }
 

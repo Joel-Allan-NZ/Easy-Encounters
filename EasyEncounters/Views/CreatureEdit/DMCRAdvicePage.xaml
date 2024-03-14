@@ -9,7 +9,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Grid Margin="5,10,0,0">
         <ScrollViewer>
             <StackPanel>
                 <TextBlock>
@@ -17,6 +17,7 @@
                 <LineBreak/>
                 <Run Text="You should also apply some basic adjustments as follows:"/>
                 <LineBreak/>
+                    <LineBreak/>
                 <Run Text="Defensive Challenge Rating:" FontWeight="Medium"/>
                 <LineBreak/>
                 <Run Text="Read down the Hit Points column of the Monster Statistics by Challenge Rating table until you find your monster’s hit points."/>
@@ -27,6 +28,7 @@
                 <LineBreak/>
                 <Run Text="If your monster’s AC is at least two points higher or lower than that number, adjust the challenge rating suggested by its hit points up or down by 1 for every 2 points of difference."/>
                 <LineBreak/>
+                    <LineBreak/>
                 <Run Text="Offensive Challenge Rating."
                      FontWeight="Medium"/>
                 <LineBreak/>
@@ -44,6 +46,7 @@
                 <controls:DataGrid
             ItemsSource="{Binding DifficultyGuide.Data}"
              IsReadOnly="True"
+             Margin="0,10,0,0"
              SelectionMode="Single"
              GridLinesVisibility="Horizontal">
 

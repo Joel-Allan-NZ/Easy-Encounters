@@ -25,7 +25,6 @@ public class PageService : IPageService
         Configure<PartyEditViewModel, PartyEditPage>();
         Configure<CampaignCRUDViewModel, CampaignCRUDPage>();
         Configure<EncounterCRUDViewModel, EncounterCRUDPage>();
-        Configure<EncounterEditViewModel, EncounterEditPage>();
         Configure<EncounterTabViewModel, EncounterTabPage>();
         Configure<AbilityCRUDViewModel, AbilityCRUDPage>();
         Configure<AbilityEditViewModel, AbilityEditPage>();
