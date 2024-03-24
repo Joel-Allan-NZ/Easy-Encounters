@@ -1,4 +1,5 @@
-﻿using EasyEncounters.Core.Contracts.Services;
+﻿using System.Reflection;
+using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Helpers;
 using EasyEncounters.Core.Services.Models;
 
@@ -27,11 +28,41 @@ public class LocalSettingsService : ILocalSettingsService
         _options = options.Value;
 
         // _applicationDataFolder = 
-
+        CopyDB();
         _applicationDataFolder = Path.Combine(_localApplicationData, _options.ApplicationDataFolder ?? _defaultApplicationDataFolder);
         _localsettingsFile = _options.LocalSettingsFile ?? _defaultLocalSettingsFile;
 
         //_settings = new Dictionary<string, object>();
+    }
+
+    private void CopyDB()
+    {
+
+        string result = Assembly.GetExecutingAssembly().Location;
+        int index = result.LastIndexOf("\\");
+        string dbPath = $"{result.Substring(0, index)}\\TextJson.txt";
+        
+        
+        string destinationFolder = Path.Combine(_localApplicationData, _options.ApplicationDataFolder ?? _defaultApplicationDataFolder); //$"{Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)}\\EasyEncounters\\";
+        string destinationPath = Path.Combine(destinationFolder, "TextJson.txt");
+        if (!File.Exists(destinationPath))
+        {
+            Directory.CreateDirectory(destinationFolder);
+            File.Copy(dbPath, destinationPath, true);
+            var settings = "LocalSettings.json";
+            var oldLog = "Logging.txt";
+            var error = "ErrorLogging.txt";
+            var log = "Log.txt";
+
+            File.Copy(Path.Combine($"{result.Substring(0, index)}\\", settings), Path.Combine(destinationFolder, settings), true);
+            File.Copy(Path.Combine($"{result.Substring(0, index)}\\", oldLog), Path.Combine(destinationFolder, oldLog), true);
+            File.Copy(Path.Combine($"{result.Substring(0, index)}\\", error), Path.Combine(destinationFolder, error), true);
+            File.Copy(Path.Combine($"{result.Substring(0, index)}\\", log), Path.Combine(destinationFolder, log), true);
+
+
+        }
+
+
     }
 
     public async Task<T?> ReadSettingAsync<T>(string key)

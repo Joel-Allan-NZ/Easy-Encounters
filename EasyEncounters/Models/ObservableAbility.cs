@@ -6,7 +6,7 @@ namespace EasyEncounters.Models;
 
 public partial class ObservableAbility : ObservableObject
 {
-    private readonly Ability _ability;
+    public Ability Ability;
 
     [ObservableProperty]
     private bool _isSpell;
@@ -23,149 +23,158 @@ public partial class ObservableAbility : ObservableObject
     [ObservableProperty]
     private bool _needsTime;
 
+    [ObservableProperty]
+    private bool _needsCastTimeString;
+
     public ObservableAbility(Ability ability)
     {
-        _ability = ability;
+        Ability = ability;
 
         IsSpell = ability.SpellLevel != SpellLevel.NotASpell;
         NeedsSaveType = ability.Resolution == ResolutionType.SavingThrow;
         NeedsRangeValue = ability.TargetDistanceType == ActionRangeType.Feet || ability.TargetDistanceType == ActionRangeType.Mile;
         NeedsArea = ability.TargetAreaType != TargetAreaType.Creatures && ability.TargetAreaType != TargetAreaType.None;
         NeedsTime = ability.TimeDurationType != Core.Models.Enums.TimeDuration.Permanent && ability.TimeDurationType != Core.Models.Enums.TimeDuration.Instantaneous;
+        NeedsCastTimeString = ActionSpeed == ActionSpeed.Other;
     }
 
     public ActionSpeed ActionSpeed
     {
-        get => _ability.ActionSpeed;
-        set => SetProperty(_ability.ActionSpeed, value, _ability, (m, v) => m.ActionSpeed = v);
+        get => Ability.ActionSpeed;
+        set
+        {
+            SetProperty(Ability.ActionSpeed, value, Ability, (m, v) => m.ActionSpeed = v);
+            NeedsCastTimeString = ActionSpeed == ActionSpeed.Other;
+        }
     }
 
     public bool Concentration
     {
-        get => _ability.Concentration;
-        set => SetProperty(_ability.Concentration, value, _ability, (m, v) => m.Concentration = v);
+        get => Ability.Concentration;
+        set => SetProperty(Ability.Concentration, value, Ability, (m, v) => m.Concentration = v);
     }
 
     public DamageType DamageType
     {
-        get => _ability.DamageTypes;
-        set => SetProperty(_ability.DamageTypes, value, _ability, (m, v) => m.DamageTypes = v);
+        get => Ability.DamageTypes;
+        set => SetProperty(Ability.DamageTypes, value, Ability, (m, v) => m.DamageTypes = v);
     }
 
     public string EffectDescription
     {
-        get => _ability.EffectDescription;
-        set => SetProperty(_ability.EffectDescription, value, _ability, (m, v) => m.EffectDescription = v);
+        get => Ability.EffectDescription;
+        set => SetProperty(Ability.EffectDescription, value, Ability, (m, v) => m.EffectDescription = v);
     }
 
     public MagicSchool MagicSchool
     {
-        get => _ability.MagicSchool;
-        set => SetProperty(_ability.MagicSchool, value, _ability, (m, v) => m.MagicSchool = v);
+        get => Ability.MagicSchool;
+        set => SetProperty(Ability.MagicSchool, value, Ability, (m, v) => m.MagicSchool = v);
     }
 
     public string MaterialCost
     {
-        get => _ability.MaterialCost;
-        set => SetProperty(_ability.MaterialCost, value, _ability, (m, v) => m.MaterialCost = v);
+        get => Ability.MaterialCost;
+        set => SetProperty(Ability.MaterialCost, value, Ability, (m, v) => m.MaterialCost = v);
     }
 
     public string Name
     {
-        get => _ability.Name;
-        set => SetProperty(_ability.Name, value, _ability, (m, v) => m.Name = v);
+        get => Ability.Name;
+        set => SetProperty(Ability.Name, value, Ability, (m, v) => m.Name = v);
     }
 
     public ResolutionType Resolution
     {
-        get => _ability.Resolution;
+        get => Ability.Resolution;
         set
         {
-            SetProperty(_ability.Resolution, value, _ability, (m, v) => m.Resolution = v);
-            NeedsSaveType = _ability.Resolution == ResolutionType.SavingThrow;
+            SetProperty(Ability.Resolution, value, Ability, (m, v) => m.Resolution = v);
+            NeedsSaveType = Ability.Resolution == ResolutionType.SavingThrow;
         }
     }
 
     public CreatureAttributeType ResolutionStat
     {
-        get => _ability.ResolutionStat;
-        set => SetProperty(_ability.ResolutionStat, value, _ability, (m, v) => m.ResolutionStat = v);
+        get => Ability.ResolutionStat;
+        set => SetProperty(Ability.ResolutionStat, value, Ability, (m, v) => m.ResolutionStat = v);
     }
 
     public CreatureAttributeType SaveType
     {
-        get => _ability.SaveType;
-        set => SetProperty(_ability.SaveType, value, _ability, (m, v) => m.SaveType = v);
+        get => Ability.SaveType;
+        set => SetProperty(Ability.SaveType, value, Ability, (m, v) => m.SaveType = v);
     }
 
     public SpellCastComponent SpellCastComponents
     {
-        get => _ability.CastingComponents;
-        set => SetProperty(_ability.CastingComponents, value, _ability, (m, v) => m.CastingComponents = v);
+        get => Ability.CastingComponents;
+        set => SetProperty(Ability.CastingComponents, value, Ability, (m, v) => m.CastingComponents = v);
     }
 
     public SpellLevel SpellLevel
     {
-        get => _ability.SpellLevel;
+        get => Ability.SpellLevel;
         set
         {
-            SetProperty(_ability.SpellLevel, value, _ability, (m, v) => m.SpellLevel = v);
-            IsSpell = _ability.SpellLevel != SpellLevel.NotASpell;
+            SetProperty(Ability.SpellLevel, value, Ability, (m, v) => m.SpellLevel = v);
+            IsSpell = Ability.SpellLevel != SpellLevel.NotASpell;
         }
     }
 
     public TargetAreaType TargetAreaType
     {
-        get => _ability.TargetAreaType;
+        get => Ability.TargetAreaType;
         set
         {
-            SetProperty(_ability.TargetAreaType, value, _ability, (m, v) => m.TargetAreaType = v);
-            NeedsArea = _ability.TargetAreaType != TargetAreaType.Creatures && _ability.TargetAreaType != TargetAreaType.None;
+            SetProperty(Ability.TargetAreaType, value, Ability, (m, v) => m.TargetAreaType = v);
+            NeedsArea = Ability.TargetAreaType != TargetAreaType.Creatures && Ability.TargetAreaType != TargetAreaType.None;
         }
     }
 
     public int TargetCount
     {
-        get => _ability.TargetCount;
-        set => SetProperty(_ability.TargetCount, value, _ability, (m, v) => m.TargetCount = v);
+        get => Ability.TargetCount;
+        set => SetProperty(Ability.TargetCount, value, Ability, (m, v) => m.TargetCount = v);
     }
 
     public int TargetDistance
     {
-        get => _ability.TargetDistance;
-        set => SetProperty(_ability.TargetDistance, value, _ability, (m, v) => m.TargetDistance = v);
+        get => Ability.TargetDistance;
+        set => SetProperty(Ability.TargetDistance, value, Ability, (m, v) => m.TargetDistance = v);
     }
 
     public ActionRangeType TargetDistanceType
     {
-        get => _ability.TargetDistanceType;
+        get => Ability.TargetDistanceType;
         set
         {
-            SetProperty(_ability.TargetDistanceType, value, _ability, (m, v) => m.TargetDistanceType = v);
-            NeedsRangeValue = _ability.TargetDistanceType == ActionRangeType.Feet || _ability.TargetDistanceType == ActionRangeType.Mile;
+            SetProperty(Ability.TargetDistanceType, value, Ability, (m, v) => m.TargetDistanceType = v);
+            NeedsRangeValue = Ability.TargetDistanceType == ActionRangeType.Feet || Ability.TargetDistanceType == ActionRangeType.Mile;
         }
     }
 
     public int TargetSize
     {
-        get => _ability.TargetAreaSize;
-        set => SetProperty(_ability.TargetAreaSize, value, _ability, (m, v) => m.TargetAreaSize = v);
+        get => Ability.TargetAreaSize;
+        set => SetProperty(Ability.TargetAreaSize, value, Ability, (m, v) => m.TargetAreaSize = v);
     }
 
     public int TimeDuration
     {
-        get => _ability.TimeDuration;
-        set => SetProperty(_ability.TimeDuration, value, _ability, (m, v) => m.TimeDuration = v);
+        get => Ability.TimeDuration;
+        set => SetProperty(Ability.TimeDuration, value, Ability, (m, v) => m.TimeDuration = v);
     }
 
     public TimeDuration TimeDurationType
     {
-        get => _ability.TimeDurationType;
+        get => Ability.TimeDurationType;
         set
         {
-            SetProperty(_ability.TimeDurationType, value, _ability, (m, v) => m.TimeDurationType = v);
-            NeedsTime = _ability.TimeDurationType != Core.Models.Enums.TimeDuration.Permanent &&
-                _ability.TimeDurationType != Core.Models.Enums.TimeDuration.Instantaneous;
+            SetProperty(Ability.TimeDurationType, value, Ability, (m, v) => m.TimeDurationType = v);
+            NeedsTime = Ability.TimeDurationType != Core.Models.Enums.TimeDuration.Permanent &&
+                Ability.TimeDurationType != Core.Models.Enums.TimeDuration.Instantaneous;
         }
     }
+
 }

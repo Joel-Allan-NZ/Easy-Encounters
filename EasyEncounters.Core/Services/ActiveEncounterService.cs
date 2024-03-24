@@ -47,6 +47,7 @@ public class ActiveEncounterService : IActiveEncounterService
         var activeCreatures = CreateCreaturesForActiveEncounter(encounter, party);
 
         var active = new ActiveEncounter(encounter, activeCreatures);
+        active.Description ??= "Active";
         await _dataService.SaveAddAsync(active);
 
         return active;
@@ -76,7 +77,7 @@ public class ActiveEncounterService : IActiveEncounterService
     public async Task EndEncounterAsync(ActiveEncounter activeEncounter)
     {
         await _dataService.WriteLogAsync(activeEncounter.Log);
-        await _dataService.ClearActiveEncounterAsync();
+        //await _dataService.ClearActiveEncounterAsync();
         await _logService.EndEncounterLog();
     }
 
@@ -152,7 +153,7 @@ public class ActiveEncounterService : IActiveEncounterService
 
     private ActiveEncounterCreature CreateActiveEncounterCreature(Creature creature, bool rollHP)
     {
-        var result = new ActiveEncounterCreature(_creatureService.DeepCopy(creature));
+        var result = new ActiveEncounterCreature(creature);
 
         if (rollHP && creature.DMControl)
         {

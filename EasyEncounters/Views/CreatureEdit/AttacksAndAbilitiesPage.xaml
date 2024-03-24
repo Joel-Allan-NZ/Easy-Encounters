@@ -38,6 +38,39 @@
                 <TextBox Margin="10,5"
                   Header="Number of Attacks Description:"
                   Text="{Binding Creature.AttackDescription, Mode=TwoWay}" />
+                <StackPanel Orientation="Horizontal" Margin="10,2">
+                <ComboBox Header="Primary Spell Stat"
+                          SelectedItem="{Binding CreatureCastingStat, Mode=TwoWay}"
+                          ItemsSource="{Binding StatTypes}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Expander Header="Spell Slots:"
+                          Visibility="{Binding ShowSpellSlots, Mode=TwoWay}"
+                    Margin="5">
+                    <Expander.Content>
+                        <GridView ItemsSource="{Binding Creature.SpellSlots}">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VariableSizedWrapGrid 
+                                        MaximumRowsOrColumns="9"
+                                       ItemWidth="100"                      
+                                       Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <NumberBox Maximum="20" Minimum="0"
+                                    Value="{Binding }"></NumberBox>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                    </Expander.Content>
+                </Expander>
+                </StackPanel>
                 <controls:DataGrid
                     x:Name="AbilityGrid"
                     IsReadOnly="True"

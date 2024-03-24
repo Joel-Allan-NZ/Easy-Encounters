@@ -19,7 +19,7 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
     private readonly IFilteringService _filteringService;
 
     private ActiveEncounter? _activeEncounter;
-    private IList<CreatureViewModel>? _creatureCache;
+    private IList<ObservableCreature>? _creatureCache;
 
     [ObservableProperty]
     private CreatureFilter _creatureFilterValues;
@@ -31,7 +31,7 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
     private double _minimumCRFilter;
 
     [ObservableProperty]
-    private List<CreatureViewModel>? searchSuggestions;
+    private List<ObservableCreature>? searchSuggestions;
 
     public EncounterAddCreaturesTabViewModel(IDataService dataService, IFilteringService filteringService)
     {
@@ -39,13 +39,13 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
         _dataService = dataService;
         _activeEncounter = null;
 
-        _creatureCache = new List<CreatureViewModel>();
-        _creatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<CreatureViewModel>();
+        _creatureCache = new List<ObservableCreature>();
+        _creatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<ObservableCreature>();
     }
 
     public event EventHandler<DataGridColumnEventArgs>? Sorting;
 
-    public ObservableCollection<CreatureViewModel> Creatures
+    public ObservableCollection<ObservableCreature> Creatures
     {
         get; private set;
     } = new();
@@ -53,7 +53,7 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
     /// <summary>
     /// Additional creatures to add to the active encounter, and their quantities
     /// </summary>
-    public ObservableCollection<ObservableKVP<CreatureViewModel, int>> EncounterCreaturesByCount
+    public ObservableCollection<ObservableKVP<ObservableCreature, int>> EncounterCreaturesByCount
     {
         get; private set;
     } = new();
@@ -72,10 +72,10 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
 
         Creatures.Clear();
         foreach (var creature in await _dataService.GetAllCreaturesAsync())
-            Creatures.Add(new CreatureViewModel(creature));
+            Creatures.Add(new ObservableCreature((Creature)creature));
 
         MaximumCRFilter = 30; //that's as high as she goes cap'n
-        _creatureCache = new List<CreatureViewModel>(Creatures);
+        _creatureCache = new List<ObservableCreature>(Creatures);
 
         SearchSuggestions = new(Creatures);
     }
@@ -88,15 +88,15 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
     [RelayCommand]
     private void AddCreature(object obj)
     {
-        if (obj != null && obj is CreatureViewModel)
+        if (obj != null && obj is ObservableCreature)
         {
-            CreatureViewModel creature = (CreatureViewModel)obj;
+            ObservableCreature creature = (ObservableCreature)obj;
 
             var match = EncounterCreaturesByCount.FirstOrDefault(x => x.Key.Creature.Equals(creature.Creature));
 
             if (match == null)
             {
-                EncounterCreaturesByCount.Add(new ObservableKVP<CreatureViewModel, int>(creature, 1));
+                EncounterCreaturesByCount.Add(new ObservableKVP<ObservableCreature, int>(creature, 1));
             }
             else
                 match.Value++;
@@ -128,7 +128,7 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
     [RelayCommand]
     private void CreatureFilter(string text)
     {
-        List<FilterCriteria<CreatureViewModel>> criteria = new List<FilterCriteria<CreatureViewModel>>()
+        List<FilterCriteria<ObservableCreature>> criteria = new List<FilterCriteria<ObservableCreature>>()
         {
             new(x => x.Creature.LevelOrCR, MinimumCRFilter, MaximumCRFilter),
             new(x => x.Creature.Name, text)
@@ -174,9 +174,9 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
     [RelayCommand]
     private void RemoveCreature(object obj)
     {
-        if (obj != null && obj is CreatureViewModel)
+        if (obj != null && obj is ObservableCreature)
         {
-            CreatureViewModel toRemove = (CreatureViewModel)obj;
+            ObservableCreature toRemove = (ObservableCreature)obj;
 
             var match = EncounterCreaturesByCount.FirstOrDefault(x => x.Key.Creature.Equals(toRemove.Creature));
             if (match != null)
@@ -199,7 +199,7 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
 
     private void SortCreaturesByCR(bool ascending)
     {
-        IEnumerable<CreatureViewModel> tmp;
+        IEnumerable<ObservableCreature> tmp;
 
         if (!ascending)
             tmp = Creatures.OrderBy(x => x.Creature.LevelOrCR).ToList();
@@ -213,7 +213,7 @@ public partial class EncounterAddCreaturesTabViewModel : ObservableRecipientTab
 
     private void SortCreaturesByName(bool ascending)
     {
-        IEnumerable<CreatureViewModel> tmp;
+        IEnumerable<ObservableCreature> tmp;
 
         if (!ascending)
             tmp = Creatures.OrderBy(x => x.Creature.Name).ToList();

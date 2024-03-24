@@ -21,7 +21,7 @@ public partial class CreatureFilter : FilterValues
     private double _minimumCRFilter;
 
     [ObservableProperty]
-    private List<CreatureViewModel> _searchSuggestions = new();
+    private List<ObservableCreature> _searchSuggestions = new();
 
     [ObservableProperty]
     private CreatureType _creatureTypeFilterSelected;
@@ -39,9 +39,9 @@ public partial class CreatureFilter : FilterValues
     public IList<CreatureSizeClass> SizeClasses => _creatureSizeClasses;
     public IList<CreatureType> CreatureTypes => _creatureTypes;
 
-    public ICollection<FilterCriteria<CreatureViewModel>> GenerateFilterCriteria(string text)
+    public ICollection<FilterCriteria<ObservableCreature>> GenerateFilterCriteria(string text)
     {
-        List<FilterCriteria<CreatureViewModel>> criteriaList = new List<FilterCriteria<CreatureViewModel>>()
+        List<FilterCriteria<ObservableCreature>> criteriaList = new List<FilterCriteria<ObservableCreature>>()
         {
             new(x => x.Creature.LevelOrCR, MinimumCRFilter, MaximumCRFilter),
             new(x => x.Creature.Size, MinCreatureSizeClassFilter, MaxCreatureSizeClassFilter),
@@ -67,13 +67,13 @@ public partial class CreatureFilter : FilterValues
         CreatureTypeFilterSelected = CreatureType.Any;
     }
 
-    public void SortCollection(ObservableCollection<CreatureViewModel> collection, DataGridColumnEventArgs e)
+    public void SortCollection(ObservableCollection<ObservableCreature> collection, DataGridColumnEventArgs e)
     {
         var sortDirection = e.Column.SortDirection == DataGridSortDirection.Ascending;
 
         var tagString = e.Column.Tag.ToString();
 
-        Func<CreatureViewModel, object> predicate = tagString switch
+        Func<ObservableCreature, object> predicate = tagString switch
         {
             "CreatureName" => new(x => x.Creature.Name),
             "CreatureCR" => new(x => x.Creature.LevelOrCR),

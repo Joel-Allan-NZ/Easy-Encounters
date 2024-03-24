@@ -7,6 +7,10 @@ namespace EasyEncounters.Core.Models;
 /// </summary>
 public class Encounter : Persistable
 {
+    public Encounter()
+    {
+        
+    }
     public Encounter(string name = "default", List<Creature>? creatures = null, string description = "", double adjustedEncounterXP = -1, Campaign? campaign = null, bool isCampaignOnlyEncounter = false)
     {
         Creatures = creatures ?? new List<Creature>();

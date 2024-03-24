@@ -60,16 +60,16 @@ public class ActiveEncounter : Encounter
         get; set;
     }
 
-    private void AddCreature(ActiveEncounterCreature creature, Dictionary<string, int> collisions)
+    private void AddCreature(ActiveEncounterCreature activeCreature, Dictionary<string, int> collisions)
     {
-        if (collisions.ContainsKey(creature.EncounterName))
+        if (collisions.ContainsKey(activeCreature.EncounterName))
         {
-            creature.EncounterName = creature.Name + " " + collisions[creature.Name];
-            collisions[creature.Name]++;
+            activeCreature.EncounterName = activeCreature.Name + " " + collisions[activeCreature.Name];
+            collisions[activeCreature.Name]++;
         }
         else
-            collisions[creature.Name] = 1;
+            collisions[activeCreature.Name] = 1;
 
-        ActiveCreatures.Add(creature);
+        ActiveCreatures.Add(activeCreature);
     }
 }

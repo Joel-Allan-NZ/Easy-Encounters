@@ -13,4 +13,8 @@ public class ActiveAbility : Ability
     {
         get; set;
     }
+    public ActiveAbility()
+    {
+        
+    }
 }

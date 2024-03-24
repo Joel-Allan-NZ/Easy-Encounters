@@ -5,6 +5,10 @@ namespace EasyEncounters.Core.Models;
 
 public class Ability : IPersistable
 {
+    public Ability()
+    {
+        Id = Guid.NewGuid();
+    }
     public Ability(string name = "New Ability", ResolutionType resolutionType = ResolutionType.Attack, int targetCount = 1,
         int targetSize = 0, int targetDistance = 5, ActionRangeType targetDistanceType = ActionRangeType.Self,
         TargetAreaType targetAreaType = TargetAreaType.Creatures,
@@ -12,7 +16,7 @@ public class Ability : IPersistable
         CreatureAttributeType resolutionStat = CreatureAttributeType.None, SpellCastComponent spellCastComponents = SpellCastComponent.None,
         ActionSpeed actionSpeed = ActionSpeed.Action, string materialCost = "", SpellLevel spellLevel = SpellLevel.NotASpell,
         MagicSchool magicSchool = MagicSchool.None, int duration = 0, TimeDuration durationType = Enums.TimeDuration.Instantaneous,
-        CreatureAttributeType saveType = CreatureAttributeType.None, bool concentration = false)
+        CreatureAttributeType saveType = CreatureAttributeType.None, bool concentration = false, string castTimeString = "")
     {
         Name = name;
         Resolution = resolutionType;
@@ -34,6 +38,7 @@ public class Ability : IPersistable
         SaveType = saveType;
         MagicSchool = magicSchool;
         Concentration = concentration;
+        CastTimeString = castTimeString;
     }
 
     /// <summary>
@@ -48,6 +53,14 @@ public class Ability : IPersistable
     /// The components involved in casting a spell - Verbal, Somatic, Material.
     /// </summary>
     public SpellCastComponent CastingComponents
+    {
+        get; set;
+    }
+
+    /// <summary>
+    /// The length of time it takes to use an ability; for non-standard cast times.
+    /// </summary>
+    public string CastTimeString
     {
         get; set;
     }

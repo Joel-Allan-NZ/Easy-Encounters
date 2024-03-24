@@ -8,4 +8,5 @@ public enum TargetAreaType
     Cube = 3,
     Sphere = 4,
     Cone = 5,
+    Cylinder = 6,
 }

@@ -6,12 +6,12 @@ using EasyEncounters.Messages;
 
 namespace EasyEncounters.ViewModels;
 
-public partial class CreatureViewModel : ObservableRecipient
+public partial class ObservableCreature : ObservableRecipient
 {
     [ObservableProperty]
     private Creature creature;
 
-    public CreatureViewModel(Creature creature)
+    public ObservableCreature(Creature creature)
     {
         Creature = creature;
     }

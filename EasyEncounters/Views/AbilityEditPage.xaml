@@ -47,7 +47,7 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <StackPanel
+                <StackPanel Orientation="Horizontal"
                     Grid.Row="0"
                     Grid.Column="1">
                     <ComboBox Margin="5"
@@ -67,6 +67,9 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                     <!--For adding special case cast times later-->
+                    <TextBox Header="Cast Time String"
+                             Visibility="{x:Bind ViewModel.ObservableAbility.NeedsCastTimeString, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
+                             Text="{x:Bind ViewModel.ObservableAbility.Ability.CastTimeString, Mode=TwoWay}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal"
                             Grid.Row="0"

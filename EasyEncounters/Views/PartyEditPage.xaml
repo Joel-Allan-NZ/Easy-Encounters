@@ -8,23 +8,44 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     mc:Ignorable="d"
-    xmlns:behaviors="using:EasyEncounters.Behaviors"
+    xmlns:behaviors="using:EasyEncounters.Behaviors" 
+    xmlns:usercontrols="using:EasyEncounters.Views.UserControls" 
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:helpers="using:EasyEncounters.Helpers"
     behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    <Page.Resources>
+        <helpers:DoubleToStringConverter x:Key="DoubleToStringConverter" />
+        <XamlUICommand x:Name="RemoveCreature" Command="{x:Bind ViewModel.RemoveCreatureCommand}"/>
+        <DataTemplate x:Key="RemoveCreatureButton">
+            <Button Margin="5,5,5,5"
+                    Command="{StaticResource RemoveCreature}"
+                    CommandParameter="{Binding}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <FontIcon Glyph="&#xE74D;" />
+            </Button>
+        </DataTemplate>
+    </Page.Resources>
     <Grid>
+        <Grid.Resources>
+            <ResourceDictionary>
+                <SolidColorBrush x:Key="DataGridCellFocusVisualPrimaryBrush" Color="Transparent" />
+                <SolidColorBrush x:Key="DataGridCellFocusVisualSecondaryBrush" Color="Transparent" />
+            </ResourceDictionary>
+        </Grid.Resources>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="3*" MinHeight="130" MaxHeight="130" />
-                <RowDefinition Height="4*" />
-                <RowDefinition Height="*" MinHeight="50" MaxHeight="50" />
-                <RowDefinition Height="5*" />
+                <RowDefinition Height="*" MinHeight="130" MaxHeight="130" />
+                <RowDefinition Height="2*" />
+                <RowDefinition Height="2*" />
             </Grid.RowDefinitions>
             <StackPanel Orientation="Vertical"
                         Grid.Row="0">
                 <TextBox  Header="Party Name:"
                           Text="{x:Bind ViewModel.Party.Name, Mode=TwoWay}"
                           Margin="5,5,5,5"></TextBox>
+                <StackPanel Orientation="Horizontal">
                 <ComboBox ItemsSource="{x:Bind ViewModel.Campaigns}"
                           Header="Campaign:"
                           PlaceholderText="Select a campaign for this party"
@@ -32,80 +53,63 @@
                           DisplayMemberPath="Name"
                           Margin="5,5,5,5">
                 </ComboBox>
+                <TextBox Header="Party Description:"
+                           Text="{x:Bind ViewModel.Party.PartyDescription, Mode=TwoWay}"
+                           Margin="5"
+                           TextWrapping="Wrap"
+                           AcceptsReturn ="True" />
+                </StackPanel>
             </StackPanel>
-            <ListView x:Name="partyListView"
-                      Margin="5,5,5,5"
-                      Grid.Row="1"
-                      ItemsSource="{x:Bind ViewModel.PartyMembers, Mode=OneWay}"
-                      BorderBrush="Black"
-                      BorderThickness="2">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <StackPanel BorderBrush="Black"
-                                    BorderThickness="1"
-                                    Orientation="Horizontal">
-                                <TextBlock VerticalAlignment="Center" Text="{Binding Creature.Name}" Margin="5,5,5,5" FontSize="20" HorizontalAlignment="Left" />
-                                <AppBarSeparator />
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="8" Text="Level/CR" Margin="5,5,5,5" />
-                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding Creature.LevelOrCR}" Margin="5,5,5,5" />
-                                </StackPanel>
-                                <AppBarSeparator />
-                                <StackPanel Orientation="Vertical">
-                                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="8" Text="Description" Margin="5,5,5,5" />
-                                    <TextBlock VerticalAlignment="Center" Text="{Binding Creature.Description}" Margin="5,5,5,5" />
-                                </StackPanel>
-                            </StackPanel>
-                            <Button Margin="5,5,5,5"
-                                        Command="{Binding RequestDeleteCreatureCommand}"
-                                        HorizontalAlignment="Right"
-                                        HorizontalContentAlignment="Right"
-                                        VerticalAlignment="Center">
-                                <FontIcon Glyph="&#xE74D;" />
-                            </Button>
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <TextBox x:Name="FilterByName"
-                     Grid.Row="2"
-                         PlaceholderText="Filter/Search"
-                         MinWidth="200"
-                         Margin="2,10,2,2">
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="TextChanged">
-                        <Core:InvokeCommandAction Command="{x:Bind ViewModel.FilterCommand}" CommandParameter="{x:Bind FilterByName.Text, Mode=OneWay}" />
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-            </TextBox>
-
-            <ScrollViewer Grid.Row="3">
-                <ListView ItemsSource="{x:Bind ViewModel.Creatures}"
-                            x:Name="CreaturesListView"
-                            Header="Add members to the party"
-                            Margin="5,5,5,5">
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="DoubleTapped">
-                            <Core:InvokeCommandAction Command="{x:Bind ViewModel.AddCreatureCommand}" CommandParameter="{x:Bind CreaturesListView.SelectedItem, Mode=OneWay}" />
-                        </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{Binding Creature.Name}"
-                                            VerticalAlignment="Center"
-                                            Margin="2,2,2,2" />
-                                <TextBlock Text="Level/CR:"
-                                            Margin="2,2,2,2" />
-                                <TextBlock Text="{Binding Creature.LevelOrCR}"
-                                            VerticalAlignment="Center"
-                                            Margin="2,2,2,2" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </ScrollViewer>
+            <controls:DataGrid
+                x:Name="PartyCreaturesDataGrid"
+                Grid.Row="1"
+                Margin="5"
+                SelectionMode="Single"
+                IsReadOnly="True"
+                GridLinesVisibility="Horizontal"
+                ItemsSource="{x:Bind ViewModel.PartyMembers, Mode=OneWay}"
+                AlternatingRowBackground="{StaticResource CardBackgroundFillColorSecondary}"
+                AutoGenerateColumns="False">
+                <controls:DataGrid.Columns>
+                    <controls:DataGridTextColumn Header="Name"
+                                             Tag="CreatureName"
+                                             Binding="{Binding Creature.Name, Mode=OneWay}"
+                                             IsReadOnly="True"
+                                             CanUserSort="False" />
+                    <controls:DataGridTextColumn Header="Challenge Rating"
+                                             Tag="CreatureCR"
+                                             Binding="{Binding Creature.LevelOrCR, Mode=OneWay}"
+                                             IsReadOnly="True"
+                                             CanUserSort="False" />
+                    <!--<controls:DataGridTextColumn Header="Count"
+                                             Tag="CreatureCount"
+                                             Binding="{Binding Value, Mode=TwoWay}"
+                                             CanUserSort="False" />-->
+                    <controls:DataGridTemplateColumn Header="X"
+                                                 CellTemplate="{StaticResource RemoveCreatureButton}"
+                                                 CellEditingTemplate="{StaticResource RemoveCreatureButton}">
+                    </controls:DataGridTemplateColumn>
+                </controls:DataGrid.Columns>
+            </controls:DataGrid>
+            <usercontrols:CreatureGrid Grid.Row="2"
+            AddNewCreatureCommand="{x:Bind ViewModel.AddCreatureCommand}"
+                                   ClearFiltersCommand="{x:Bind ViewModel.ClearCreatureFilterCommand}"
+                                   SelectCreatureCommand="{x:Bind ViewModel.AddCreatureCommand}"
+                                   FilterAlignmentSelected="{x:Bind ViewModel.CreatureFilterValues.CreatureAlignmentFilterSelected, Mode=TwoWay}"
+                                   FilterAlignmentSource="{x:Bind ViewModel.CreatureFilterValues.Alignments}"
+                                   FilterCommand="{x:Bind ViewModel.CreatureFilterCommand}"
+                                   FilterCreatureTypeSelected="{x:Bind ViewModel.CreatureFilterValues.CreatureTypeFilterSelected, Mode=TwoWay}"
+                                   FilterMaximumCR="{x:Bind ViewModel.CreatureFilterValues.MaximumCRFilter, Mode=TwoWay}"
+                                   FilterMaximumSize="{x:Bind ViewModel.CreatureFilterValues.MaxCreatureSizeClassFilter, Mode=TwoWay}"
+                                   FilterMinimumCR="{x:Bind ViewModel.CreatureFilterValues.MinimumCRFilter, Mode=TwoWay}"
+                                   FilterMinimumSize="{x:Bind ViewModel.CreatureFilterValues.MinCreatureSizeClassFilter, Mode=TwoWay}"
+                                   FilterSizeSource="{x:Bind ViewModel.CreatureFilterValues.SizeClasses}"
+                                   GridDataSource="{x:Bind ViewModel.Creatures}"
+                                   SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
+                                   SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
+                                    InteractableRows="False"
+                                   Suggestions="{x:Bind ViewModel.CreatureFilterValues.SearchSuggestions}">
+            </usercontrols:CreatureGrid>
         </Grid>
         <Button HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"

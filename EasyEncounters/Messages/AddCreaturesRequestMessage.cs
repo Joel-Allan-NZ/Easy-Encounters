@@ -5,12 +5,12 @@ namespace EasyEncounters.Messages;
 
 public class AddCreaturesRequestMessage
 {
-    public AddCreaturesRequestMessage(ICollection<ObservableKVP<CreatureViewModel, int>> creaturesToAdd)
+    public AddCreaturesRequestMessage(ICollection<ObservableKVP<ObservableCreature, int>> creaturesToAdd)
     {
         CreaturesToAdd = creaturesToAdd;
     }
 
-    public ICollection<ObservableKVP<CreatureViewModel, int>> CreaturesToAdd
+    public ICollection<ObservableKVP<ObservableCreature, int>> CreaturesToAdd
     {
         get; set;
     }

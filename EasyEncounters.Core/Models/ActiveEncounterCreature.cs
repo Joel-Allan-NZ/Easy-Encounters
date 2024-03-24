@@ -2,11 +2,11 @@
 
 namespace EasyEncounters.Core.Models;
 
-public class ActiveEncounterCreature : Creature
+public class ActiveEncounterCreature : CreatureBase //: Creature
 {
-    public ActiveEncounterCreature(Creature creature) : base(creature)
+    public ActiveEncounterCreature(CreatureBase creature) : base(creature)
     {
-        Name = creature.Name;
+        //Name = creature.Name;
         EncounterName = creature.Name ?? "Unnamed Creature";
         Dead = false;
         EncounterID = Guid.NewGuid();
@@ -18,13 +18,27 @@ public class ActiveEncounterCreature : Creature
         CurrentLegendaryActions = creature.MaxLegendaryActions;
         CurrentLegendaryResistance = creature.MaxLegendaryResistance;
         ActiveConditions = Condition.None;
-        SpellSlots = new Dictionary<int, int>();
 
-        foreach (var kvp in creature.SpellSlots)
-        {
-            SpellSlots.Add(kvp.Key, kvp.Value);
-        }
+        ActiveSpellSlots = (int[])creature.SpellSlots.Clone();
+
+        //Creature = creature;
+        //SpellSlots = new Dictionary<int, int>();
+
+        //foreach (var kvp in creature.SpellSlots)
+        //{
+        //    SpellSlots.Add(kvp.Key, kvp.Value);
+        //}
     }
+
+    public int[] ActiveSpellSlots
+    {
+        get; set;
+    }
+
+    //public Creature Creature
+    //{
+    //    get; set;
+    //}
 
     public ActiveEncounterCreature()
     {

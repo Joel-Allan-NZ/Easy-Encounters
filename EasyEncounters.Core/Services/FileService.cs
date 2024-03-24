@@ -47,6 +47,18 @@ public class FileService : IFileService
         return default;
     }
 
+    public async Task<T> ReadAsyncUTF<T>(string folderPath, string fileName)
+    {
+        var path = Path.Combine(folderPath, fileName);
+
+        if (File.Exists(path))
+        {
+            var json = await File.ReadAllTextAsync(path, Encoding.UTF8);
+            return JsonConvert.DeserializeObject<T>(json, new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects });
+        }
+        return default;
+    }
+
     public void Save<T>(string folderPath, string fileName, T content)
     {
         if (!Directory.Exists(folderPath))

@@ -133,7 +133,7 @@
             </controls:DataGrid.Columns>
         </controls:DataGrid>
         <Button Command="{x:Bind AddNewPartyCommand}"
-            Grid.Row="2"
+                Grid.Row="2"
                 VerticalAlignment="Bottom"
                 Margin="5,5,5,5"
                 KeyboardAcceleratorPlacementMode="Auto"

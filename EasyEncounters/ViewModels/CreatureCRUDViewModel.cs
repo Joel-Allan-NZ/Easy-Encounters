@@ -7,8 +7,11 @@ using EasyEncounters.Contracts.Services;
 using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
+using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Messages;
+using EasyEncounters.Persistence.ApiToModel;
 using EasyEncounters.Services.Filter;
+using Windows.Media.Audio;
 
 namespace EasyEncounters.ViewModels;
 
@@ -17,7 +20,7 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
     private readonly IDataService _dataService;
     private readonly IFilteringService _filteringService;
     private readonly INavigationService _navigationService;
-    private IList<CreatureViewModel>? _creatureCache;
+    private IList<ObservableCreature>? _creatureCache;
     private readonly ICreatureService _creatureService;
 
     [ObservableProperty]
@@ -30,10 +33,10 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
         _filteringService = filteringService;
         _creatureService = creatureService;
 
-        _creatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<CreatureViewModel>();
+        _creatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<ObservableCreature>();
     }
 
-    public ObservableCollection<CreatureViewModel> Creatures
+    public ObservableCollection<ObservableCreature> Creatures
     {
         get; private set;
     } = new();
@@ -48,9 +51,26 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
 
         Creatures.Clear();
         foreach (var creature in await _dataService.GetAllCreaturesAsync())
-            Creatures.Add(new CreatureViewModel(creature));
+        {
+            Creatures.Add(new ObservableCreature((Creature)creature));
+        }
 
-        _creatureCache = new List<CreatureViewModel>(Creatures);
+        //    if (creature.SpellSlots == null)
+        //    {
+        //        creature.SpellSlots = new int[9];
+        //    }
+
+        //    foreach (var kvp in creature.OldSpellSlots)
+        //    {
+
+        //        creature.SpellSlots[kvp.Key - 1] = kvp.Value;
+
+        //        await _dataService.SaveAddAsync(creature);
+        //    }
+        //}
+            
+
+        _creatureCache = new List<ObservableCreature>(Creatures);
 
     }
 
@@ -58,7 +78,7 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
     private async Task AddNewCreature()
     {
         var creature = _creatureService.Create();
-        var vm = new CreatureViewModel(creature);
+        var vm = new ObservableCreature(creature);
         Creatures.Add(vm);
         _creatureCache?.Add(vm);
         await _dataService.SaveAddAsync(creature);
@@ -73,7 +93,7 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
             var copied = await _dataService.CopyAsync(parameter as Creature);
             if (copied != null)
             {
-                var creature = new CreatureViewModel(copied);
+                var creature = new ObservableCreature(copied);
                 Creatures.Add(creature);
                 _creatureCache?.Add(creature);
             }
@@ -99,17 +119,16 @@ public partial class CreatureCRUDViewModel : ObservableRecipient, INavigationAwa
         }
     }
 
-    //private DispatcherQueueTimer _filterTimer;
     [RelayCommand]
     private void EditCreature(object parameter)
     {
-        if (parameter is CreatureViewModel)
+        if (parameter is ObservableCreature)
         {
             //todo: pass a copy of the creature rather than the original, so changes are discarded if user hits back button rather than committing changes.
             //_navigationService.NavigateTo(typeof(CreatureEditViewModel).FullName!, ((CreatureViewModel)parameter).Creature);
 
             //experiemental:
-            _navigationService.NavigateTo(typeof(CreatureEditNavigationPageViewModel).FullName!, ((CreatureViewModel)parameter).Creature);
+            _navigationService.NavigateTo(typeof(CreatureEditNavigationPageViewModel).FullName!, ((ObservableCreature)parameter).Creature);
         }
     }
 

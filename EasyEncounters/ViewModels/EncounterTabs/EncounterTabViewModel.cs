@@ -82,10 +82,11 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
         if (activeEncounter != null && activeEncounter is ActiveEncounter)
         {
             _activeEncounter = (ActiveEncounter)activeEncounter;
+            WeakReferenceMessenger.Default.Send(new LogMessageLogged(new List<string>() { "Encounter Begins!" }));
         }
         else
         {
-            _activeEncounter = await _dataService.GetActiveEncounterAsync();
+            //_activeEncounter = await _dataService.GetActiveEncounterAsync();
         }
         Creatures.Clear();
 
@@ -97,7 +98,7 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
     }
 
     [RelayCommand]
-    private void AddCreatures(ICollection<ObservableKVP<CreatureViewModel, int>> creaturesToAdd)
+    private void AddCreatures(ICollection<ObservableKVP<ObservableCreature, int>> creaturesToAdd)
     {
         if (_activeEncounter == null)
             return;

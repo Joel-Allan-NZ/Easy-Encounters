@@ -9,7 +9,7 @@ public interface ICreatureService
     /// Create a deep copy of a source creature
     /// </summary>
     /// <param name="toCopy"></param>
-    Creature DeepCopy(Creature toCopy);
+    CreatureBase DeepCopy(CreatureBase toCopy);
 
     Creature Create();
 
@@ -19,7 +19,7 @@ public interface ICreatureService
     /// <param name="creature"></param>
     /// <param name="creatureAttributeType"></param>
     /// <returns>Bonus value of an attribute, ie +2</returns>
-    int GetAttributeBonusValue(Creature creature, CreatureAttributeType creatureAttributeType);
+    int GetAttributeBonusValue(CreatureBase creature, CreatureAttributeType creatureAttributeType);
 
     /// <summary>
     /// Get the total value for a specified attribute for a specified creature.
@@ -27,9 +27,9 @@ public interface ICreatureService
     /// <param name="creature"></param>
     /// <param name="creatureAttributeType"></param>
     /// <returns></returns>
-    int GetAttributeTypeValue(Creature creature, CreatureAttributeType creatureAttributeType);
+    int GetAttributeTypeValue(CreatureBase creature, CreatureAttributeType creatureAttributeType);
 
-    int GetSkillBonusTotal(Creature creature, CreatureSkills skill, CreatureSkillLevel proficiencyLevel);
+    int GetSkillBonusTotal(CreatureBase creature, CreatureSkills skill, CreatureSkillLevel proficiencyLevel);
 
-    CreatureSkillLevel GetSkillProficiencyLevel(Creature creature, CreatureSkills skill);
+    CreatureSkillLevel GetSkillProficiencyLevel(CreatureBase creature, CreatureSkills skill);
 }

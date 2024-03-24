@@ -19,14 +19,14 @@ public class CreatureService : ICreatureService
         return new Creature()
         {
             Abilities = new(),
-            SpellSlots = new Dictionary<int, int>(),
+            SpellSlots = new int[9],// new Dictionary<int, int>(),
             Id = Guid.NewGuid()
         };
     }
 
-    public Creature DeepCopy(Creature source)
+    public CreatureBase DeepCopy(CreatureBase source)
     {
-        var clone = new Creature(source);
+        var clone = new CreatureBase(source);
 
         clone.Abilities.Clear();
 
@@ -45,12 +45,12 @@ public class CreatureService : ICreatureService
         return clone;
     }
 
-    public int GetAttributeBonusValue(Creature creature, CreatureAttributeType creatureAttributeType)
+    public int GetAttributeBonusValue(CreatureBase creature, CreatureAttributeType creatureAttributeType)
     {
         return (GetAttributeTypeValue(creature, creatureAttributeType) - _baseStatZeroBonusValue) / 2;
     }
 
-    public int GetAttributeTypeValue(Creature creature, CreatureAttributeType creatureAttributeType)
+    public int GetAttributeTypeValue(CreatureBase creature, CreatureAttributeType creatureAttributeType)
     {
         return creatureAttributeType switch
         {
@@ -64,7 +64,7 @@ public class CreatureService : ICreatureService
         };
     }
 
-    public CreatureSkillLevel GetSkillProficiencyLevel(Creature creature, CreatureSkills skill)
+    public CreatureSkillLevel GetSkillProficiencyLevel(CreatureBase creature, CreatureSkills skill)
     {
         if (creature.Expertise.HasFlag(skill))
         {
@@ -81,7 +81,7 @@ public class CreatureService : ICreatureService
         return CreatureSkillLevel.None;
     }
 
-    public int GetSkillBonusTotal(Creature creature, CreatureSkills skill, CreatureSkillLevel proficiencyLevel)
+    public int GetSkillBonusTotal(CreatureBase creature, CreatureSkills skill, CreatureSkillLevel proficiencyLevel)
     {
         var statBonus = GetAttributeBonusValue(creature, GetBaseSkillAttributeType(skill));
 

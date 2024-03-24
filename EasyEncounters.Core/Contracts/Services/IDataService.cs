@@ -4,15 +4,15 @@ namespace EasyEncounters.Core.Contracts.Services;
 
 public interface IDataService
 {
-    Task<bool> ActiveEncounterExistsAsync();
+    //Task<bool> ActiveEncounterExistsAsync();
 
-    Task ClearActiveEncounterAsync();
+    //Task ClearActiveEncounterAsync();
 
     Task<T> CopyAsync<T>(T entity) where T : IPersistable;
 
     Task DeleteAsync<T>(T entity) where T : IPersistable;
 
-    Task<ActiveEncounter> GetActiveEncounterAsync();
+    //Task<ActiveEncounter> GetActiveEncounterAsync();
 
     Task<IEnumerable<Campaign>> GetAllCampaignsAsync();
 
@@ -26,9 +26,11 @@ public interface IDataService
 
     Task<IEnumerable<Party>> GetCampaignPartiesAsync(Campaign campaign);
 
-    Task SaveAddAsync<T>(T entity) where T : IPersistable;
+    Task SaveAddAsync<T>(T entity) where T : class, IPersistable;
 
     Task WriteLogAsync(IEnumerable<string> log);
 
     Task<IEnumerable<Encounter>> GetCampaignEncountersAsync(Campaign campaign, bool includeGeneralEncounters);
+
+    Task SaveAddAsync<T>(IEnumerable<T> entities) where T : IPersistable;
 }

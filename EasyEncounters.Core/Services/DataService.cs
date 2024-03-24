@@ -1,4 +1,5 @@
-﻿using EasyEncounters.Core.Contracts;
+﻿using System.Drawing.Text;
+using EasyEncounters.Core.Contracts;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
@@ -29,20 +30,20 @@ public class DataService : IDataService
 
     }
 
-    public async Task<bool> ActiveEncounterExistsAsync()
-    {
-        await RefreshCacheAsync();
+    //public async Task<bool> ActiveEncounterExistsAsync()
+    //{
+    //    await RefreshCacheAsync();
 
-        return _cached?.ActiveEncounter != null;
-    }
+    //    return _cached?.ActiveEncounter != null;
+    //}
 
-    public async Task ClearActiveEncounterAsync()
-    {
-        await RefreshCacheAsync();
-        _cached.ActiveEncounter = null;
+    //public async Task ClearActiveEncounterAsync()
+    //{
+    //    await RefreshCacheAsync();
+    //    _cached.ActiveEncounter = null;
 
-        await DefaultSave();
-    }
+    //    await DefaultSave();
+    //}
 
     public async Task<T> CopyAsync<T>(T entity) where T : IPersistable
     {
@@ -78,10 +79,10 @@ public class DataService : IDataService
         return result;
     }
 
-    public void DeleteActiveEncounter()
-    {
-        _cached.ActiveEncounter = null;
-    }
+    //public void DeleteActiveEncounter()
+    //{
+    //    _cached.ActiveEncounter = null;
+    //}
 
     public async Task DeleteAsync<T>(T entity) where T : IPersistable
     {
@@ -89,7 +90,7 @@ public class DataService : IDataService
 
         if (entity is ActiveEncounter)
         {
-            DeleteActiveEncounter();
+            //DeleteActiveEncounter();
         }
         else if (entity is Encounter)
         {
@@ -115,12 +116,12 @@ public class DataService : IDataService
         await DefaultSave();
     }
 
-    public async Task<ActiveEncounter> GetActiveEncounterAsync()
-    {
-        await RefreshCacheAsync();
+    //public async Task<ActiveEncounter> GetActiveEncounterAsync()
+    //{
+    //    await RefreshCacheAsync();
 
-        return _cached?.ActiveEncounter;
-    }
+    //    return _cached?.ActiveEncounter;
+    //}
 
     public async Task<IEnumerable<Campaign>> GetAllCampaignsAsync()
     {
@@ -165,11 +166,11 @@ public class DataService : IDataService
 
     //TODO: investigate if this is entirely pointless - is there any place where we're dealing with a cloned entity rather than a straight reference?
     //todo: make some kind of persistable base type etc
-    public async Task SaveAddAsync<T>(T entity) where T : IPersistable
+    public async Task SaveAddAsync<T>(T entity) where T : class, IPersistable
     {
         if (entity is ActiveEncounter)
         {
-            SaveAddActiveEncounter(entity as ActiveEncounter);
+            //SaveAddActiveEncounter(entity as ActiveEncounter);
         }
         else if (entity is Encounter)
         {
@@ -214,7 +215,7 @@ public class DataService : IDataService
     {
         //todo: all copy functions with a proper factory set up
         var res = _creatureService.DeepCopy(creature);
-        _cached.Creatures.Add(res);
+        _cached.Creatures.Add((Creature)res);
         return res;
     }
 
@@ -291,10 +292,10 @@ public class DataService : IDataService
         }
     }
 
-    private void SaveAddActiveEncounter(ActiveEncounter activeEncounter)
-    {
-        _cached.ActiveEncounter = activeEncounter;
-    }
+    //private void SaveAddActiveEncounter(ActiveEncounter activeEncounter)
+    //{
+    //    _cached.ActiveEncounter = activeEncounter;
+    //}
 
     private void SaveAddCampaign(Campaign campaign)
     {
@@ -315,7 +316,7 @@ public class DataService : IDataService
         var cachedCreature = _cached.Creatures.FirstOrDefault(x => x.Equals(creature));
         if (cachedCreature != null)
         {
-            cachedCreature = _creatureService.DeepCopy(creature);
+            cachedCreature = new Creature(_creatureService.DeepCopy(creature));
             //_creatureService.DeepCopy(cachedCreature, creature);
         }
         else
@@ -385,4 +386,6 @@ public class DataService : IDataService
 
         
     }
+
+    public Task SaveAddAsync<T>(IEnumerable<T> entities) where T : IPersistable => throw new NotImplementedException();
 }

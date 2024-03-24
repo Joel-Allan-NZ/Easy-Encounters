@@ -32,7 +32,7 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
 
     private readonly INavigationService _navigationService;
 
-    private IList<CreatureViewModel> _creatureCache;
+    private IList<ObservableCreature> _creatureCache;
 
     [ObservableProperty]
     private double _encounterCreatureCount;
@@ -61,16 +61,16 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
         _encounterService = encounterService;
 
         _filteringService = filteringService;
-        _creatureCache = new List<CreatureViewModel>();
-        _creatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<CreatureViewModel>();
+        _creatureCache = new List<ObservableCreature>();
+        _creatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<ObservableCreature>();
     }
 
-    public ObservableCollection<CreatureViewModel> Creatures
+    public ObservableCollection<ObservableCreature> Creatures
     {
         get; private set;
     } = new();
 
-    public ObservableCollection<ObservableKVP<CreatureViewModel, int>> EncounterCreaturesByCount
+    public ObservableCollection<ObservableKVP<ObservableCreature, int>> EncounterCreaturesByCount
     {
         get; private set;
     } = new();
@@ -126,7 +126,7 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
                 else
                 {
                     
-                    EncounterCreaturesByCount.Add(new(new CreatureViewModel(creature), 1));
+                    EncounterCreaturesByCount.Add(new(new ObservableCreature(creature), 1));
                 }
             }
             foreach(var kvp in EncounterCreaturesByCount)
@@ -143,15 +143,15 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
 
         Creatures.Clear();
         foreach (var creature in await _dataService.GetAllCreaturesAsync())
-            Creatures.Add(new CreatureViewModel(creature));
+            Creatures.Add(new ObservableCreature((Creature)creature));
 
-        _creatureCache = new List<CreatureViewModel>(Creatures);
+        _creatureCache = new List<ObservableCreature>(Creatures);
 
         foreach (var party in await _dataService.GetAllPartiesAsync())
             Parties.Add(party);
 
         ExpectedDifficulty = EncounterDifficulty.None;
-        CreatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<CreatureViewModel>();
+        CreatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<ObservableCreature>();
         CreatureFilterValues.ResetFilter();
         //Creatures.CollectionChanged += PartyOrCreaturesChanged;
 
@@ -168,15 +168,15 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
     [RelayCommand]
     private void AddCreature(object obj)
     {
-        if (obj != null && obj is CreatureViewModel)
+        if (obj != null && obj is ObservableCreature)
         {
-            CreatureViewModel creature = (CreatureViewModel)obj;
+            ObservableCreature creature = (ObservableCreature)obj;
 
             var match = EncounterCreaturesByCount.FirstOrDefault(x => x.Key.Creature.Equals(creature.Creature));
 
             if (match == null)
             {
-                EncounterCreaturesByCount.Add(new ObservableKVP<CreatureViewModel, int>(creature, 1));
+                EncounterCreaturesByCount.Add(new ObservableKVP<ObservableCreature, int>(creature, 1));
             }
             else
                 match.Value++;
@@ -233,9 +233,9 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
     private void RemoveCreature(object obj)
     {
         //if (obj != null && obj is CreatureViewModel && Encounter != null)
-        if (obj != null && Encounter != null && obj is ObservableKVP<CreatureViewModel, int> kvp)
+        if (obj != null && Encounter != null && obj is ObservableKVP<ObservableCreature, int> kvp)
         {
-            CreatureViewModel toRemove = kvp.Key;
+            ObservableCreature toRemove = kvp.Key;
 
             var match = EncounterCreaturesByCount.FirstOrDefault(x => x.Key.Creature.Equals(toRemove.Creature));
             if (match != null)
@@ -284,7 +284,7 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
             var copied = await _dataService.CopyAsync(parameter as Creature);
             if (copied != null)
             {
-                var creature = new CreatureViewModel(copied);
+                var creature = new ObservableCreature(copied);
                 Creatures.Add(creature);
                 _creatureCache?.Add(creature);
             }
@@ -307,13 +307,13 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
     [RelayCommand]
     private void EditCreature(object parameter)
     {
-        if (parameter is CreatureViewModel)
+        if (parameter is ObservableCreature)
         {
             //todo: pass a copy of the creature rather than the original, so changes are discarded if user hits back button rather than committing changes.
             //_navigationService.NavigateTo(typeof(CreatureEditViewModel).FullName!, ((CreatureViewModel)parameter).Creature);
 
             //experiemental:
-            _navigationService.NavigateTo(typeof(CreatureEditNavigationPageViewModel).FullName!, ((CreatureViewModel)parameter).Creature);
+            _navigationService.NavigateTo(typeof(CreatureEditNavigationPageViewModel).FullName!, ((ObservableCreature)parameter).Creature);
         }
     }
 

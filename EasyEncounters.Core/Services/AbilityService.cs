@@ -36,7 +36,7 @@ public class AbilityService : IAbilityService
         copyTarget.Concentration = copySource.Concentration;
     }
 
-    public ActiveAbility CreateActiveAbility(ActiveEncounterCreature creature, Ability ability, int abilityStatValue)
+    public ActiveAbility CreateActiveAbility(ActiveEncounterCreature activeCreature, Ability ability, int abilityStatValue)
     {
         ActiveAbility activeAbility = new ActiveAbility();
         CopyTo(activeAbility, ability);
@@ -44,11 +44,11 @@ public class AbilityService : IAbilityService
         switch (activeAbility.Resolution)
         {
             case ResolutionType.Attack:
-                activeAbility.ResolutionValue = abilityStatValue + _baseAttackBonus + creature.ProficiencyBonus;
+                activeAbility.ResolutionValue = abilityStatValue + _baseAttackBonus + activeCreature.ProficiencyBonus;
                 break;
 
             case ResolutionType.SavingThrow:
-                activeAbility.ResolutionValue = abilityStatValue + _baseDCBonus + creature.ProficiencyBonus;
+                activeAbility.ResolutionValue = abilityStatValue + _baseDCBonus + activeCreature.ProficiencyBonus;
                 break;
 
             default:

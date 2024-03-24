@@ -12,8 +12,8 @@
 
   <Identity
     Name="f6eedcce-a3db-4c4c-9cdb-13db1f2315d1"
-    Publisher="CN=joelc"
-    Version="1.0.0.0" />
+    Publisher="CN=Joel Allan"
+    Version="0.8.2.0" />
     
   <mp:PhoneIdentity PhoneProductId="f6eedcce-a3db-4c4c-9cdb-13db1f2315d1" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
     

@@ -7,6 +7,10 @@ namespace EasyEncounters.Core.Models;
 /// </summary>
 public class Party : Persistable
 {
+    public Party()
+    {
+        
+    }
     public Party(Campaign? campaign = null, string name = "party", List<Creature>? members = null, double[]? partyXPThresholds = null, string partyDescription = "")
     {
         Campaign = campaign;

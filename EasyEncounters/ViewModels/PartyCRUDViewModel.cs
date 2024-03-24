@@ -8,6 +8,7 @@ using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Messages;
+using EasyEncounters.Persistence.SQLLite;
 using EasyEncounters.Services.Filter;
 
 namespace EasyEncounters.ViewModels;
@@ -22,13 +23,22 @@ public partial class PartyCRUDViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private PartyFilter _partyFilterValues;
 
-    public PartyCRUDViewModel(IDataService dataService, INavigationService navigationService, IFilteringService filteringService)
+    public PartyCRUDViewModel(IDataService dataService, INavigationService navigationService, IFilteringService filteringService, CopyDB db)
     {
         _dataService = dataService;
         _navigationService = navigationService;
         _filteringService = filteringService;
 
         _partyFilterValues = (PartyFilter)_filteringService.GetFilterValues<Party>();
+
+        //db.CopyAll();
+        
+        //db.CopyCampaigns();
+        //db.CopyParties();
+        //db.CopyCreatures();
+        //db.CopyEncounters();
+        //db.CopyAbilities();
+        
 
         //WeakReferenceMessenger.Default.Register<PartyCopyRequestMessage>(this, (r, m) =>
         //{

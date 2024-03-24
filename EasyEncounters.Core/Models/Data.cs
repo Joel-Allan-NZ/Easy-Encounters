@@ -21,10 +21,10 @@ internal class Data
         get; set;
     }
 
-    public ActiveEncounter? ActiveEncounter
-    {
-        get; set;
-    }
+    ////public ActiveEncounter? ActiveEncounter
+    //{
+    //    get; set;
+    //}
 
     public List<Campaign> Campaigns
     {

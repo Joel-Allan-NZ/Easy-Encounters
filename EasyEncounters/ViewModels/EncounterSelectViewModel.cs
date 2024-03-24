@@ -101,7 +101,7 @@ public partial class EncounterSelectViewModel : ObservableRecipient, INavigation
         if (parameter != null)
         {
             var active = await _activeEncounterService.CreateActiveEncounterAsync(parameter.Encounter, Party);
-            _navigationService.NavigateTo(typeof(EncounterTabViewModel).FullName!, active);
+            _navigationService.NavigateTo(typeof(EncounterTabViewModel).FullName!, active, true);
         }
     }
 

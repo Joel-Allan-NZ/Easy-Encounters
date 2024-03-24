@@ -931,4 +931,7 @@ Any attack that hits the creature is a critical hit if the attacker is within 5 
   <data name="CreatureType_Any_Short" xml:space="preserve">
     <value>Any/All</value>
   </data>
+  <data name="TargetAreaType_Cylinder_Short" xml:space="preserve">
+    <value>Cylinder</value>
+  </data>
 </root>

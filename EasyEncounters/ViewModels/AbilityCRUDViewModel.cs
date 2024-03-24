@@ -9,6 +9,7 @@ using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Messages;
 using EasyEncounters.Models;
+using EasyEncounters.Persistence.ApiToModel;
 using EasyEncounters.Services.Filter;
 
 namespace EasyEncounters.ViewModels;
@@ -51,6 +52,20 @@ public partial class AbilityCRUDViewModel : ObservableRecipient, INavigationAwar
         AbilityFilterValues = (AbilityFilter)_filteringService.GetFilterValues<Ability>();
 
         _abilityCache = new List<Ability>(Abilities);
+
+        //foreach (var ability in await ReadDNDJson.ReadAbilities())
+        //{
+        //    var match = Abilities.FirstOrDefault(x => x.Name == ability.Name);
+        //    if (match != null)
+        //    {
+        //        match.TimeDuration = ability.TimeDuration;
+        //        match.EffectDescription = ability.EffectDescription;
+
+        //        await _dataService.SaveAddAsync(match);
+        //    }
+        //}
+        
+
     }
 
     [RelayCommand]

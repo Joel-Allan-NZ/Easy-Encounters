@@ -3,11 +3,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.WinUI.UI;
+using CommunityToolkit.WinUI.UI.Controls;
 using EasyEncounters.Contracts.Services;
 using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Messages;
+using EasyEncounters.Services.Filter;
 using Microsoft.UI.Dispatching;
 
 namespace EasyEncounters.ViewModels;
@@ -15,10 +17,9 @@ namespace EasyEncounters.ViewModels;
 public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
 {
     private readonly IDataService _dataService;
-
+    private readonly IFilteringService _filteringService;
     private readonly INavigationService _navigationService;
-
-    private readonly DispatcherQueueTimer _filterTimer;
+    private IList<ObservableCreature> _creatureCache;
 
     [ObservableProperty]
     private Party? _party;
@@ -26,14 +27,18 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
     [ObservableProperty]
     private Campaign? _selectedCampaign;
 
-    public PartyEditViewModel(IDataService dataService, INavigationService navigationService)
+
+    [ObservableProperty]
+    private CreatureFilter _creatureFilterValues;
+
+    public PartyEditViewModel(IDataService dataService, INavigationService navigationService, IFilteringService filteringService)
     {
         _dataService = dataService;
         _navigationService = navigationService;
+        _filteringService = filteringService;
 
-        var dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
-        _filterTimer = dispatcherQueue.CreateTimer();
-
+        _creatureCache = new List<ObservableCreature>();
+        _creatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<ObservableCreature>();
         //WeakReferenceMessenger.Default.Register<CreatureDeleteRequestMessage>(this, (r, m) =>
         //{
         //    RemoveCreature(m.Parameter.Creature);
@@ -45,19 +50,18 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
         get; private set;
     } = new();
 
-    public ObservableCollection<CreatureViewModel> Creatures
+    public ObservableCollection<ObservableCreature> Creatures
     {
         get; private set;
     } = new();
 
-    public ObservableCollection<CreatureViewModel> PartyMembers
+    public ObservableCollection<ObservableCreature> PartyMembers
     {
         get; private set;
     } = new();
 
     public void OnNavigatedFrom()
     {
-        _filterTimer.Stop();
         WeakReferenceMessenger.Default.UnregisterAll(this);
     }
 
@@ -70,15 +74,16 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
             PartyMembers.Clear();
             foreach (var partyMember in Party.Members)
             {
-                PartyMembers.Add(new CreatureViewModel(partyMember));
+                PartyMembers.Add(new ObservableCreature(partyMember));
             }
 
             Creatures.Clear();
             //todo: will have to  handle campaigns and creatures differently in future when there are a large number; can't possibly load all of each.
             foreach (var creature in await _dataService.GetAllCreaturesAsync())
             {
-                Creatures.Add(new CreatureViewModel(creature));
+                Creatures.Add(new ObservableCreature((Creature)creature));
             }
+            _creatureCache = new List<ObservableCreature>(Creatures);
 
             Campaigns.Clear();
             foreach (var campaign in await _dataService.GetAllCampaignsAsync())
@@ -95,12 +100,12 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
     {
         if (parameter != null && parameter is Creature creature)
         {
-            PartyMembers.Add(new CreatureViewModel(creature));
+            PartyMembers.Add(new ObservableCreature(creature));
             Party?.Members.Add(creature);
         }
-        else if (parameter != null && parameter is CreatureViewModel creatureViewModel)
+        else if (parameter != null && parameter is ObservableCreature creatureViewModel)
         {
-            PartyMembers.Add(new CreatureViewModel(creatureViewModel.Creature));
+            PartyMembers.Add(new ObservableCreature(creatureViewModel.Creature));
             Party?.Members.Add(creatureViewModel.Creature);
         }
     }
@@ -115,42 +120,6 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    [RelayCommand]
-    private async Task Filter(object parameter)
-    {
-        _filterTimer.Debounce(async () =>
-        {
-            await FilterAsync(parameter);
-        }, TimeSpan.FromSeconds(0.3));
-    }
-
-    private async Task FilterAsync(object parameter)
-    {
-        if (parameter is string text)
-        {
-
-            //remove is worse performance than clearing and repopulating the list, but much less 'flickery'.
-
-            var matched = Creatures.Where(x => x.Creature.Name.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToList();
-            List<CreatureViewModel> noMatch = new();
-
-            for (var i = Creatures.Count - 1; i >= 0; i--)
-            {
-                var item = Creatures[i];
-                if (!matched.Contains(item))
-                {
-                    Creatures.Remove(item);
-                    noMatch.Add(item);
-                }
-            }
-
-            foreach (var item in noMatch)
-            {
-                Creatures.Add(item);
-            }
-        }
-    }
-
     partial void OnSelectedCampaignChanged(Campaign? value)
     {
         if (Party?.Campaign != value && Party != null)
@@ -160,10 +129,45 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
     [RelayCommand]
     private void RemoveCreature(object parameter)
     {
-        if (parameter != null && parameter is Creature creature)
+        if (parameter != null && parameter is ObservableCreature observableCreature)
         {
+            var creature = observableCreature.Creature;
             PartyMembers.Remove(PartyMembers.First(x => x.Creature == creature));
             Party?.Members.Remove(creature);
         }
+    }
+
+    [RelayCommand]
+    private void ClearCreatureFilter()
+    {
+        CreatureFilterValues.ResetFilter();
+        CreatureFilter("");
+    }
+
+    [RelayCommand]
+    private void CreatureFilter(string text)
+    {
+        var filtered = _filteringService.Filter(_creatureCache, CreatureFilterValues, text);
+        Creatures.Clear();
+        foreach (var creature in filtered)
+            Creatures.Add(creature);
+    }
+
+    [RelayCommand]
+    private void SearchTextChange(string text)
+    {
+        var filtered = _filteringService.Filter(_creatureCache, CreatureFilterValues, text);
+        if (String.IsNullOrEmpty(text))
+        {
+            Creatures.Clear();
+            foreach (var creature in filtered)
+                Creatures.Add(creature);
+        }
+    }
+
+    [RelayCommand]
+    private void DataGridSort(DataGridColumnEventArgs e)
+    {
+        CreatureFilterValues.SortCollection(Creatures, e);
     }
 }

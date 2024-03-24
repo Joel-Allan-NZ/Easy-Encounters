@@ -127,7 +127,7 @@ public partial class ObservableActiveEncounterCreature : ObservableRecipient
 
     public bool HasResists => this.Creature.Resistance > Core.Models.Enums.DamageType.None;
 
-    public bool HasSpellSlots => this.Creature.SpellSlots.Any(x => x.Value > 0);
+    public bool HasSpellSlots => this.Creature.SpellSlots.Any(x => x > 0);
 
     public bool HasVulnerabilities => this.Creature.Vulnerability > Core.Models.Enums.DamageType.None;
 

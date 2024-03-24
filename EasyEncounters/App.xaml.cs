@@ -3,6 +3,8 @@ using EasyEncounters.Contracts.Services;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Services;
 using EasyEncounters.Core.Services.Models;
+using EasyEncounters.Persistence.ApiToModel;
+using EasyEncounters.Persistence.SQLLite;
 using EasyEncounters.Services;
 using EasyEncounters.Services.Filter;
 using EasyEncounters.ViewModels;
@@ -48,13 +50,19 @@ public partial class App : Application
 
             // Core Services
             services.AddSingleton<IFileService, FileService>();
-            services.AddSingleton<IDataService, DataService>();
+            
             services.AddSingleton<IRandomService, RandomService>();
             services.AddSingleton<IEncounterService, EncounterService>();
             services.AddSingleton<IActiveEncounterService, ActiveEncounterService>();
             services.AddSingleton<IPartyXPService, PartyXPService>();
             services.AddSingleton<IDiceService, DiceService>();
             services.AddSingleton<ILogService, LogService>();
+
+            //Database Services
+            services.AddSingleton<IDataService, DataService>();
+            //services.AddDbContext<DataContext>();
+            //services.AddScoped<IDataService, SQLiteDataService>();
+
 
             // Views and ViewModels
             services.AddTransient<SettingsViewModel>();
@@ -97,6 +105,9 @@ public partial class App : Application
             services.AddTransient<EncounterEditNavigationPage>();
             services.AddTransient<EncounterAddCreaturesTabPage>();
             services.AddTransient<EncounterAddCreaturesTabViewModel>();
+
+
+            services.AddTransient<CopyDB>();
 
 
 

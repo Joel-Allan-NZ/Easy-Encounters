@@ -61,6 +61,21 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
     [ObservableProperty]
     private ObservableEnumKeyValuePairs<CreatureSkills, CreatureSkillLevel> _skills;
 
+    [ObservableProperty]
+    private CreatureAttributeType _creatureCastingStat;
+
+    [ObservableProperty]
+    private bool showSpellSlots;
+
+    partial void OnCreatureCastingStatChanged(CreatureAttributeType oldValue, CreatureAttributeType newValue)
+    {
+        ShowSpellSlots = (newValue != CreatureAttributeType.None);
+        if (Creature != null)
+        {
+            Creature.SpellStat = newValue;
+        }
+    }
+
     public CreatureEditNavigationPageViewModel(INavigationService navigationService, IDataService dataService, IFilteringService filteringService)
     {
         _navigationService = navigationService;
@@ -123,6 +138,8 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
             };
 
             Skills = new(skillsKVP);
+
+            CreatureCastingStat = Creature.SpellStat;
 
         }
     }

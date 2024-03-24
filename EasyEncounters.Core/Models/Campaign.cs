@@ -7,6 +7,10 @@ namespace EasyEncounters.Core.Models;
 /// </summary>
 public class Campaign : Persistable
 {
+    public Campaign()
+    {
+        
+    }
     public Campaign(string name = "New Campaign", string desc = "Add a description.")
     {
         Name = name;

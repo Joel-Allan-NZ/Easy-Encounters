@@ -13,4 +13,6 @@ public interface IFileService
     void Save<T>(string folderPath, string fileName, T content);
 
     Task SaveAsync<T>(string folderPath, string fileName, T content);
+
+    Task<T> ReadAsyncUTF<T>(string folderPath, string fileName);
 }
