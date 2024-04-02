@@ -5,13 +5,22 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:EasyEncounters.Views.EncounterEdit"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:usercontrols="using:EasyEncounters.Views.UserControls" 
-    xmlns:helpers="using:EasyEncounters.Helpers" xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:usercontrols="using:EasyEncounters.Views.UserControls" 
+    xmlns:userFilters="using:EasyEncounters.Views.UserControls.Filters"
+    xmlns:userGrids="using:EasyEncounters.Views.UserControls.DataGrids"
+    xmlns:helpers="using:EasyEncounters.Helpers" 
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    
     <Page.Resources>
         <helpers:DoubleToStringConverter x:Key="DoubleToStringConverter" />
         <XamlUICommand x:Name="RemoveCreature" Command="{Binding RemoveCreatureCommand}"/>
+        <XamlUICommand x:Name="AddCreature" Command="{Binding AddCreatureCommand}"/>
         <DataTemplate x:Key="RemoveCreatureButton">
             <Button Margin="5,5,5,5"
                         Command="{StaticResource RemoveCreature}"
@@ -20,6 +29,13 @@
                         VerticalAlignment="Center">
                 <FontIcon Glyph="&#xE74D;" />
             </Button>
+        </DataTemplate>
+        <DataTemplate x:Key="RowDetailsTemplate">
+            <StackPanel>
+                <TextBlock Text="{Binding Creature.Description}"
+                   Margin="10,5"
+                   TextWrapping="Wrap" />
+            </StackPanel>
         </DataTemplate>
     </Page.Resources>
     <Grid>
@@ -65,26 +81,64 @@
                 </controls:DataGridTemplateColumn>
             </controls:DataGrid.Columns>
         </controls:DataGrid>
-        <usercontrols:CreatureGrid Grid.Row="2"
-            AddNewCreatureCommand="{Binding AddCreatureCommand}"
-                                   ClearFiltersCommand="{Binding ClearCreatureFilterCommand}"
-                                   CopyCreatureCommand="{Binding CopyCreatureCommand}"
-                                   DeleteCreatureCommand="{Binding DeleteCreatureCommand}"
-                                   EditCreatureCommand="{Binding EditCreatureCommand}"
-                                   SelectCreatureCommand="{Binding AddCreatureCommand}"
-                                   FilterAlignmentSelected="{Binding CreatureFilterValues.CreatureAlignmentFilterSelected, Mode=TwoWay}"
-                                   FilterAlignmentSource="{Binding CreatureFilterValues.Alignments}"
-                                   FilterCommand="{Binding CreatureFilterCommand}"
-                                   FilterCreatureTypeSelected="{Binding CreatureFilterValues.CreatureTypeFilterSelected, Mode=TwoWay}"
-                                   FilterMaximumCR="{Binding CreatureFilterValues.MaximumCRFilter, Mode=TwoWay}"
-                                   FilterMaximumSize="{Binding CreatureFilterValues.MaxCreatureSizeClassFilter, Mode=TwoWay}"
-                                   FilterMinimumCR="{Binding CreatureFilterValues.MinimumCRFilter, Mode=TwoWay}"
-                                   FilterMinimumSize="{Binding CreatureFilterValues.MinCreatureSizeClassFilter, Mode=TwoWay}"
-                                   FilterSizeSource="{Binding CreatureFilterValues.SizeClasses}"
-                                   GridDataSource="{Binding Creatures}"
-                                   SearchTextChangeCommand="{Binding SearchTextChangeCommand}"
-                                   SortCommand="{Binding DataGridSortCommand}"
-                                   Suggestions="{Binding CreatureFilterValues.SearchSuggestions}">
-        </usercontrols:CreatureGrid>
+        <usercontrols:PaginatedDataGridWithFilters 
+                                                   GridFilteredValues="{Binding CreatureFilterValues}"
+                                                   Grid.Row="2"
+                                                   >
+            <usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+                <userFilters:CreatureFilterControl CreatureFilter="{Binding CreatureFilterValues, Mode=TwoWay}"/>
+            </usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+            <usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+                <!--<userGrids:CreatureDataGrid SelectCreatureCommand="{StaticResource AddCreature}"
+                                            GridDataSource="{Binding CreatureFilterValues.Data}"
+
+                                                    />-->
+                <!--<ListView ItemsSource="{Binding CreatureFilterValues.Data}"/>-->
+                <!--TODO: fix context issue that makes this necessary-->
+                
+                <controls:DataGrid
+               x:Name="CreatureDG"
+               IsReadOnly="True"
+               SelectionMode="Single"
+               GridLinesVisibility="Horizontal"
+               RowDetailsTemplate="{StaticResource RowDetailsTemplate}"
+               Margin="0"
+               ItemsSource="{Binding CreatureFilterValues.Data, Mode=TwoWay}"
+               AutoGenerateColumns="False">
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="DoubleTapped">
+                            <Core:InvokeCommandAction Command="{StaticResource AddCreature}" CommandParameter="{x:Bind CreatureDG.SelectedItem, Mode=OneWay}" />
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                    <controls:DataGrid.Columns>
+                        <controls:DataGridTextColumn Header="Name"
+                                 Tag="CreatureName"
+                                 Binding="{Binding Creature.Name}"
+                                 CanUserSort="True" />
+                        <controls:DataGridTextColumn Header="Challenge Rating"
+                                 Tag="CreatureCR"
+                                 Binding="{Binding Creature.LevelOrCR, Converter={StaticResource DoubleToStringConverter}}"
+                                 CanUserSort="True" />
+                        <controls:DataGridTextColumn Header="Type"
+                                     Tag="CreatureType"
+                                     CanUserSort="True"
+                                     Binding="{Binding Creature.CreatureType, Converter={StaticResource EnumToStringConverter}}"/>
+                        <controls:DataGridTextColumn Header="Subtype"
+                                     Tag="SubType"
+                                     CanUserSort="False"
+                                     Binding="{Binding Creature.CreatureSubtype}"/>
+                        <controls:DataGridTextColumn Header="Alignment"
+                                     Tag="CreatureAlignment"
+                                     CanUserSort="True"
+                                     Binding="{Binding Creature.Alignment, Converter={StaticResource EnumToStringConverter}}"/>
+                        <controls:DataGridTextColumn Header="Size"
+                                     Tag="CreatureSize"
+                                     CanUserSort="True"
+                                     Binding="{Binding Creature.Size, Converter={StaticResource EnumToStringConverter}}"/>
+
+                    </controls:DataGrid.Columns>
+                </controls:DataGrid>
+            </usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+        </usercontrols:PaginatedDataGridWithFilters>
     </Grid>
 </Page>

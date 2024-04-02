@@ -1,24 +1,34 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.WinUI.UI.Controls;
+using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Models;
-using EasyEncounters.ViewModels;
+using Microsoft.EntityFrameworkCore.Metadata;
+using Windows.ApplicationModel.Contacts;
 
 namespace EasyEncounters.Services.Filter;
 
-/// <summary>
-/// Wrapper for Ability Properties of interest for filtering, including convenience lists of enum values
-/// </summary>
-public partial class AbilityFilter : FilterValues
+public partial class AbilityFilter : GridFilteredValues<Ability>
 {
     private readonly IList<ThreeStateBoolean> _concentrationStates = Enum.GetValues(typeof(ThreeStateBoolean)).Cast<ThreeStateBoolean>().ToList();
     private readonly IList<DamageType> _damageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
     private readonly IList<MagicSchool> _magicSchools = Enum.GetValues(typeof(MagicSchool)).Cast<MagicSchool>().ToList();
     private readonly IList<ResolutionType> _resolutionTypes = Enum.GetValues(typeof(ResolutionType)).Cast<ResolutionType>().ToList();
     private readonly IList<SpellLevel> _spellLevels = Enum.GetValues(typeof(SpellLevel)).Cast<SpellLevel>().ToList();
+    private readonly IDataService _dataService;
     private readonly IList<ActionSpeed> _actionSpeeds = Enum.GetValues(typeof(ActionSpeed)).Cast<ActionSpeed>().ToList();
+    private readonly string _safeTag = "AbilityName";
+
+    [ObservableProperty]
+    private List<Ability> _data;
 
     [ObservableProperty]
     private ThreeStateBoolean _concentrationFilterSelected;
@@ -44,10 +54,8 @@ public partial class AbilityFilter : FilterValues
     [ObservableProperty]
     private ActionSpeed _actionSpeedFilterSelected;
 
-    public AbilityFilter()
-    {
-        ResetFilter();
-    }
+    //[ObservableProperty]
+    //private string _searchString;
 
     public IList<ThreeStateBoolean> ConcentrationStates => _concentrationStates;
     public IList<DamageType> DamageTypes => _damageTypes;
@@ -56,70 +64,108 @@ public partial class AbilityFilter : FilterValues
     public IList<SpellLevel> SpellLevels => _spellLevels;
     public IList<ActionSpeed> ActionSpeeds => _actionSpeeds;
 
-    public ICollection<FilterCriteria<Ability>> GenerateFilterCriteria(string text)
+    public AbilityFilter(IDataService dataService)
     {
-        List<FilterCriteria<Ability>> criteria = new()
-            {
-            new FilterCriteria<Ability>(x => x.SpellLevel, MinimumSpellLevelFilter, MaximumSpellLevelFilter),
-            };
-        if (!String.IsNullOrEmpty(text))
-            criteria.Add(new FilterCriteria<Ability>(x => x.Name, text));
-        if (ConcentrationFilterSelected == ThreeStateBoolean.False)
-            criteria.Add(new FilterCriteria<Ability>(x => x.Concentration, false, false));
-        if (ConcentrationFilterSelected == ThreeStateBoolean.True)
-            criteria.Add(new FilterCriteria<Ability>(x => x.Concentration, true, true));
-        if (ResolutionTypeFilterSelected != ResolutionType.Undefined)
-            criteria.Add(new FilterCriteria<Ability>(x => x.Resolution, ResolutionTypeFilterSelected, ResolutionTypeFilterSelected));
-        if (SpellSchoolFilterSelected != MagicSchool.None)
-            criteria.Add(new FilterCriteria<Ability>(x => x.MagicSchool, SpellSchoolFilterSelected, SpellSchoolFilterSelected));
-        if (DamageTypeFilterSelected != DamageType.Untyped)
-            criteria.Add(new FilterCriteria<Ability>(x => x.DamageTypes, DamageTypeFilterSelected, DamageTypeFilterSelected));
-        if (ActionSpeedFilterSelected != ActionSpeed.None)
-            criteria.Add(new FilterCriteria<Ability>(x => x.ActionSpeed, ActionSpeedFilterSelected, ActionSpeedFilterSelected));
+        _sortAscending = true;
+        Data = new();
+        _sortTag = _safeTag;
+        _dataService = dataService;
+        SearchString = "";
+        //Reset();
+        _namesCache = (from a in _dataService.Abilities().Where(x => x.SpellLevel != SpellLevel.NotASpell) select a.Name).ToList();
+    }
+    public override IQueryable<Ability> FilterAndSortQuery<U>(IQueryable<Ability> queryable, U? additionalData, DataGridColumnEventArgs? e = null) where U : class
+    {
+        HandleDataGrid(e, _safeTag);
 
-        return criteria;
+        queryable = Filter(queryable);
+
+        return _sortTag switch
+        {
+            "AbilityName" => _sortAscending ? queryable.OrderBy(x => x.Name) : queryable.OrderByDescending(x => x.Name),
+            "AbilityLevel" => _sortAscending ? queryable.OrderBy(x => x.SpellLevel) : queryable.OrderByDescending(x => x.SpellLevel),
+            "AbilityDamageType" => _sortAscending ? queryable.OrderBy(x => x.DamageTypes) : queryable.OrderByDescending(x => x.DamageTypes),
+            "AbilityResolutionType" => _sortAscending ? queryable.OrderBy(x => x.Resolution) : queryable.OrderByDescending(x => x.Resolution),
+            "AbilityConcentration" => _sortAscending ? queryable.OrderBy(x => x.Concentration) : queryable.OrderByDescending(x => x.Concentration),
+            "AbilityResolutionStat" => _sortAscending ? queryable.OrderBy(x => x.ResolutionStat) : queryable.OrderByDescending(x => x.ResolutionStat),
+            "AbilitySchool" => _sortAscending ? queryable.OrderBy(x => x.MagicSchool) : queryable.OrderByDescending(x => x.MagicSchool),
+            "AbilityActionSpeed" => _sortAscending ? queryable.OrderBy(x=> x.ActionSpeed) : queryable.OrderByDescending(x => x.ActionSpeed),
+            _ => throw new ArgumentException($"{_sortTag} is not a valid sorting field on {typeof(Ability).Name}")
+        };
     }
 
-    public void ResetFilter()
+    private IQueryable<Ability> Filter(IQueryable<Ability> queryable)
     {
+        queryable = queryable.Where(x => x.SpellLevel >= MinimumSpellLevelFilter && x.SpellLevel <= MaximumSpellLevelFilter);
+
+        if(ConcentrationFilterSelected == ThreeStateBoolean.True)
+        {
+            queryable = queryable.Where(x => x.Concentration);
+        }
+        else if(ConcentrationFilterSelected == ThreeStateBoolean.False)
+        {
+            queryable = queryable.Where(x => !x.Concentration);
+        }
+
+        if(DamageTypeFilterSelected != DamageType.None)
+        {
+            queryable = queryable.Where(x => (x.DamageTypes & DamageTypeFilterSelected) != 0); 
+        }
+
+        if(ResolutionTypeFilterSelected != ResolutionType.Undefined)
+        {
+            queryable = queryable.Where(x => x.Resolution == ResolutionTypeFilterSelected);
+        }
+
+        if(SpellSchoolFilterSelected != MagicSchool.None)
+        {
+            queryable = queryable.Where(x => x.MagicSchool == SpellSchoolFilterSelected);
+        }
+
+        if (!string.IsNullOrEmpty(SearchString))
+        {
+            queryable = queryable.Where(x => x.Name.ToLower().Contains(SearchString.ToLower()));
+        }
+
+        return queryable;
+        
+    }
+
+    public async override Task ResetAsync()
+    {
+        SearchString = "";
         MaximumSpellLevelFilter = SpellLevel.LevelNine;
         ConcentrationFilterSelected = ThreeStateBoolean.Either;
         MinimumSpellLevelFilter = SpellLevel.Cantrip;
-        DamageTypeFilterSelected = DamageType.Untyped;
+        DamageTypeFilterSelected = DamageType.None;
         ResolutionTypeFilterSelected = ResolutionType.Undefined;
         SpellSchoolFilterSelected = MagicSchool.None;
         ActionSpeedFilterSelected = ActionSpeed.None;
+        await GetPaginatedList(1, 50);
     }
+    //public override void ResetFilter()
+    //{
+    //    MaximumSpellLevelFilter = SpellLevel.LevelNine;
+    //    ConcentrationFilterSelected = ThreeStateBoolean.Either;
+    //    MinimumSpellLevelFilter = SpellLevel.Cantrip;
+    //    DamageTypeFilterSelected = DamageType.Untyped;
+    //    ResolutionTypeFilterSelected = ResolutionType.Undefined;
+    //    SpellSchoolFilterSelected = MagicSchool.None;
+    //    ActionSpeedFilterSelected = ActionSpeed.None;
+    //}
 
-    public void SortCollection(ObservableCollection<Ability> collection, DataGridColumnEventArgs e)
+    public async override Task GetPaginatedList(int pageIndex, int pageSize, DataGridColumnEventArgs? e = null)
     {
-        var sortDirection = e.Column.SortDirection == DataGridSortDirection.Ascending;
+        var query = FilterAndSortQuery<Creature>(_dataService.Abilities().Where(x => x.SpellLevel != Core.Models.Enums.SpellLevel.NotASpell), null, e);
 
-        var tagString = e.Column.Tag.ToString();
+        var pagedEncounters = await PaginatedList<Ability>.CreateAsync(
+            query,
+            (x) => (Ability)x,
+            pageIndex,
+            pageSize);
 
-        Func<Ability, object> predicate = tagString switch
-        {
-            "AbilityName" => new(x=> x.Name),
-            "AbilityLevel" => new(x=>x.SpellLevel),
-            "AbilityDamageType" => new(x => x.DamageTypes),
-            "AbilityResolutionType" => new(x => x.Resolution),
-            "AbilityConcentration" => new(x => x.Concentration),
-            "AbilityResolutionStat" => new(x => x.SaveType),
-            "AbilitySchool" => new(x => x.MagicSchool),
-            "AbilityActionSpeed" => new(x => x.ActionSpeed),
-            _ => throw new Exception("Not a valid tag name")
-        };
-
-        SortByPredicate(collection, predicate, sortDirection);
-
-
-        if (e.Column.SortDirection == null || e.Column.SortDirection == DataGridSortDirection.Descending)
-        {
-            e.Column.SortDirection = DataGridSortDirection.Ascending;
-        }
-        else
-        {
-            e.Column.SortDirection = DataGridSortDirection.Descending;
-        }
+        PageNumber = pagedEncounters.PageIndex;
+        PageCount = pagedEncounters.PageCount;
+        Data = pagedEncounters;
     }
 }

@@ -51,6 +51,11 @@ public class DataContext : DbContext
         get; set;
     }
 
+    public DbSet<EncounterCreatures> EncounterCreatures
+    {
+        get; set;
+    }
+
     public string DbPath
     {
         get;
@@ -59,7 +64,7 @@ public class DataContext : DbContext
     {
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
-        path = Path.Join(path, @"/EasyEncounters");
+        path = Path.Join(path, @"/EasyEncounters/ApplicationData");
         DbPath = System.IO.Path.Join(path, "EasyEncounters.db");
     }
 
@@ -68,8 +73,15 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Creature>().HasMany(x => x.Abilities).WithMany();
+        modelBuilder.Entity<Encounter>().HasMany(x => x.CreaturesByCount);
+        modelBuilder.Entity<EncounterCreatures>().HasOne(x => x.Creature).WithMany();
         modelBuilder.Entity<Encounter>().HasMany(x => x.Creatures).WithMany();
         modelBuilder.Entity<Party>().HasMany(x => x.Members).WithMany();
+
+        modelBuilder.Ignore<ActiveAbility>();
+        modelBuilder.Ignore<ICollection<ActiveAbility>>();
+        modelBuilder.Entity<ActiveEncounterCreature>().Ignore(x => x.ActiveAbilities);
+
     }
 
 }

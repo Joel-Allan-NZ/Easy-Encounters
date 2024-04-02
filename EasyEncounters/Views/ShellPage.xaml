@@ -35,6 +35,11 @@
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
             Header="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}">
             <NavigationView.MenuItems>
+                <NavigationViewItem x:Uid="Shell_CampaignSplash" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.CampaignSplashViewModel">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEDB5;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem x:Uid="Shell_CampaignCRUD" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.CampaignCRUDViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE774;" />
@@ -43,11 +48,6 @@
                 <NavigationViewItem x:Uid="Shell_SpellsCRUD" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.AbilityCRUDViewModel">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xea37;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem x:Uid="Shell_CampaignSplash" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.CampaignSplashViewModel">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEDB5;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem x:Uid="Shell_CreatureCRUD" helpers:NavigationHelper.NavigateTo="EasyEncounters.ViewModels.CreatureCRUDViewModel">

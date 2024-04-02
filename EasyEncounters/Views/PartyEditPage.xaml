@@ -11,7 +11,7 @@
     xmlns:behaviors="using:EasyEncounters.Behaviors" 
     xmlns:usercontrols="using:EasyEncounters.Views.UserControls" 
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
-    xmlns:helpers="using:EasyEncounters.Helpers"
+    xmlns:helpers="using:EasyEncounters.Helpers" xmlns:filters="using:EasyEncounters.Views.UserControls.Filters" xmlns:datagrids="using:EasyEncounters.Views.UserControls.DataGrids"
     behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
@@ -46,14 +46,14 @@
                           Text="{x:Bind ViewModel.Party.Name, Mode=TwoWay}"
                           Margin="5,5,5,5"></TextBox>
                 <StackPanel Orientation="Horizontal">
-                <ComboBox ItemsSource="{x:Bind ViewModel.Campaigns}"
+                    <ComboBox ItemsSource="{x:Bind ViewModel.Campaigns}"
                           Header="Campaign:"
                           PlaceholderText="Select a campaign for this party"
                           SelectedItem="{x:Bind ViewModel.SelectedCampaign, Mode=TwoWay}"
                           DisplayMemberPath="Name"
                           Margin="5,5,5,5">
-                </ComboBox>
-                <TextBox Header="Party Description:"
+                    </ComboBox>
+                    <TextBox Header="Party Description:"
                            Text="{x:Bind ViewModel.Party.PartyDescription, Mode=TwoWay}"
                            Margin="5"
                            TextWrapping="Wrap"
@@ -91,7 +91,21 @@
                     </controls:DataGridTemplateColumn>
                 </controls:DataGrid.Columns>
             </controls:DataGrid>
-            <usercontrols:CreatureGrid Grid.Row="2"
+            <usercontrols:PaginatedDataGridWithFilters GridFilteredValues="{x:Bind ViewModel.CreatureFilterValues}"
+                                                   Grid.Row="2">
+                <usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+                    <filters:CreatureFilterControl CreatureFilter="{x:Bind ViewModel.CreatureFilterValues, Mode=OneWay}"/>
+                </usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+                <usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+                    <datagrids:CreatureDataGrid SelectCreatureCommand="{x:Bind ViewModel.AddCreatureCommand}"
+                                            SortCommand="{x:Bind ViewModel.CreatureFilterValues.DataGridSortCommand, Mode=OneWay}"
+                                            InteractableRows="False"
+                                            GridDataSource="{x:Bind ViewModel.CreatureFilterValues.Data, Mode=OneWay}"/>
+                </usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+            </usercontrols:PaginatedDataGridWithFilters>
+        </Grid>
+
+        <!--<usercontrols:CreatureGrid Grid.Row="2"
             AddNewCreatureCommand="{x:Bind ViewModel.AddCreatureCommand}"
                                    ClearFiltersCommand="{x:Bind ViewModel.ClearCreatureFilterCommand}"
                                    SelectCreatureCommand="{x:Bind ViewModel.AddCreatureCommand}"
@@ -110,7 +124,7 @@
                                     InteractableRows="False"
                                    Suggestions="{x:Bind ViewModel.CreatureFilterValues.SearchSuggestions}">
             </usercontrols:CreatureGrid>
-        </Grid>
+        </Grid>-->
         <Button HorizontalAlignment="Right"
                 VerticalAlignment="Bottom"
                 Command="{x:Bind ViewModel.CommitChangesCommand}">

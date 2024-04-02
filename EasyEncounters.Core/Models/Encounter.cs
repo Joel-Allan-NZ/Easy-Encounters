@@ -11,15 +11,39 @@ public class Encounter : Persistable
     {
         
     }
-    public Encounter(string name = "default", List<Creature>? creatures = null, string description = "", double adjustedEncounterXP = -1, Campaign? campaign = null, bool isCampaignOnlyEncounter = false)
+    public Encounter(string name = "default", List<Creature>? creatures = null, string description = "", 
+        double adjustedEncounterXP = -1, Campaign? campaign = null, bool isCampaignOnlyEncounter = false, List<EncounterCreatures>? byCount = null, string plan = "")
     {
         Creatures = creatures ?? new List<Creature>();
+        CreaturesByCount = byCount ?? new();
+
+        if (CreaturesByCount.Count == 0)
+        {
+            Dictionary<Creature, int> critters = new();
+            foreach (var creature in Creatures)
+            {
+                if (critters.ContainsKey(creature))
+                {
+                    critters[creature] += 1;
+                }
+                else
+                {
+                    critters[creature] = 1;
+                }
+            }
+            foreach (var k in critters.Keys)
+            {
+                CreaturesByCount.Add(new EncounterCreatures(k, critters[k]));
+            }
+        }
+        CreatureCount = CreaturesByCount.Sum(x => x.Count);
         Name = name;
         Id = Guid.NewGuid();
         Description = description ?? "";
         AdjustedEncounterXP = adjustedEncounterXP;
         Campaign = campaign;
         IsCampaignOnlyEncounter = isCampaignOnlyEncounter;
+        Plan = plan;
     }
 
     /// <summary>
@@ -55,6 +79,11 @@ public class Encounter : Persistable
         get; set;
     }
 
+    public List<EncounterCreatures> CreaturesByCount
+    {
+        get; set;
+    }
+
     /// <summary>
     /// A short description for additional differentiation.
     /// </summary>
@@ -79,5 +108,15 @@ public class Encounter : Persistable
     public override int GetHashCode()
     {
         return Id.GetHashCode();
+    }
+
+    public int CreatureCount
+    {
+        get; set;
+    }
+
+    public string Plan
+    {
+        get; set;
     }
 }

@@ -46,6 +46,10 @@ public class Party : Persistable
         get; set;
     }
 
+    /// <summary>
+    /// A range of xp values, representing expected encounter difficulties.
+    /// 
+    /// </summary>
     public double[] PartyXPThresholds
     {
         get; set;

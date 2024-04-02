@@ -5,6 +5,7 @@ using EasyEncounters.Contracts.Services;
 using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EasyEncounters.ViewModels;
 
@@ -12,14 +13,16 @@ public partial class PartySelectViewModel : ObservableRecipient, INavigationAwar
 {
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
+    private readonly IActiveEncounterService _activeEncounterService;
 
     [ObservableProperty]
     private string campaignName = "";
 
-    public PartySelectViewModel(IDataService dataService, INavigationService navigationService)
+    public PartySelectViewModel(IDataService dataService, INavigationService navigationService, IActiveEncounterService activeEncounterService)
     {
         _navigationService = navigationService;
         _dataService = dataService;
+        _activeEncounterService = activeEncounterService;
     }
 
     public ObservableCollection<Party> Parties { get; private set; } = new ObservableCollection<Party>();
@@ -42,8 +45,19 @@ public partial class PartySelectViewModel : ObservableRecipient, INavigationAwar
     }
 
     [RelayCommand]
-    private void PartySelected(Party party)
+    private async Task PartySelected(Party party)
     {
-        _navigationService.NavigateTo(typeof(EncounterSelectViewModel).FullName!, party);
+        var savedActiveEncounter = await _dataService.ActiveEncounters().FirstOrDefaultAsync(x => x.Party.Id == party.Id);
+
+        if (savedActiveEncounter == null)
+        {           
+            _navigationService.NavigateTo(typeof(EncounterSelectViewModel).FullName!, party);
+        }
+        else
+        {
+            savedActiveEncounter = await _activeEncounterService.FullyLoadActiveEncounter(savedActiveEncounter);
+            _navigationService.NavigateTo(typeof(EncounterTabViewModel).FullName!, savedActiveEncounter, true);
+        }
+        
     }
 }

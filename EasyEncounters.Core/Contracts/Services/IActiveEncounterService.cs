@@ -10,7 +10,7 @@ public interface IActiveEncounterService
     /// </summary>
     /// <param name="inProgress"></param>
     /// <param name="creature"></param>
-    void AddCreatureToInProgressEncounter(ActiveEncounter inProgress, Creature creature);
+    Task AddCreatureToInProgressEncounterAsync(ActiveEncounter inProgress, Creature creature);
 
     /// <summary>
     /// Creates an ActiveEncounter from an Encounter for a given Party,
@@ -55,6 +55,6 @@ public interface IActiveEncounterService
     /// <returns>The ActiveEncounterCreatures in the ActiveEncounter, returned in initiative order</returns>
     Task<IEnumerable<ActiveEncounterCreature>> RollInitiative(ActiveEncounter activeEncounter);
 
-    //ActiveEncounterCreature CreateActiveEncounterCreature(Creature creature, bool maxHPRoll);
+    Task<ActiveEncounter> FullyLoadActiveEncounter(ActiveEncounter encounter);
 
 }

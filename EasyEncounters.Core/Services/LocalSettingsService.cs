@@ -11,7 +11,7 @@ namespace EasyEncounters.Core.Services;
 #nullable enable
 public class LocalSettingsService : ILocalSettingsService
 {
-    private const string _defaultApplicationDataFolder = "EasyEncounters\\ApplicationData";
+    private const string _defaultApplicationDataFolder = "EasyEncounters";
     private const string _defaultLocalSettingsFile = "LocalSettings.json";
 
     private readonly string _applicationDataFolder;
@@ -29,7 +29,7 @@ public class LocalSettingsService : ILocalSettingsService
 
         // _applicationDataFolder = 
         CopyDB();
-        _applicationDataFolder = Path.Combine(_localApplicationData, _options.ApplicationDataFolder ?? _defaultApplicationDataFolder);
+        _applicationDataFolder = Path.Combine(_localApplicationData, _defaultApplicationDataFolder?? _options.ApplicationDataFolder);
         _localsettingsFile = _options.LocalSettingsFile ?? _defaultLocalSettingsFile;
 
         //_settings = new Dictionary<string, object>();
@@ -40,11 +40,19 @@ public class LocalSettingsService : ILocalSettingsService
 
         string result = Assembly.GetExecutingAssembly().Location;
         int index = result.LastIndexOf("\\");
-        string dbPath = $"{result.Substring(0, index)}\\TextJson.txt";
-        
+        string dbPath = $"{result.Substring(0, index)}\\EasyEncounters.db";
+
+
         
         string destinationFolder = Path.Combine(_localApplicationData, _options.ApplicationDataFolder ?? _defaultApplicationDataFolder); //$"{Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)}\\EasyEncounters\\";
-        string destinationPath = Path.Combine(destinationFolder, "TextJson.txt");
+        string destinationPath = Path.Combine(destinationFolder, "EasyEncounters.db");
+
+        if (!File.Exists(dbPath))
+        {
+            string nope = "nope, not a file path match";
+            var filePathDir = Path.Combine(destinationFolder, "nope.txt");
+            File.WriteAllText(filePathDir, nope);
+        }
         if (!File.Exists(destinationPath))
         {
             Directory.CreateDirectory(destinationFolder);

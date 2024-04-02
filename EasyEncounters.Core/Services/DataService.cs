@@ -388,4 +388,11 @@ public class DataService : IDataService
     }
 
     public Task SaveAddAsync<T>(IEnumerable<T> entities) where T : IPersistable => throw new NotImplementedException();
+    public IQueryable<Campaign> Campaigns() => throw new NotImplementedException();
+    public IQueryable<Encounter> Encounters() => throw new NotImplementedException();
+    public IQueryable<Ability> Abilities() => throw new NotImplementedException();
+    public IQueryable<Party> Parties() => throw new NotImplementedException();
+    public IQueryable<Creature> Creatures() => throw new NotImplementedException();
+    public Task CommitChanges() => throw new NotImplementedException();
+    public IQueryable<ActiveEncounter> ActiveEncounters() => throw new NotImplementedException();
 }

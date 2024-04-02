@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="EasyEncounters.Views.UserControls.Filters.AbilityFilterControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EasyEncounters.Views.UserControls.Filters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:helpers="using:EasyEncounters.Helpers"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <helpers:EnumToStringConverter x:Key="EnumToStringConverter" />
+    </UserControl.Resources>
+
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Spell Level:" />
+            <StackPanel Orientation="Horizontal">
+                <ComboBox ItemsSource="{x:Bind AbilityFilter.SpellLevels, Mode=OneWay}"
+                      SelectedItem="{x:Bind AbilityFilter.MinimumSpellLevelFilter, Mode=TwoWay}"
+                      MinWidth="124"
+                      Margin="2">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Text="-"
+                           Margin="2"
+                           VerticalAlignment="Center" />
+                <ComboBox ItemsSource="{x:Bind AbilityFilter.SpellLevels, Mode=OneWay}"
+                      SelectedItem="{x:Bind AbilityFilter.MaximumSpellLevelFilter, Mode=TwoWay}"
+                      MinWidth="124"
+                      Margin="2">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Spell School:" />
+            <ComboBox ItemsSource="{x:Bind AbilityFilter.MagicSchools, Mode=OneWay}"
+                  SelectedItem="{x:Bind AbilityFilter.SpellSchoolFilterSelected, Mode=TwoWay}"
+                  MinWidth="124"
+                  Margin="2">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Concentration:" />
+            <ComboBox ItemsSource="{x:Bind AbilityFilter.ConcentrationStates, Mode=OneWay}"
+                  SelectedItem="{x:Bind AbilityFilter.ConcentrationFilterSelected, Mode=TwoWay}"
+                  MinWidth="124"
+                  Margin="2">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Damage Type:" />
+            <ComboBox ItemsSource="{x:Bind AbilityFilter.DamageTypes, Mode=OneWay}"
+                  SelectedItem="{x:Bind AbilityFilter.DamageTypeFilterSelected, Mode=TwoWay}"
+                  MinWidth="124"
+                  Margin="2">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Resolution Type:" />
+            <ComboBox ItemsSource="{x:Bind AbilityFilter.ResolutionTypes, Mode=OneWay}"
+                  SelectedItem="{x:Bind AbilityFilter.ResolutionTypeFilterSelected, Mode=TwoWay}"
+                  MinWidth="124"
+                  Margin="2">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <TextBlock Text="Action Speed:" />
+            <ComboBox ItemsSource="{x:Bind AbilityFilter.ActionSpeeds, Mode=OneWay}"
+                  SelectedItem="{x:Bind AbilityFilter.ActionSpeedFilterSelected, Mode=TwoWay}"
+                  MinWidth="124"
+                  Margin="2">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

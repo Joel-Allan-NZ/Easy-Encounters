@@ -47,6 +47,8 @@
     <Content Remove="Assets\Fonts\MRSEAV~9.TTF" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="EasyEncounters.db" />
+    <None Remove="LocalSettings.json" />
     <None Remove="Styles\ValidatingStyles.xaml" />
     <None Remove="Views\AbilityCRUDPage.xaml" />
     <None Remove="Views\AbilityEditPage.xaml" />
@@ -59,7 +61,6 @@
     <None Remove="Views\CreatureCRUDPage.xaml" />
     <None Remove="Views\CreatureDisplayTabPage.xaml" />
     <None Remove="Views\CreatureEditNavigationPage.xaml" />
-    <None Remove="Views\CreatureEditPage.xaml" />
     <None Remove="Views\CreatureEdit\DMCRAdvicePage.xaml" />
     <None Remove="Views\CreatureEdit\SkillsPage.xaml" />
     <None Remove="Views\DealDamagePage.xaml" />
@@ -81,7 +82,15 @@
     <None Remove="Views\SpellGrid.xaml" />
     <None Remove="Views\TargetedDamagePage.xaml" />
     <None Remove="Views\UserControls\CreatureGrid.xaml" />
+    <None Remove="Views\UserControls\DataGrids\AbilityDataGrid.xaml" />
+    <None Remove="Views\UserControls\DataGrids\CreatureDataGrid.xaml" />
+    <None Remove="Views\UserControls\DataGrids\EncounterDataGrid.xaml" />
+    <None Remove="Views\UserControls\DataGrids\PartyDataGrid.xaml" />
     <None Remove="Views\UserControls\EncounterGrid.xaml" />
+    <None Remove="Views\UserControls\Filters\AbilityFilterControl.xaml" />
+    <None Remove="Views\UserControls\Filters\CreatureFilterControl.xaml" />
+    <None Remove="Views\UserControls\Filters\EncounterFilterControl.xaml" />
+    <None Remove="Views\UserControls\PaginatedDataGridWithFilters.xaml" />
     <None Remove="Views\UserControls\PartyGrid.xaml" />
   </ItemGroup>
 
@@ -117,9 +126,6 @@
     <None Update="ErrorLogging.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="LocalSettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Log.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -130,8 +136,32 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="TextJson.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+    <Page Update="Views\UserControls\DataGrids\PartyDataGrid.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\UserControls\DataGrids\EncounterDataGrid.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\UserControls\DataGrids\AbilityDataGrid.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\UserControls\DataGrids\CreatureDataGrid.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\UserControls\Filters\AbilityFilterControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\UserControls\Filters\CreatureFilterControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\UserControls\Filters\EncounterFilterControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Views\UserControls\PaginatedDataGridWithFilters.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Update="Views\CreatureEdit\DMCRAdvicePage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -210,9 +240,6 @@
     <Page Update="Views\PartyCRUDPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Update="Views\CreatureEditPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Update="Views\CreatureCRUDPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -248,6 +275,15 @@
   
   <ItemGroup>
     <Resource Remove="Views\SpellGrid.xaml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="EasyEncounters.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="LocalSettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   
   <ItemGroup>

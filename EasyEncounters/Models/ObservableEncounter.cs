@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +34,13 @@ public partial class ObservableEncounter : ObservableObject
         get => Encounter.Campaign;
         set => SetProperty(Encounter.Campaign, value, Encounter, (m,v) => m.Campaign = v);
     }
+
+    public int CreatureCount
+    {
+        get => Encounter.CreatureCount;
+        set => SetProperty(Encounter.CreatureCount, value, Encounter, (m, v) => m.CreatureCount = v);
+    }
+
 
     public ObservableEncounter(Encounter encounter)
     {

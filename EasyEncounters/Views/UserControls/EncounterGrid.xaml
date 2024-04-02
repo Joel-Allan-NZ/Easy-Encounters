@@ -50,7 +50,11 @@
                      Orientation="Horizontal"
                      Margin="0"
                      Grid.Row="0"
-                     Background="{ThemeResource SystemAltHighColor}">   
+                     Background="{ThemeResource SystemAltHighColor}">
+            <TextBlock Text="{x:Bind TitleText}"
+                       VerticalAlignment="Center"
+                       Margin="10,5"
+                       Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
             <CommandBar DefaultLabelPosition="Right"
                  VerticalAlignment="Center"
                  Visibility="{Binding HasVisibileFilters, Converter={StaticResource BooleanToVisibilityConverter}}"
@@ -119,7 +123,7 @@
                                                    HorizontalAlignment="Left"
                                                    AcceptsExpression="True"
                                                    Minimum="0"
-                                                   Maximum="50"
+                                                   Maximum="255"
                                                    Margin="2" />
                                     </StackPanel>
                                 </StackPanel>
@@ -133,6 +137,7 @@
                        Command="{x:Bind ClearFiltersCommand}"
                        Width="80">>
                 </AppBarButton>
+
             </CommandBar>
             <AutoSuggestBox x:Name="SearchBox"
                  HorizontalAlignment="Stretch"
@@ -140,19 +145,23 @@
                  QueryIcon="Find"
                  VerticalAlignment="Center"
                  ItemsSource="{x:Bind Suggestions, Mode=OneWay}"
-                 TextMemberPath="Name"
-                 DisplayMemberPath="Name"
+                 Text="{x:Bind SearchString, Mode=TwoWay}"
                  FontSize="20"
                  Margin="5,0,0,0">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="QuerySubmitted">
                         <Core:EventTriggerBehavior.Actions>
-                            <Core:InvokeCommandAction Command="{x:Bind FilterCommand}" CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}" />
+                            <Core:InvokeCommandAction Command="{x:Bind FilterCommand}"/>
                         </Core:EventTriggerBehavior.Actions>
                     </Core:EventTriggerBehavior>
                     <Core:EventTriggerBehavior EventName="TextChanged">
                         <Core:EventTriggerBehavior.Actions>
-                            <Core:InvokeCommandAction Command="{x:Bind SearchTextChangeCommand}" CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}" />
+                            <Core:InvokeCommandAction Command="{x:Bind SearchTextChangeCommand}" />
+                        </Core:EventTriggerBehavior.Actions>
+                    </Core:EventTriggerBehavior>
+                    <Core:EventTriggerBehavior EventName="SuggestionChosen">
+                        <Core:EventTriggerBehavior.Actions>
+                            <Core:InvokeCommandAction Command="{x:Bind SuggestionChosenCommand}"/>
                         </Core:EventTriggerBehavior.Actions>
                     </Core:EventTriggerBehavior>
                 </Interactivity:Interaction.Behaviors>
@@ -164,6 +173,38 @@
                 <AppBarButton Label="Search"
                    Command="{x:Bind FilterCommand}"
                    CommandParameter="{x:Bind SearchBox.Text, Mode=OneWay}" />
+                <AppBarButton ToolTipService.ToolTip="First"
+                   Icon="Previous"
+                   Command="{x:Bind FirstAsyncCommand, Mode=OneWay}"
+                   Foreground="{ThemeResource SystemAccentColor}" />
+                <AppBarButton ToolTipService.ToolTip="Previous"
+                   Icon="Back"
+                   Command="{x:Bind PreviousAsyncCommand, Mode=OneWay}"
+                   Foreground="{ThemeResource SystemAccentColor}" />
+                <AppBarElementContainer VerticalContentAlignment="Center">
+                    <TextBlock Text="Page"
+                    Margin="12 0 8 0" />
+                </AppBarElementContainer>
+                <AppBarElementContainer VerticalContentAlignment="Center">
+                    <TextBlock Text="{x:Bind PageNumber, Mode=OneWay}" />
+                </AppBarElementContainer>
+                <AppBarElementContainer VerticalContentAlignment="Center">
+                    <TextBlock Text="of"
+                    Margin="8 0" />
+                </AppBarElementContainer>
+                <AppBarElementContainer VerticalContentAlignment="Center">
+                    <TextBlock Text="{x:Bind PageCount, Mode=OneWay}"
+                    Margin="0 0 12 0" />
+                </AppBarElementContainer>
+                <AppBarButton ToolTipService.ToolTip="Next"
+                   Icon="Forward"
+                   Command="{x:Bind NextAsyncCommand, Mode=OneWay}"
+                   Foreground="{ThemeResource SystemAccentColor}" />
+                <AppBarButton ToolTipService.ToolTip="Last"
+                   Icon="Next"
+                   Command="{x:Bind LastAsyncCommand, Mode=OneWay}"
+                   Foreground="{ThemeResource SystemAccentColor}" />
+                <AppBarSeparator />
             </CommandBar>
         </StackPanel>
         <controls:DataGrid Grid.Row="1"

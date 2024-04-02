@@ -2,6 +2,7 @@
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Core.Models.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace EasyEncounters.Core.Services;
 
@@ -28,9 +29,33 @@ public class ActiveEncounterService : IActiveEncounterService
 
     }
 
-    public void AddCreatureToInProgressEncounter(ActiveEncounter inProgress, Creature creatureToAdd)
+    public async Task<ActiveEncounter> FullyLoadActiveEncounter(ActiveEncounter encounter)
     {
-        var activeCreatureToAdd = CreateActiveEncounterCreature(creatureToAdd, _modelOptionsService.RollHP);
+        var partiallyLoaded = await _dataService.ActiveEncounters().Include(x => x.ActiveCreatures).Include(x => x.CreatureTurns).FirstOrDefaultAsync(x => x.Party.Id == encounter.Party.Id);
+
+        //load active creatures fully. 
+        //create activeabilities for active creatures
+        if(partiallyLoaded != null)
+        {
+            foreach(var creature in partiallyLoaded.ActiveCreatures)
+            {
+                var nonActiveCreature = await _dataService.Creatures().Include(x => x.Abilities).FirstOrDefaultAsync(x => x.Id == creature.CreatureID);
+
+                foreach(var ability in nonActiveCreature.Abilities)
+                {
+                    creature.ActiveAbilities.Add(_abilityService.CreateActiveAbility(creature, ability, _creatureService.GetAttributeBonusValue(creature, ability.ResolutionStat)));
+                }
+            }
+        }
+        partiallyLoaded.ActiveCreatures = partiallyLoaded.ActiveCreatures.OrderBy(x => x.Order).ToList();
+        return partiallyLoaded;
+    }
+
+    public async Task AddCreatureToInProgressEncounterAsync(ActiveEncounter inProgress, Creature creatureToAdd)
+    {
+        var fromData = await _dataService.Creatures().Include(x => x.Abilities).FirstOrDefaultAsync(x => x.Id == creatureToAdd.Id);
+
+        var activeCreatureToAdd = CreateActiveEncounterCreature(fromData, _modelOptionsService.RollHP);
 
         var nameSuffixDigit = inProgress.ActiveCreatures.Count(x => x.Name == creatureToAdd.Name);
 
@@ -40,14 +65,18 @@ public class ActiveEncounterService : IActiveEncounterService
         inProgress.CreatureTurns.Add(activeCreatureToAdd);
 
         RollInitiative(activeCreatureToAdd);
+
+        await _dataService.SaveAddAsync(activeCreatureToAdd);
     }
 
     public async Task<ActiveEncounter> CreateActiveEncounterAsync(Encounter encounter, Party party)
     {
         var activeCreatures = CreateCreaturesForActiveEncounter(encounter, party);
 
-        var active = new ActiveEncounter(encounter, activeCreatures);
+        var active = new ActiveEncounter(encounter, activeCreatures, party);
         active.Description ??= "Active";
+        
+        
         await _dataService.SaveAddAsync(active);
 
         return active;
@@ -77,8 +106,10 @@ public class ActiveEncounterService : IActiveEncounterService
     public async Task EndEncounterAsync(ActiveEncounter activeEncounter)
     {
         await _dataService.WriteLogAsync(activeEncounter.Log);
+        
         //await _dataService.ClearActiveEncounterAsync();
         await _logService.EndEncounterLog();
+        await _dataService.DeleteAsync(activeEncounter);
     }
 
     public DamageVolume GetDamageVolumeSuggestion(ActiveEncounterCreature target, DamageType damageType)
@@ -104,6 +135,7 @@ public class ActiveEncounterService : IActiveEncounterService
     public void OrderCreatureTurns(ActiveEncounter activeEncounter, IEnumerable<ActiveEncounterCreature> creatures)
     {
         activeEncounter.CreatureTurns = creatures.ToList();
+        AddOrderNumbers(activeEncounter);
     }
 
     public async Task<IEnumerable<ActiveEncounterCreature>> RollInitiative(ActiveEncounter activeEncounter)
@@ -120,7 +152,17 @@ public class ActiveEncounterService : IActiveEncounterService
         await _dataService.SaveAddAsync(activeEncounter);
         _logService.StartEncounterLog(activeEncounter.ActiveTurn);
 
+        AddOrderNumbers(activeEncounter);
+
         return activeEncounter.CreatureTurns;
+    }
+
+    private void AddOrderNumbers(ActiveEncounter activeEncounter)
+    {
+        for (int i = 0; i < activeEncounter.CreatureTurns.Count; i++)
+        {
+            activeEncounter.CreatureTurns[i].Order = i+1;
+        }
     }
 
     private static int GetEffectiveDamage(int damage, DamageVolume multiplierEnum)
@@ -175,7 +217,15 @@ public class ActiveEncounterService : IActiveEncounterService
 
     private IEnumerable<ActiveEncounterCreature> CreateCreaturesForActiveEncounter(Encounter encounter, Party party)
     {
-        var activeCreatures = encounter.Creatures.Select(x => CreateActiveEncounterCreature(x, _modelOptionsService.RollHP));
+        List<ActiveEncounterCreature> activeCreatures = new();
+        foreach(var creaturePair in encounter.CreaturesByCount)
+        {
+            for(int i =0; i < creaturePair.Count; i++)
+            {
+                activeCreatures.Add(CreateActiveEncounterCreature(creaturePair.Creature, _modelOptionsService.RollHP));
+            }
+        }
+       // var activeCreatures = encounter.Creatures.Select(x => CreateActiveEncounterCreature(x, _modelOptionsService.RollHP));
 
         return activeCreatures.Concat(party.Members.Select(x => CreateActiveEncounterCreature(x, false))); //todo: investigate if this deferred execution here is ever a problem
     }

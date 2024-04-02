@@ -18,6 +18,7 @@
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -27,27 +28,65 @@
                        Margin="10"
                        Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
             </Grid>
-            <controls:DataGrid ItemsSource="{x:Bind ViewModel.Campaigns}"
-                           CanUserReorderColumns="False"
-                           CanUserResizeColumns="False"
-                           GridLinesVisibility="Horizontal"
-                               Grid.Row="1"
-                           Margin="0"
-                           SelectionMode="Single"
-                           AutoGenerateColumns="False">
+        <CommandBar DefaultLabelPosition="Right"
+                    Grid.Row="1"
+                        Background="{ThemeResource SystemAltHighColor}"
+                        VerticalAlignment="Center"
+                        OverflowButtonVisibility="Collapsed">
+            <AppBarButton ToolTipService.ToolTip="First"
+                              Icon="Previous"
+                              Command="{x:Bind ViewModel.FirstAsyncCommand, Mode=OneWay}"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+            <AppBarButton ToolTipService.ToolTip="Previous"
+                              Icon="Back"
+                              Command="{x:Bind ViewModel.PreviousAsyncCommand, Mode=OneWay}"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+            <AppBarElementContainer VerticalContentAlignment="Center">
+                <TextBlock Text="Page"
+                               Margin="12 0 8 0" />
+            </AppBarElementContainer>
+            <AppBarElementContainer VerticalContentAlignment="Center">
+                <TextBlock Text="{x:Bind ViewModel.PageNumber, Mode=OneWay}" />
+            </AppBarElementContainer>
+            <AppBarElementContainer VerticalContentAlignment="Center">
+                <TextBlock Text="of"
+                               Margin="8 0" />
+            </AppBarElementContainer>
+            <AppBarElementContainer VerticalContentAlignment="Center">
+                <TextBlock Text="{x:Bind ViewModel.PageCount, Mode=OneWay}"
+                               Margin="0 0 12 0" />
+            </AppBarElementContainer>
+            <AppBarButton ToolTipService.ToolTip="Next"
+                              Icon="Forward"
+                              Command="{x:Bind ViewModel.NextAsyncCommand, Mode=OneWay}"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+            <AppBarButton ToolTipService.ToolTip="Last"
+                              Icon="Next"
+                              Command="{x:Bind ViewModel.LastAsyncCommand, Mode=OneWay}"
+                              Foreground="{ThemeResource SystemAccentColor}" />
+            <AppBarSeparator />
+        </CommandBar>
+        <controls:DataGrid ItemsSource="{x:Bind ViewModel.Campaigns, Mode=OneWay}"
+                    CanUserReorderColumns="False"
+                    CanUserResizeColumns="False"
+                    GridLinesVisibility="Horizontal"
+                    Grid.Row="2"
+                    Margin="0"
+                    SelectionMode="Single"
+                    AutoGenerateColumns="False">
                 <controls:DataGrid.Columns>
                     <controls:DataGridTextColumn
-                    Header="Campaign"
-                    Tag="CampaignName"
-                    Binding="{Binding Name}" />
+                        Header="Campaign"
+                        Tag="CampaignName"
+                        Binding="{Binding Name}" />
                     <controls:DataGridTextColumn
-                    Header="Description"
-                    Tag="CampaignDescription"
-                    Binding="{Binding Description}" />
+                        Header="Description"
+                        Tag="CampaignDescription"
+                        Binding="{Binding Description}" />
                 </controls:DataGrid.Columns>
             </controls:DataGrid>
             <Button Command="{x:Bind ViewModel.AddNewCampaignCommand}"
-                    Grid.Row="2"
+                    Grid.Row="3"
                 VerticalAlignment="Bottom"
                 Margin="5,5,5,5"
                 KeyboardAcceleratorPlacementMode="Auto"

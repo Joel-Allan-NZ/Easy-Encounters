@@ -46,7 +46,18 @@
             </Button.KeyboardAccelerators>
             <FontIcon Glyph="&#xE74E;"></FontIcon>
         </Button>
-
+        <!--<Grid Grid.Row="1">
+        <SelectorBar x:Name="SelectorBar"
+                     Loaded="SelectorBar_Loaded"
+                     SelectionChanged="SelectorBar_SelectionChanged">
+            <SelectorBarItem Text="Basic Information" x:Name="BasicInfoContentEncounter"
+                             IsSelected="True"/>
+            <SelectorBarItem Text="Party and Difficulty" x:Name="PartyAndDifficulty" />
+            <SelectorBarItem Text="Creatures" x:Name="Creatures" />
+        </SelectorBar>
+        <Frame x:Name="ContentFrame" 
+               IsNavigationStackEnabled="False"/>
+        </Grid>-->
         <NavigationView x:Name="rootNavigationView" 
                     Grid.Row="1"
                     Margin="10,0,0,0"

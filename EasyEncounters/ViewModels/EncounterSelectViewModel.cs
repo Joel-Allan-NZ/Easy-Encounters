@@ -8,6 +8,8 @@ using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Models;
 using EasyEncounters.Services.Filter;
+using Microsoft.EntityFrameworkCore;
+using Windows.Services.Maps;
 
 namespace EasyEncounters.ViewModels;
 
@@ -15,33 +17,31 @@ public partial class EncounterSelectViewModel : ObservableRecipient, INavigation
 {
     private readonly IActiveEncounterService _activeEncounterService;
     private readonly IDataService _dataService;
-    private IList<ObservableEncounter> _encounterCache;
     private readonly IFilteringService _filteringService;
     private readonly INavigationService _navigationService;
-    private readonly IEncounterService _encounterService;
 
     [ObservableProperty]
     private Party _party;
 
     [ObservableProperty]
-    private ObservableEncounterFilter _encounterFilterValues;
+    private EncounterFilter _encounterFilterValues;
 
-
-    public EncounterSelectViewModel(IDataService dataService, INavigationService navigationService, IActiveEncounterService activeEncounterService, IFilteringService filteringService,
-        IEncounterService encounterService)
+    public List<Campaign> Campaigns
     {
-        _encounterService = encounterService;
+    get; set; }
+
+
+    public EncounterSelectViewModel(IDataService dataService, INavigationService navigationService, IActiveEncounterService activeEncounterService, IFilteringService filteringService)
+    {
         _dataService = dataService;
         _activeEncounterService = activeEncounterService;
         _navigationService = navigationService;
         _filteringService = filteringService;
-        _encounterCache = new List<ObservableEncounter>();
-        _encounterFilterValues = (ObservableEncounterFilter)_filteringService.GetFilterValues<ObservableEncounter>();
+        _encounterFilterValues = (EncounterFilter)_filteringService.GetFilterValues<Encounter>();
+        Campaigns = new();
+        
+
     }
-
-    public event EventHandler<DataGridColumnEventArgs>? Sorting;
-
-    public ObservableCollection<ObservableEncounter> Encounters { get; private set; } = new ObservableCollection<ObservableEncounter>();
 
     public void OnNavigatedFrom()
     {
@@ -51,25 +51,13 @@ public partial class EncounterSelectViewModel : ObservableRecipient, INavigation
     {
         if (parameter is Party party)
         {
+            Campaigns = new();
             Party = party;
-            Encounters.Clear();
 
-            var encounters = await _dataService.GetCampaignEncountersAsync(Party.Campaign, true);
+            Campaigns.Add(Party.Campaign);
 
-            //var data = _encounterService.GenerateEncounterData(party, encounters);
-            foreach(var encounter in encounters)
-            {
-                ObservableEncounter obs = new(encounter)
-                {
-                    EncounterDifficulty = _encounterService.DetermineDifficultyForParty(encounter, Party)
-                };
-
-                Encounters.Add(obs);
-            }
-
-            _encounterCache = new List<ObservableEncounter>(Encounters);
-
-            EncounterFilterValues = (ObservableEncounterFilter)_filteringService.GetFilterValues<ObservableEncounter>();
+            EncounterFilterValues = (EncounterFilter)_filteringService.GetFilterValues<Encounter>();
+            await EncounterFilterValues.ResetAsync();
         }
     }
 
@@ -79,53 +67,14 @@ public partial class EncounterSelectViewModel : ObservableRecipient, INavigation
         _navigationService.NavigateTo(typeof(EncounterEditNavigationViewModel).FullName!, null);
     }
 
-
-    [RelayCommand]
-    private void DataGridSort(DataGridColumnEventArgs e)
-    {
-        EncounterFilterValues.SortCollection(Encounters, e);
-    }
-
-    [RelayCommand]
-    private void EncounterFilter(string text)
-    {
-        var filtered = _filteringService.Filter(_encounterCache, EncounterFilterValues, text);
-        Encounters.Clear();
-        foreach (var encounter in filtered)
-            Encounters.Add(encounter);
-    }
-
     [RelayCommand]
     private async Task SelectEncounter(ObservableEncounter parameter)
     {
         if (parameter != null)
         {
-            var active = await _activeEncounterService.CreateActiveEncounterAsync(parameter.Encounter, Party);
+            var encounter = _dataService.Encounters().Where(x => x.Id == parameter.Encounter.Id).Include(x => x.CreaturesByCount).Include(x => x.Creatures).ThenInclude(x => x.Abilities).First();
+            var active = await _activeEncounterService.CreateActiveEncounterAsync(encounter, Party);
             _navigationService.NavigateTo(typeof(EncounterTabViewModel).FullName!, active, true);
         }
-    }
-
-    [RelayCommand]
-    private void SearchTextChange(string text)
-    {
-        if (_encounterCache == null)
-            return;
-
-        var filtered = _filteringService.Filter(_encounterCache, EncounterFilterValues, text);
-        if (String.IsNullOrEmpty(text))
-        {
-            Encounters.Clear();
-            foreach (var Encounter in filtered)
-            {
-                Encounters.Add(Encounter);
-            }
-        }
-    }
-
-    [RelayCommand]
-    private void ClearFilters()
-    {
-        EncounterFilterValues.ResetFilter();
-        EncounterFilter("");
     }
 }

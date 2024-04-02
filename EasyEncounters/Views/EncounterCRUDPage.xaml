@@ -8,6 +8,8 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
+    xmlns:userFilters="using:EasyEncounters.Views.UserControls.Filters"
+    xmlns:userGrids="using:EasyEncounters.Views.UserControls.DataGrids"
     xmlns:behaviors="using:EasyEncounters.Behaviors"
     behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
     mc:Ignorable="d"
@@ -18,33 +20,24 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Background="{ThemeResource SystemAltHighColor}"
-              Grid.Row="0">
-                <TextBlock Text="Manage Encounters"
-                       Margin="10"
-                       Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
-            </Grid>
-        <usercontrols:EncounterGrid HasVisibleFilters="True"
-                                    FilterMinimumEncounterDifficulty="{x:Bind ViewModel.EncounterFilterValues.MinimumDifficulty, Mode=TwoWay}"
-                                    FilterMaximumEncounterDifficulty="{x:Bind ViewModel.EncounterFilterValues.MaximumDifficulty, Mode=TwoWay}"
-                                    FilterEncounterDifficultySource="{x:Bind ViewModel.EncounterFilterValues.Difficulties, Mode=OneWay}"
-                                    FilterCampaignSelected="{x:Bind ViewModel.EncounterFilterValues.CampaignName}"
-                                    FilterCampaignSource="{x:Bind ViewModel.Campaigns}"
-                                    FilterMinimumEnemies="{x:Bind ViewModel.EncounterFilterValues.MinimumEnemiesFilter, Mode=TwoWay}"
-                                    FilterMaximumEnemies="{x:Bind ViewModel.EncounterFilterValues.MaximumEnemiesFilter, Mode=TwoWay}"
-                                    ClearFiltersCommand="{x:Bind ViewModel.ClearFiltersCommand}"
-                                    Suggestions="{x:Bind ViewModel.EncounterFilterValues.SearchSuggestions, Mode=OneWay}"
-                                    FilterCommand="{x:Bind ViewModel.EncounterFilterCommand}"
-                                    GridDataSource="{x:Bind ViewModel.Encounters}"
-                                    SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
-                                    EditEncounterCommand="{x:Bind ViewModel.EditEncounterCommand}"
-                                    CopyEncounterCommand="{x:Bind ViewModel.CopyEncounterCommand}"
-                                    DeleteEncounterCommand="{x:Bind ViewModel.DeleteEncounterCommand}"
-                                    AddNewEncounterCommand="{x:Bind ViewModel.AddEncounterCommand}"
-                                    SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
-                                    SelectEncounterCommand="{x:Bind ViewModel.EditEncounterCommand}"
-                                    InteractableRows="True"
-                                    Grid.Row="1"
-                                    />
+        <usercontrols:PaginatedDataGridWithFilters TitleText="Manage Encounters"
+                                                   GridFilteredValues="{x:Bind ViewModel.EncounterFilterValues}"
+                                                   AddNewItemCommand="{x:Bind ViewModel.AddEncounterCommand}"
+                                                   Grid.Row="1"
+                                                   >
+            <usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+                <userFilters:EncounterFilterControl EncounterFilter="{x:Bind ViewModel.EncounterFilterValues, Mode=OneWay}"
+                                                    FilterCampaignSource="{x:Bind ViewModel.Campaigns, Mode=OneWay}"/>
+            </usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+            <usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+                <userGrids:EncounterDataGrid SelectEncounterCommand="{x:Bind ViewModel.EditEncounterCommand}"
+                                             CopyEncounterCommand="{x:Bind ViewModel.CopyEncounterCommand}"
+                                             DeleteEncounterCommand="{x:Bind ViewModel.DeleteEncounterCommand}"
+                                             SortCommand="{x:Bind ViewModel.EncounterFilterValues.DataGridSortCommand, Mode=OneWay}"
+                                             InteractableRows="True"
+                                             GridDataSource="{x:Bind ViewModel.EncounterFilterValues.Data, Mode=OneWay}"
+                                             EditEncounterCommand="{x:Bind ViewModel.EditEncounterCommand}"/>
+            </usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+        </usercontrols:PaginatedDataGridWithFilters>
     </Grid>
 </Page>

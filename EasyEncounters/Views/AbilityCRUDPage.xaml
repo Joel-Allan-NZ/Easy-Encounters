@@ -7,6 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:helpers="using:EasyEncounters.Helpers"
     xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
+    xmlns:userFilters="using:EasyEncounters.Views.UserControls.Filters"
+    xmlns:userGrids="using:EasyEncounters.Views.UserControls.DataGrids"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
         xmlns:behaviors="using:EasyEncounters.Behaviors"
     behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
@@ -19,38 +21,58 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Background="{ThemeResource SystemAltHighColor}"
-              Grid.Row="0">
-                <TextBlock Text="Manage Spells"
-                       Margin="10"
-                       Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
-            </Grid>
-        <usercontrols:SpellGrid
+        <usercontrols:PaginatedDataGridWithFilters TitleText="Manage Abilities"
+                                                   GridFilteredValues="{x:Bind ViewModel.AbilityFilterValues}"
+                                                   AddNewItemCommand="{x:Bind ViewModel.AddAbilityCommand}"
+                                                   Grid.Row="1"
+                                                   >
+            <usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+                <userFilters:AbilityFilterControl AbilityFilter="{x:Bind ViewModel.AbilityFilterValues, Mode=OneWay}"/>
+            </usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+            <usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+                <userGrids:AbilityDataGrid SelectSpellCommand="{x:Bind ViewModel.EditAbilityCommand}"
+                                             CopySpellCommand="{x:Bind ViewModel.CopyAbilityCommand}"
+                                             DeleteSpellCommand="{x:Bind ViewModel.DeleteAbilityCommand}"
+                                             SortCommand="{x:Bind ViewModel.AbilityFilterValues.DataGridSortCommand, Mode=OneWay}"
+                                             GridDataSource="{x:Bind ViewModel.AbilityFilterValues.Data, Mode=OneWay}"
+                                             EditSpellCommand="{x:Bind ViewModel.EditAbilityCommand}"/>
+            </usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+        </usercontrols:PaginatedDataGridWithFilters>
+        <!--<usercontrols:SpellGrid
             Grid.Row="1"
-        FilterSpellLevelSource="{x:Bind ViewModel.AbilityFilterValues.SpellLevels}"
-        FilterMinimumSpellLevel="{x:Bind ViewModel.AbilityFilterValues.MinimumSpellLevelFilter, Mode=TwoWay}"
-        FilterMaximumSpellLevel="{x:Bind ViewModel.AbilityFilterValues.MaximumSpellLevelFilter, Mode=TwoWay}"
-        FilterSpellSchoolSource="{x:Bind ViewModel.AbilityFilterValues.MagicSchools}"
-        FilterSpellSchoolSelected="{x:Bind ViewModel.AbilityFilterValues.SpellSchoolFilterSelected, Mode=TwoWay}"
-        FilterConcentrationSource="{x:Bind ViewModel.AbilityFilterValues.ConcentrationStates}"
-        FilterConcentrationSelected="{x:Bind ViewModel.AbilityFilterValues.ConcentrationFilterSelected, Mode=TwoWay}"
-        FilterResolutionSource="{x:Bind ViewModel.AbilityFilterValues.ResolutionTypes}"
-        FilterResolutionSelected="{x:Bind ViewModel.AbilityFilterValues.ResolutionTypeFilterSelected, Mode=TwoWay}"
-        FilterDamageTypeSource="{x:Bind ViewModel.AbilityFilterValues.DamageTypes}"
-        FilterDamageTypeSelected="{x:Bind ViewModel.AbilityFilterValues.DamageTypeFilterSelected, Mode=TwoWay}"
-        FilterActionSpeedSelected="{x:Bind ViewModel.AbilityFilterValues.ActionSpeedFilterSelected, Mode=TwoWay}"
-        FilterActionSpeedSource="{x:Bind ViewModel.AbilityFilterValues.ActionSpeeds}"
-        ClearFiltersCommand="{x:Bind ViewModel.ClearFiltersCommand}"
-        Suggestions="{x:Bind ViewModel.AbilityFilterValues.SearchSuggestions, Mode=OneWay}"
-        FilterCommand="{x:Bind ViewModel.AbilityFilterCommand}"
-        SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
-        GridDataSource="{x:Bind ViewModel.Abilities}"
-        SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
-        EditSpellCommand="{x:Bind ViewModel.EditAbilityCommand}"
-        SelectSpellCommand="{x:Bind ViewModel.EditAbilityCommand}"
-        CopySpellCommand="{x:Bind ViewModel.CopyAbilityCommand}"
-        DeleteSpellCommand="{x:Bind ViewModel.DeleteAbilityCommand}"
-        AddSpellCommand="{x:Bind ViewModel.AddAbilityCommand}" />
+            FilterSpellLevelSource="{x:Bind ViewModel.AbilityFilterValues.SpellLevels}"
+            FilterMinimumSpellLevel="{x:Bind ViewModel.AbilityFilterValues.MinimumSpellLevelFilter, Mode=TwoWay}"
+            FilterMaximumSpellLevel="{x:Bind ViewModel.AbilityFilterValues.MaximumSpellLevelFilter, Mode=TwoWay}"
+            FilterSpellSchoolSource="{x:Bind ViewModel.AbilityFilterValues.MagicSchools}"
+            FilterSpellSchoolSelected="{x:Bind ViewModel.AbilityFilterValues.SpellSchoolFilterSelected, Mode=TwoWay}"
+            FilterConcentrationSource="{x:Bind ViewModel.AbilityFilterValues.ConcentrationStates}"
+            FilterConcentrationSelected="{x:Bind ViewModel.AbilityFilterValues.ConcentrationFilterSelected, Mode=TwoWay}"
+            FilterResolutionSource="{x:Bind ViewModel.AbilityFilterValues.ResolutionTypes}"
+            FilterResolutionSelected="{x:Bind ViewModel.AbilityFilterValues.ResolutionTypeFilterSelected, Mode=TwoWay}"
+            FilterDamageTypeSource="{x:Bind ViewModel.AbilityFilterValues.DamageTypes}"
+            FilterDamageTypeSelected="{x:Bind ViewModel.AbilityFilterValues.DamageTypeFilterSelected, Mode=TwoWay}"
+            FilterActionSpeedSelected="{x:Bind ViewModel.AbilityFilterValues.ActionSpeedFilterSelected, Mode=TwoWay}"
+            FilterActionSpeedSource="{x:Bind ViewModel.AbilityFilterValues.ActionSpeeds}"
+            ClearFiltersCommand="{x:Bind ViewModel.ClearFiltersCommand}"        
+            FilterCommand="{x:Bind ViewModel.AbilityFilterCommand}"
+            SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
+            GridDataSource="{x:Bind ViewModel.Abilities, Mode=OneWay}"
+            SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
+            EditSpellCommand="{x:Bind ViewModel.EditAbilityCommand}"
+            SelectSpellCommand="{x:Bind ViewModel.EditAbilityCommand}"
+            CopySpellCommand="{x:Bind ViewModel.CopyAbilityCommand}"
+            DeleteSpellCommand="{x:Bind ViewModel.DeleteAbilityCommand}"
+            AddSpellCommand="{x:Bind ViewModel.AddAbilityCommand}"
+            TitleText="Manage Spells"
+            NextAsyncCommand="{x:Bind ViewModel.NextAsyncCommand}"
+            LastAsyncCommand="{x:Bind ViewModel.LastAsyncCommand}"
+            PreviousAsyncCommand="{x:Bind ViewModel.PreviousAsyncCommand}"
+            FirstAsyncCommand="{x:Bind ViewModel.FirstAsyncCommand}"
+            PageCount="{x:Bind ViewModel.PageCount, Mode=OneWay}"
+            PageNumber="{x:Bind ViewModel.PageNumber, Mode=OneWay}"
+            SearchString="{x:Bind ViewModel.AbilityFilterValues.SearchString, Mode=TwoWay}"
+            Suggestions="{x:Bind ViewModel.Names, Mode=OneWay}"
+            SuggestionChosenCommand="{x:Bind ViewModel.SuggestionChosenCommand}"/>-->
     </Grid>
 
 </Page>

@@ -20,6 +20,7 @@ using EasyEncounters.Helpers.DamageTypes;
 using EasyEncounters.Messages;
 using EasyEncounters.Models;
 using EasyEncounters.Services.Filter;
+using Microsoft.UI.Xaml.Controls;
 
 namespace EasyEncounters.ViewModels;
 public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, INavigationAware
@@ -49,8 +50,6 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
 
     [ObservableProperty]
     private Creature? _creature;
-
-    private List<Ability> _spellCache;
 
     [ObservableProperty]
     private SpellSlotViewModel? _spellSlots;
@@ -82,6 +81,7 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
         _filteringService = filteringService;
         _dataService = dataService;
         _difficultyGuide = new CRDifficultyGuide();
+        Spells = new();
     }
     public ObservableCollection<Ability> CreatureAbilities
     {
@@ -89,7 +89,7 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
         private set;
     } = new();
 
-    public ObservableCollection<Ability> Spells
+    public List<Ability> Spells
     {
         get; set;
     } = new();
@@ -116,18 +116,12 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
             {
                 CreatureAbilities.Add(ability);
             }
+            Creature.SpellSlots ??= new int[9];
 
             SpellSlots = new SpellSlotViewModel(Creature.SpellSlots);
 
-            var spells = await _dataService.GetAllSpellsAsync();
-
-            foreach (var spell in spells)
-            {
-                Spells.Add(spell);
-            }
-
-            _spellCache = new List<Ability>(Spells);
             AbilityFilterValues = (AbilityFilter)_filteringService.GetFilterValues<Ability>();
+            await AbilityFilterValues.ResetAsync();
 
             var skillsKVP = new List<KeyValuePair<CreatureSkills, CreatureSkillLevel>>()
             {
@@ -140,6 +134,7 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
             Skills = new(skillsKVP);
 
             CreatureCastingStat = Creature.SpellStat;
+
 
         }
     }
@@ -172,15 +167,6 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
 
             _navigationService.NavigateTo(typeof(AbilityEditViewModel).FullName!, ability);
         }
-    }
-
-    [RelayCommand]
-    private void AbilityFilter(string text)
-    {
-        var filtered = _filteringService.Filter(_spellCache, AbilityFilterValues, text);
-        Spells.Clear();
-        foreach (var ability in filtered)
-            Spells.Add(ability);
     }
 
     [RelayCommand]
@@ -236,36 +222,4 @@ public partial class CreatureEditNavigationPageViewModel : ObservableRecipient, 
             CreatureAbilities.Add((Ability)ability);
         }
     }
-
-    [RelayCommand]
-    private void SearchTextChange(string text)
-    {
-        var filtered = _filteringService.Filter(_spellCache, AbilityFilterValues, text);
-        if (String.IsNullOrEmpty(text))
-        {
-            Spells.Clear();
-            foreach (var ability in filtered)
-                Spells.Add(ability);
-        }
-    }
-
-    [RelayCommand]
-    private void AbilityGridSort(DataGridColumnEventArgs e)
-    {
-        AbilityFilterValues.SortCollection(CreatureAbilities, e);
-    }
-
-    [RelayCommand]
-    private void DataGridSort(DataGridColumnEventArgs e)
-    {
-        AbilityFilterValues.SortCollection(Spells, e);
-    }
-
-    [RelayCommand]
-    private void ClearFilters()
-    {
-        AbilityFilterValues.ResetFilter();
-        AbilityFilter("");
-    }
-
 }

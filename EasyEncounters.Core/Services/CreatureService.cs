@@ -85,7 +85,7 @@ public class CreatureService : ICreatureService
     {
         var statBonus = GetAttributeBonusValue(creature, GetBaseSkillAttributeType(skill));
 
-        var proficiencyBonus = (int)proficiencyLevel / 2 * creature.ProficiencyBonus;
+        var proficiencyBonus = ((int)proficiencyLevel * creature.ProficiencyBonus)/2;
 
         return statBonus + proficiencyBonus;
     }

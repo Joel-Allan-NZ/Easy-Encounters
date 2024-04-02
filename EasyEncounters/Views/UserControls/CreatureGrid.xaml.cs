@@ -70,9 +70,41 @@ public sealed partial class CreatureGrid : UserControl
     public static readonly DependencyProperty FilterSizeSourceProperty =
         DependencyProperty.Register("FilterSizeSource", typeof(object), typeof(CreatureGrid), new PropertyMetadata(null));
 
+    // Using a DependencyProperty as the backing store for FirstAsyncCommand.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty FirstAsyncCommandProperty =
+        DependencyProperty.Register("FirstAsyncCommand", typeof(ICommand), typeof(EncounterGrid), new PropertyMetadata(null));
+
     // Using a DependencyProperty as the backing store for GridDataSource.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty GridDataSourceProperty =
         DependencyProperty.Register("GridDataSource", typeof(IEnumerable), typeof(CreatureGrid), new PropertyMetadata(null));
+
+    // Using a DependencyProperty as the backing store for InteractableRows.  This enables animation, styling, binding, etc...s
+    public static readonly DependencyProperty InteractableRowsProperty =
+        DependencyProperty.Register("InteractableRows", typeof(bool), typeof(CreatureGrid), new PropertyMetadata(false));
+
+    // Using a DependencyProperty as the backing store for LastAsyncCommand.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty LastAsyncCommandProperty =
+        DependencyProperty.Register("LastAsyncCommand", typeof(ICommand), typeof(EncounterGrid), new PropertyMetadata(null));
+
+    // Using a DependencyProperty as the backing store for NextAsyncCommand.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty NextAsyncCommandProperty =
+        DependencyProperty.Register("NextAsyncCommand", typeof(ICommand), typeof(EncounterGrid), new PropertyMetadata(null));
+
+    // Using a DependencyProperty as the backing store for PageCount.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty PageCountProperty =
+        DependencyProperty.Register("PageCount", typeof(int), typeof(EncounterGrid), new PropertyMetadata(0));
+
+    // Using a DependencyProperty as the backing store for PageNumber.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty PageNumberProperty =
+        DependencyProperty.Register("PageNumber", typeof(int), typeof(EncounterGrid), new PropertyMetadata(0));
+
+    // Using a DependencyProperty as the backing store for PreviousAsyncCommand.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty PreviousAsyncCommandProperty =
+        DependencyProperty.Register("PreviousAsyncCommand", typeof(ICommand), typeof(EncounterGrid), new PropertyMetadata(null));
+
+    // Using a DependencyProperty as the backing store for SearchString.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty SearchStringProperty =
+        DependencyProperty.Register("SearchString", typeof(string), typeof(EncounterGrid), new PropertyMetadata(""));
 
     // Using a DependencyProperty as the backing store for SearchTextChangeCommand.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty SearchTextChangeCommandProperty =
@@ -86,9 +118,17 @@ public sealed partial class CreatureGrid : UserControl
     public static readonly DependencyProperty SortCommandProperty =
         DependencyProperty.Register("SortCommand", typeof(ICommand), typeof(CreatureGrid), new PropertyMetadata(null));
 
+    // Using a DependencyProperty as the backing store for SuggestionChosenCommand.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty SuggestionChosenCommandProperty =
+        DependencyProperty.Register("SuggestionChosenCommand", typeof(ICommand), typeof(EncounterGrid), new PropertyMetadata(null));
+
     // Using a DependencyProperty as the backing store for Suggestions.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty SuggestionsProperty =
         DependencyProperty.Register("Suggestions", typeof(object), typeof(CreatureGrid), new PropertyMetadata(null));
+
+    // Using a DependencyProperty as the backing store for TitleText.  This enables animation, styling, binding, etc...
+    public static readonly DependencyProperty TitleTextProperty =
+        DependencyProperty.Register("TitleText", typeof(string), typeof(CreatureGrid), new PropertyMetadata(""));
 
     public CreatureGrid()
     {
@@ -185,10 +225,58 @@ public sealed partial class CreatureGrid : UserControl
         set => SetValue(FilterSizeSourceProperty, value);
     }
 
+    public ICommand FirstAsyncCommand
+    {
+        get => (ICommand)GetValue(FirstAsyncCommandProperty);
+        set => SetValue(FirstAsyncCommandProperty, value);
+    }
+
     public IEnumerable GridDataSource
     {
         get => (IEnumerable)GetValue(GridDataSourceProperty);
         set => SetValue(GridDataSourceProperty, value);
+    }
+
+    public bool InteractableRows
+    {
+        get => (bool)GetValue(InteractableRowsProperty);
+        set => SetValue(InteractableRowsProperty, value);
+    }
+
+    public ICommand LastAsyncCommand
+    {
+        get => (ICommand)GetValue(LastAsyncCommandProperty);
+        set => SetValue(LastAsyncCommandProperty, value);
+    }
+
+    public ICommand NextAsyncCommand
+    {
+        get => (ICommand)GetValue(NextAsyncCommandProperty);
+        set => SetValue(NextAsyncCommandProperty, value);
+    }
+
+    public int PageCount
+    {
+        get => (int)GetValue(PageCountProperty);
+        set => SetValue(PageCountProperty, value);
+    }
+
+    public int PageNumber
+    {
+        get => (int)GetValue(PageNumberProperty);
+        set => SetValue(PageNumberProperty, value);
+    }
+
+    public ICommand PreviousAsyncCommand
+    {
+        get => (ICommand)GetValue(PreviousAsyncCommandProperty);
+        set => SetValue(PreviousAsyncCommandProperty, value);
+    }
+
+    public string SearchString
+    {
+        get => (string)GetValue(SearchStringProperty);
+        set => SetValue(SearchStringProperty, value);
     }
 
     public ICommand SearchTextChangeCommand
@@ -209,10 +297,22 @@ public sealed partial class CreatureGrid : UserControl
         set => SetValue(SortCommandProperty, value);
     }
 
+    public ICommand SuggestionChosenCommand
+    {
+        get => (ICommand)GetValue(SuggestionChosenCommandProperty);
+        set => SetValue(SuggestionChosenCommandProperty, value);
+    }
+
     public object Suggestions
     {
         get => (object)GetValue(SuggestionsProperty);
         set => SetValue(SuggestionsProperty, value);
+    }
+
+    public string TitleText
+    {
+        get => (string)GetValue(TitleTextProperty);
+        set => SetValue(TitleTextProperty, value);
     }
 
     private void CreatureDG_Sorting(object sender, CommunityToolkit.WinUI.UI.Controls.DataGridColumnEventArgs e)
@@ -225,18 +325,4 @@ public sealed partial class CreatureGrid : UserControl
             }
         }
     }
-
-
-
-    public bool InteractableRows
-    {
-        get => (bool)GetValue(InteractableRowsProperty);
-        set => SetValue(InteractableRowsProperty, value);
-    }
-
-    // Using a DependencyProperty as the backing store for InteractableRows.  This enables animation, styling, binding, etc...s
-    public static readonly DependencyProperty InteractableRowsProperty =
-        DependencyProperty.Register("InteractableRows", typeof(bool), typeof(CreatureGrid), new PropertyMetadata(false));
-
-
 }

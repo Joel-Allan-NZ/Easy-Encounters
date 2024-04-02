@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="EasyEncounters.Views.UserControls.Filters.CreatureFilterControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EasyEncounters.Views.UserControls.Filters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:helpers="using:EasyEncounters.Helpers"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <helpers:EnumToStringConverter x:Key="EnumToStringConverter" />
+        <Style TargetType="ComboBox"
+                       x:Name="FilterBoxStyle">
+            <Setter Target="MinWidth"
+                            Value="124"/>
+            <Setter Target="Margin"
+                            Value="2"/>
+        </Style>
+        <DataTemplate x:Key="FilterBoxDataTemplate">
+            <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Challenge Rating:" />
+        </StackPanel>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <NumberBox Value="{x:Bind CreatureFilter.MinimumCRFilter, Mode=TwoWay}"
+                       HorizontalAlignment="Left"
+                       Minimum="0"
+                       Maximum="30"
+                       AcceptsExpression="True"
+                       Margin="2" />
+                <TextBlock Text="-"
+                       Margin="2"
+                       VerticalAlignment="Center" />
+                <NumberBox Value="{x:Bind CreatureFilter.MaximumCRFilter, Mode=TwoWay}"
+                       HorizontalAlignment="Left"
+                       AcceptsExpression="True"
+                       Minimum="0"
+                       Maximum="30"
+                       Margin="2" />
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Size Class:"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <ComboBox ItemsSource="{x:Bind CreatureFilter.SizeClasses, Mode=OneWay}"
+                      SelectedItem="{x:Bind CreatureFilter.MinCreatureSizeClassFilter, Mode=TwoWay}"
+                      MinWidth="124"
+                      Margin="2">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock Text="-"
+                           Margin="2"
+                           VerticalAlignment="Center" />
+                <ComboBox ItemsSource="{x:Bind CreatureFilter.SizeClasses, Mode=OneWay}"
+                      SelectedItem="{x:Bind CreatureFilter.MaxCreatureSizeClassFilter, Mode=TwoWay}"
+                      MinWidth="124"
+                      Margin="2">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource EnumToStringConverter}}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Alignment:" />
+                <ComboBox ItemsSource="{x:Bind CreatureFilter.Alignments, Mode=OneWay}"
+                      SelectedItem="{x:Bind CreatureFilter.CreatureAlignmentFilterSelected, Mode=TwoWay}"
+                      Style="{StaticResource FilterBoxStyle}"
+                      ItemTemplate="{StaticResource FilterBoxDataTemplate}"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Creature Type:"/>
+                <ComboBox ItemsSource="{x:Bind CreatureFilter.CreatureTypes, Mode=OneWay}"
+                      SelectedItem="{x:Bind CreatureFilter.CreatureTypeFilterSelected, Mode=TwoWay}"
+                      Style="{StaticResource FilterBoxStyle}"
+                      ItemTemplate="{StaticResource FilterBoxDataTemplate}"/>
+            </StackPanel>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

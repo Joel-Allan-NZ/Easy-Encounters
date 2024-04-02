@@ -27,22 +27,15 @@ public partial class CampaignSplashViewModel : ObservableRecipient, INavigationA
 
     public async void OnNavigatedTo(object parameter)
     {
-        //if (await _dataService.ActiveEncounterExistsAsync())
-        //{
-        //    _navigationService.NavigateTo(typeof(RunEncounterViewModel).FullName!, parameter);
-        //}
-        //else
-        //{
         Campaigns.Clear();
 
         var data = await _dataService.GetAllCampaignsAsync();
         foreach (var item in data)
             Campaigns.Add(item);
-        //}
     }
 
     [RelayCommand]
-    private void CampaignSelected(object o)//(Campaign campaign)
+    private void CampaignSelected(object o)
     {
         if (o is Campaign)
             _navigationService.NavigateTo(typeof(PartySelectViewModel).FullName!, o as Campaign);

@@ -6,7 +6,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
+    xmlns:userFilters="using:EasyEncounters.Views.UserControls.Filters"
+    xmlns:userGrids="using:EasyEncounters.Views.UserControls.DataGrids"
     mc:Ignorable="d"
     xmlns:behaviors="using:EasyEncounters.Behaviors"
     behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
@@ -17,13 +20,24 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Background="{ThemeResource SystemAltHighColor}"
-              Grid.Row="0">
-                <TextBlock Text="Manage Parties"
-                       Margin="10"
-                       Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
-            </Grid>
-            <usercontrols:PartyGrid AddNewPartyCommand="{x:Bind ViewModel.AddNewPartyCommand}"
+        <usercontrols:PaginatedDataGridWithFilters TitleText="Manage Parties"
+                                                   GridFilteredValues="{x:Bind ViewModel.PartyFilterValues}"
+                                                   AddNewItemCommand="{x:Bind ViewModel.AddPartyCommand}"
+                                                   Grid.Row="1"
+                                                   >
+            <usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+                <StackPanel></StackPanel> <!--Currently no party filters implemented or required-->
+            </usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+            <usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+                <userGrids:PartyDataGrid SelectPartyCommand="{x:Bind ViewModel.EditPartyCommand}"
+                                             CopyPartyCommand="{x:Bind ViewModel.CopyPartyCommand}"
+                                             DeletePartyCommand="{x:Bind ViewModel.DeletePartyCommand}"
+                                             SortCommand="{x:Bind ViewModel.PartyFilterValues.DataGridSortCommand, Mode=OneWay}"
+                                             DataGridSource="{x:Bind ViewModel.PartyFilterValues.Data, Mode=OneWay}"
+                                             EditPartyCommand="{x:Bind ViewModel.EditPartyCommand}"/>
+            </usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+        </usercontrols:PaginatedDataGridWithFilters>
+        <!--<usercontrols:PartyGrid AddNewPartyCommand="{x:Bind ViewModel.AddNewPartyCommand}"
                                 CopyPartyCommand="{x:Bind ViewModel.CopyPartyCommand}"
                                 DataGridSource="{x:Bind ViewModel.Parties}"
                                 DeletePartyCommand="{x:Bind ViewModel.DeletePartyCommand}"
@@ -32,8 +46,9 @@
                                 SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
                                 SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
                                 Suggestions="{x:Bind ViewModel.PartyFilterValues.SearchSuggestions, Mode=OneWay}"
+                                    TitleText="Manage Parties"
                                     Grid.Row="1"
-                                />
+                                />-->
 
     </Grid>
 </Page>

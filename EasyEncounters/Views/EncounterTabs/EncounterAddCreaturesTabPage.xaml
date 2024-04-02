@@ -8,7 +8,10 @@
     xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
     xmlns:helpers="using:EasyEncounters.Helpers"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
+    xmlns:userFilters="using:EasyEncounters.Views.UserControls.Filters"
+    xmlns:userGrids="using:EasyEncounters.Views.UserControls.DataGrids"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
@@ -62,24 +65,47 @@
                 </controls:DataGridTemplateColumn>
             </controls:DataGrid.Columns>
         </controls:DataGrid>
-        <usercontrols:CreatureGrid Grid.Row="1"
+        <usercontrols:PaginatedDataGridWithFilters 
+                                                   GridFilteredValues="{x:Bind ViewModel.CreatureFilterValues}"
+                                                   Grid.Row="1"
+                                                   >
+            <usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+                <userFilters:CreatureFilterControl CreatureFilter="{x:Bind ViewModel.CreatureFilterValues, Mode=OneWay}"/>
+            </usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+            <usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+                <userGrids:CreatureDataGrid 
+                        SelectCreatureCommand="{x:Bind ViewModel.AddCreatureCommand}"
+                        SortCommand="{x:Bind ViewModel.CreatureFilterValues.DataGridSortCommand, Mode=OneWay}"
+                        InteractableRows="False"
+                        GridDataSource="{x:Bind ViewModel.CreatureFilterValues.Data, Mode=OneWay}"/>
+            </usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+        </usercontrols:PaginatedDataGridWithFilters>
+        <!--<usercontrols:CreatureGrid Grid.Row="1"
             AddNewCreatureCommand="{x:Bind ViewModel.AddCreatureCommand}"
-                                   ClearFiltersCommand="{x:Bind ViewModel.ClearCreatureFilterCommand}"
-                                   SelectCreatureCommand="{x:Bind ViewModel.AddCreatureCommand}"
-                                   FilterAlignmentSelected="{x:Bind ViewModel.CreatureFilterValues.CreatureAlignmentFilterSelected, Mode=TwoWay}"
-                                   FilterAlignmentSource="{x:Bind ViewModel.CreatureFilterValues.Alignments}"
-                                   FilterCommand="{x:Bind ViewModel.CreatureFilterCommand}"
-                                   FilterCreatureTypeSelected="{x:Bind ViewModel.CreatureFilterValues.CreatureTypeFilterSelected, Mode=TwoWay}"
-                                   FilterMaximumCR="{x:Bind ViewModel.CreatureFilterValues.MaximumCRFilter, Mode=TwoWay}"
-                                   FilterMaximumSize="{x:Bind ViewModel.CreatureFilterValues.MaxCreatureSizeClassFilter, Mode=TwoWay}"
-                                   FilterMinimumCR="{x:Bind ViewModel.CreatureFilterValues.MinimumCRFilter, Mode=TwoWay}"
-                                   FilterMinimumSize="{x:Bind ViewModel.CreatureFilterValues.MinCreatureSizeClassFilter, Mode=TwoWay}"
-                                   FilterSizeSource="{x:Bind ViewModel.CreatureFilterValues.SizeClasses}"
-                                   GridDataSource="{x:Bind ViewModel.Creatures}"
-                                   SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
-                                   SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
-                                   Suggestions="{x:Bind ViewModel.CreatureFilterValues.SearchSuggestions}">
-        </usercontrols:CreatureGrid>
+            ClearFiltersCommand="{x:Bind ViewModel.ClearCreatureFilterCommand}"
+            SelectCreatureCommand="{x:Bind ViewModel.AddCreatureCommand}"
+            FilterAlignmentSelected="{x:Bind ViewModel.CreatureFilterValues.CreatureAlignmentFilterSelected, Mode=TwoWay}"
+            FilterAlignmentSource="{x:Bind ViewModel.CreatureFilterValues.Alignments}"
+            FilterCommand="{x:Bind ViewModel.CreatureFilterCommand}"
+            FilterCreatureTypeSelected="{x:Bind ViewModel.CreatureFilterValues.CreatureTypeFilterSelected, Mode=TwoWay}"
+            FilterMaximumCR="{x:Bind ViewModel.CreatureFilterValues.MaximumCRFilter, Mode=TwoWay}"
+            FilterMaximumSize="{x:Bind ViewModel.CreatureFilterValues.MaxCreatureSizeClassFilter, Mode=TwoWay}"
+            FilterMinimumCR="{x:Bind ViewModel.CreatureFilterValues.MinimumCRFilter, Mode=TwoWay}"
+            FilterMinimumSize="{x:Bind ViewModel.CreatureFilterValues.MinCreatureSizeClassFilter, Mode=TwoWay}"
+            FilterSizeSource="{x:Bind ViewModel.CreatureFilterValues.SizeClasses}"
+            GridDataSource="{x:Bind ViewModel.Creatures, Mode=OneWay}"
+            SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
+            SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
+            NextAsyncCommand="{x:Bind ViewModel.NextAsyncCommand}"
+            LastAsyncCommand="{x:Bind ViewModel.LastAsyncCommand}"
+            PreviousAsyncCommand="{x:Bind ViewModel.PreviousAsyncCommand}"
+            FirstAsyncCommand="{x:Bind ViewModel.FirstAsyncCommand}"
+            PageCount="{x:Bind ViewModel.PageCount, Mode=OneWay}"
+            PageNumber="{x:Bind ViewModel.PageNumber, Mode=OneWay}"
+            SearchString="{x:Bind ViewModel.CreatureFilterValues.SearchString, Mode=TwoWay}"
+            Suggestions="{x:Bind ViewModel.Names, Mode=OneWay}"
+            SuggestionChosenCommand="{x:Bind ViewModel.SuggestionChosenCommand}">-->
+        <!--</usercontrols:CreatureGrid>-->
         <Button HorizontalAlignment="Right"
                 Grid.Row="2"
                 VerticalAlignment="Bottom"
@@ -87,7 +113,8 @@
             <FontIcon Glyph="&#xF16C;"></FontIcon>
         </Button>
     </Grid>
-    <!--<Page.Resources>
+</Page>
+<!--<Page.Resources>
         <helpers:DoubleToStringConverter x:Key="DoubleToStringConverter" />
         <helpers:EnumToStringConverter x:Key="EnumToStringConverter" />
     </Page.Resources>
@@ -281,4 +308,3 @@
             <FontIcon Glyph="&#xF16C;"></FontIcon>
         </Button>
     </Grid>-->
-</Page>

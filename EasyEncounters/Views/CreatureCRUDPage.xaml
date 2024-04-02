@@ -12,6 +12,8 @@
     xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
     xmlns:behaviors="using:EasyEncounters.Behaviors"
     behaviors:NavigationViewHeaderBehavior.HeaderMode="Minimal"
+    xmlns:userFilters="using:EasyEncounters.Views.UserControls.Filters"
+    xmlns:userGrids="using:EasyEncounters.Views.UserControls.DataGrids"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
@@ -22,34 +24,23 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-
-        <Grid Background="{ThemeResource SystemAltHighColor}"
-              Grid.Row="0">
-            <TextBlock Text="Manage Creatures"
-                    Margin="10"
-                    Style="{ThemeResource TitleTextBlockStyle}"></TextBlock>
-        </Grid>
-        <usercontrols:CreatureGrid Grid.Row="1"
-            AddNewCreatureCommand="{x:Bind ViewModel.AddNewCreatureCommand}"
-                                   ClearFiltersCommand="{x:Bind ViewModel.ClearFiltersCommand}"
-                                   CopyCreatureCommand="{x:Bind ViewModel.CopyCreatureCommand}"
-                                   DeleteCreatureCommand="{x:Bind ViewModel.DeleteCreatureCommand}"
-                                   EditCreatureCommand="{x:Bind ViewModel.EditCreatureCommand}"
-                                   SelectCreatureCommand="{x:Bind ViewModel.EditCreatureCommand}"
-                                   FilterAlignmentSelected="{x:Bind ViewModel.CreatureFilterValues.CreatureAlignmentFilterSelected, Mode=TwoWay}"
-                                   FilterAlignmentSource="{x:Bind ViewModel.CreatureFilterValues.Alignments}"
-                                   FilterCommand="{x:Bind ViewModel.CreatureFilterCommand}"
-                                   FilterCreatureTypeSelected="{x:Bind ViewModel.CreatureFilterValues.CreatureTypeFilterSelected, Mode=TwoWay}"
-                                   FilterCreatureTypeSource="{x:Bind ViewModel.CreatureFilterValues.CreatureTypes}"
-                                   FilterMaximumCR="{x:Bind ViewModel.CreatureFilterValues.MaximumCRFilter, Mode=TwoWay}"
-                                   FilterMaximumSize="{x:Bind ViewModel.CreatureFilterValues.MaxCreatureSizeClassFilter, Mode=TwoWay}"
-                                   FilterMinimumCR="{x:Bind ViewModel.CreatureFilterValues.MinimumCRFilter, Mode=TwoWay}"
-                                   FilterMinimumSize="{x:Bind ViewModel.CreatureFilterValues.MinCreatureSizeClassFilter, Mode=TwoWay}"
-                                   FilterSizeSource="{x:Bind ViewModel.CreatureFilterValues.SizeClasses}"
-                                   GridDataSource="{x:Bind ViewModel.Creatures}"
-                                   SearchTextChangeCommand="{x:Bind ViewModel.SearchTextChangeCommand}"
-                                   InteractableRows="True"
-                                   SortCommand="{x:Bind ViewModel.DataGridSortCommand}"
-                                   Suggestions="{x:Bind ViewModel.CreatureFilterValues.SearchSuggestions, Mode=OneWay}"/>
+        <usercontrols:PaginatedDataGridWithFilters TitleText="Manage Creatures"
+                                                   GridFilteredValues="{x:Bind ViewModel.CreatureFilterValues}"
+                                                   AddNewItemCommand="{x:Bind ViewModel.AddNewCreatureCommand}"
+                                                   Grid.Row="1"
+                                                   >
+            <usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+                <userFilters:CreatureFilterControl CreatureFilter="{x:Bind ViewModel.CreatureFilterValues, Mode=OneWay}"/>
+            </usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+            <usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+                <userGrids:CreatureDataGrid SelectCreatureCommand="{x:Bind ViewModel.EditCreatureCommand}"
+                                             CopyCreatureCommand="{x:Bind ViewModel.CopyCreatureCommand}"
+                                             DeleteCreatureCommand="{x:Bind ViewModel.DeleteCreatureCommand}"
+                                             SortCommand="{x:Bind ViewModel.CreatureFilterValues.DataGridSortCommand, Mode=OneWay}"
+                                             InteractableRows="True"
+                                             GridDataSource="{x:Bind ViewModel.CreatureFilterValues.Data, Mode=OneWay}"
+                                             EditCreatureCommand="{x:Bind ViewModel.EditCreatureCommand}"/>
+            </usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+        </usercontrols:PaginatedDataGridWithFilters>
     </Grid>
 </Page>

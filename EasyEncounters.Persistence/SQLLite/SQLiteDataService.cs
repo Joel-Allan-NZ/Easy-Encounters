@@ -31,16 +31,25 @@ public class SQLiteDataService : IDataService
         _modelOptionsService = modelOptionsService;
 
         _dbContext = context;
-        _dbContext.Campaigns.Load();
-        _dbContext.Encounters.Load();
-        _dbContext.Abilities.Load();
-        _dbContext.ActiveAbilities.Load();
-        _dbContext.ActiveEncounterCreatures.Load();
-        _dbContext.ActiveEncounters.Load();
-        _dbContext.Parties.Load();
+
+        //_dbContext.Campaigns.Load();
+        //_dbContext.Encounters.Load();
+        //_dbContext.Abilities.Load();
+        //_dbContext.ActiveAbilities.Load();
+        //_dbContext.ActiveEncounterCreatures.Load();
+        //_dbContext.ActiveEncounters.Load();
+        //_dbContext.Parties.Load();
         
 
     }
+    public IQueryable<Campaign> Campaigns() => _dbContext.Campaigns;
+    public IQueryable<Encounter> Encounters() => _dbContext.Encounters;
+    public IQueryable<Creature> Creatures() => _dbContext.Creatures;
+    public IQueryable<Ability> Abilities() => _dbContext.Abilities;
+    public IQueryable<Party> Parties() => _dbContext.Parties;
+
+    public IQueryable<ActiveEncounter> ActiveEncounters() => _dbContext.ActiveEncounters;
+
     public async Task<T> CopyAsync<T>(T entity) where T : IPersistable
     {
         IPersistable result;
@@ -83,37 +92,58 @@ public class SQLiteDataService : IDataService
 
     public async Task DeleteAsync<T>(T entity) where T : IPersistable
     {
+        if(entity is ActiveEncounter activeEncounter)
+        {
+            activeEncounter.ActiveCreatures.Clear();
+            var toDelete = activeEncounter.CreatureTurns;
+            activeEncounter.CreatureTurns.Clear();
+            foreach(var activeEncounterCreature in toDelete)
+            {
+                _dbContext.Remove(activeEncounterCreature);
+            }
+        }
+
         _dbContext.Remove(entity);
         await _dbContext.SaveChangesAsync();
     }
     public async Task<IEnumerable<Campaign>> GetAllCampaignsAsync() => await _dbContext.Campaigns.ToListAsync();
     public async Task<IEnumerable<Creature>> GetAllCreaturesAsync() => await _dbContext.Creatures.Include(x => x.Abilities).ToListAsync();
     public async Task<IEnumerable<Encounter>> GetAllEncountersAsync() => await _dbContext.Encounters.Include(x=> x.Creatures).ToListAsync();
-    public async Task<IEnumerable<Party>> GetAllPartiesAsync() => await _dbContext.Parties.Include(x => x.Members).ToListAsync();
+    public async Task<IEnumerable<Party>> GetAllPartiesAsync() => await _dbContext.Parties.Include(x => x.Members).ThenInclude(x => x.Abilities).ToListAsync();
     public async Task<IEnumerable<Ability>> GetAllSpellsAsync() => await _dbContext.Abilities.Where(x => x.SpellLevel != Core.Models.Enums.SpellLevel.NotASpell).ToListAsync();
+
     public async Task<IEnumerable<Encounter>> GetCampaignEncountersAsync(Campaign campaign, bool includeGeneralEncounters)
     {
         if (includeGeneralEncounters)
         {
-            return await _dbContext.Encounters.Where(x => x.Campaign == null || x.Campaign.Equals(campaign) || !x.IsCampaignOnlyEncounter).Include(x => x.Creatures).ToListAsync();
+            return await _dbContext.Encounters.Where(x => x.Campaign == null || x.Campaign.Equals(campaign) || !x.IsCampaignOnlyEncounter).Include(x => x.Creatures).ThenInclude(x => x.Abilities).ToListAsync();
         }
         else
         {
-            return await _dbContext.Encounters.Where(x => x.Campaign == null || x.Campaign.Equals(campaign)).Include(x => x.Creatures).ToListAsync();
+            return await _dbContext.Encounters.Where(x => x.Campaign == null || x.Campaign.Equals(campaign)).Include(x => x.Creatures).ThenInclude(x => x.Abilities).ToListAsync();
         }
     }
-    public async Task<IEnumerable<Party>> GetCampaignPartiesAsync(Campaign campaign) => await _dbContext.Parties.Where(x => x.Campaign == campaign).Include(x => x.Members).ToListAsync();
+    public async Task<IEnumerable<Party>> GetCampaignPartiesAsync(Campaign campaign) => await _dbContext.Parties.Where(x => x.Campaign == campaign).Include(x => x.Members).ThenInclude(x => x.Abilities).ToListAsync();
     public async Task SaveAddAsync<T>(T entity) where T : class, IPersistable
     {
-        var first = (T?) await _dbContext.FindAsync(typeof(T), entity.Id);
-        if (first == null)
-        {
-            _dbContext.Add<T>(entity);
-        }
-        else
-        {
-            _dbContext.Entry(first).CurrentValues.SetValues(entity);
-        }
+        //if (entity is ActiveEncounter)
+        //{
+        //    return;
+        //}
+        //else
+        //{
+
+
+            var first = (T?)await _dbContext.FindAsync(typeof(T), entity.Id);
+            if (first == null)
+            {
+                _dbContext.Add<T>(entity);
+            }
+            else
+            {
+                _dbContext.Entry(first).CurrentValues.SetValues(entity);
+            }
+        //}
         //otherwise it's an existing (presumably) entity, that's already been marked modified. Might be something to watch when not wishing to save changes? TODO: investigate this behavior.
         await _dbContext.SaveChangesAsync();
     }

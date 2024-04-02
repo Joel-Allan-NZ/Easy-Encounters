@@ -20,6 +20,10 @@ public class ActiveEncounterCreature : CreatureBase //: Creature
         ActiveConditions = Condition.None;
 
         ActiveSpellSlots = (int[])creature.SpellSlots.Clone();
+        CreatureID = creature.Id;
+        Id = Guid.NewGuid();
+
+        Order = 0;
 
         //Creature = creature;
         //SpellSlots = new Dictionary<int, int>();
@@ -28,6 +32,19 @@ public class ActiveEncounterCreature : CreatureBase //: Creature
         //{
         //    SpellSlots.Add(kvp.Key, kvp.Value);
         //}
+    }
+
+    /// <summary>
+    /// For easy ordering of initiative when loading activeencounter
+    /// </summary>
+    public int Order
+    {
+        get; set;
+    }
+
+    public Guid CreatureID
+    {
+        get; set;
     }
 
     public int[] ActiveSpellSlots

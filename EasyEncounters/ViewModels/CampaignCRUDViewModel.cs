@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EasyEncounters.Contracts.ViewModels;
@@ -11,16 +12,27 @@ namespace EasyEncounters.ViewModels;
 public partial class CampaignCRUDViewModel : ObservableRecipient, INavigationAware
 {
     private readonly IDataService _dataService;
+    private readonly int _pageSize = 50;
 
     public CampaignCRUDViewModel(IDataService dataService)
     {
         _dataService = dataService;
     }
 
-    public ObservableCollection<ObservableCampaign> Campaigns
+    public List<ObservableCampaign> Campaigns
     {
         get; private set;
     } = new();
+
+    [ObservableProperty]
+    private int _pageCount;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(FirstAsyncCommand))]
+    [NotifyCanExecuteChangedFor(nameof(PreviousAsyncCommand))]
+    [NotifyCanExecuteChangedFor(nameof(NextAsyncCommand))]
+    [NotifyCanExecuteChangedFor(nameof(LastAsyncCommand))]
+    private int _pageNumber;
 
     public void OnNavigatedFrom()
     {
@@ -32,12 +44,7 @@ public partial class CampaignCRUDViewModel : ObservableRecipient, INavigationAwa
     public async void OnNavigatedTo(object parameter)
     {
         Campaigns.Clear();
-        foreach (var campaign in await _dataService.GetAllCampaignsAsync())
-        {
-            ObservableCampaign observable = new(campaign);
-            observable.PropertyChanged += OnCampaignPropertyChanged;
-            Campaigns.Add(observable);
-        }
+        await GetCampaigns(1, _pageSize);
     }
 
     private async void OnCampaignPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -55,4 +62,35 @@ public partial class CampaignCRUDViewModel : ObservableRecipient, INavigationAwa
         Campaigns.Add(new(campaign));
         await _dataService.SaveAddAsync(campaign);
     }
+
+    private bool CanFirstAsync() => PageNumber != 1;
+    private bool CanPreviousAsync() => PageNumber > 1;
+    private bool CanNextAsync() => PageNumber < PageCount;
+    private bool CanLastAsync() => PageCount != PageCount;
+
+    private async Task GetCampaigns(int pageIndex, int pageSize)
+    {
+        var pagedCampaigns = await PaginatedList<ObservableCampaign>.CreateAsync(
+            _dataService.Campaigns(),
+            (x) => new ObservableCampaign((Campaign)x),
+            pageIndex,
+            pageSize);
+        PageNumber = pagedCampaigns.PageIndex;
+        PageCount = pagedCampaigns.PageCount;
+        Campaigns = pagedCampaigns;
+
+    }
+
+    [RelayCommand(CanExecute = nameof(CanFirstAsync))]
+    private async void FirstAsync() => await GetCampaigns(1, _pageSize);
+
+    [RelayCommand(CanExecute = nameof(CanPreviousAsync))]
+    private async void PreviousAsync() => await GetCampaigns(PageNumber-1, _pageSize);
+
+    [RelayCommand(CanExecute = nameof(CanNextAsync))]
+    private async void NextAsync() => await GetCampaigns(PageNumber + 1, _pageSize);
+
+    [RelayCommand(CanExecute = nameof(CanLastAsync))]
+    private async void LastAsync() => await GetCampaigns(PageCount, _pageSize);
+
 }

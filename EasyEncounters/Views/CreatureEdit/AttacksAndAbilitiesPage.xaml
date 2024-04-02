@@ -11,7 +11,8 @@
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" xmlns:viewmodels="using:EasyEncounters.ViewModels" 
     xmlns:usercontrols="using:EasyEncounters.Views.UserControls"
-    d:DataContext="{d:DesignInstance Type=viewmodels:CreatureEditNavigationPageViewModel}"
+    xmlns:userFilters="using:EasyEncounters.Views.UserControls.Filters"
+    xmlns:userGrids="using:EasyEncounters.Views.UserControls.DataGrids" d:DataContext="{d:DesignInstance Type=viewmodels:CreatureEditNavigationPageViewModel}"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
@@ -24,6 +25,7 @@
                        Command="{Binding EditAbilityCommand}">
             </XamlUICommand>
             <XamlUICommand x:Name="DeleteSpell" Command="{Binding DeleteAbilityCommand}"/>
+            <XamlUICommand x:Name="SelectSpell" Command="{Binding AddSelectedSpellCommand}"/>
             <!--Workaround for known CommunityToolkit ListViewExtensions.AlternateColor bug-->
             <DataTemplate x:Key="RowDetailsTemplate">
                 <StackPanel>
@@ -82,14 +84,14 @@
                     ItemsSource="{Binding CreatureAbilities}"
                     AlternatingRowBackground="{StaticResource CardBackgroundFillColorSecondary}"
                     AutoGenerateColumns="False">
-                    <Interactivity:Interaction.Behaviors>
+                    <!--<Interactivity:Interaction.Behaviors>
                         <Core:EventTriggerBehavior EventName="Sorting">
                             <Core:InvokeCommandAction Command="{Binding AbilityGridSortCommand}" />
                         </Core:EventTriggerBehavior>
-                        <!--<Core:EventTriggerBehavior EventName="DoubleTapped">
+                        --><!--<Core:EventTriggerBehavior EventName="DoubleTapped">
                             <Core:InvokeCommandAction Command="{StaticResource EditSpell}" CommandParameter="{Binding}" />
-                        </Core:EventTriggerBehavior>-->
-                    </Interactivity:Interaction.Behaviors>
+                        </Core:EventTriggerBehavior>--><!--
+                    </Interactivity:Interaction.Behaviors>-->
                     <controls:DataGrid.RowStyle>
                         <Style TargetType="controls:DataGridRow">
                             <Setter Property="controls:DataGridRow.ContextFlyout">
@@ -104,20 +106,20 @@
                     </controls:DataGrid.RowStyle>
                     <controls:DataGrid.Columns>
                         <controls:DataGridTextColumn Header="Name"
-                                                 Tag="AbilityName"
+                                                 Tag="AbilityName1"
                                                  Binding="{Binding Name}"
                                                  CanUserReorder="True"/>
                         <controls:DataGridTextColumn Header="Resolution Type"
                                                      Binding="{Binding Resolution, Converter={StaticResource EnumToStringConverter}}"
-                                                     Tag="AbilityResolutionType"
+                                                     Tag="AbilityResolutionType1"
                                                      CanUserReorder="True"/>
                         <controls:DataGridTextColumn Header="Damage Type"
                                                      Binding="{Binding DamageTypes, Converter={StaticResource EnumToStringConverter}}"
-                                                     Tag="AbilityDamageType"
+                                                     Tag="AbilityDamageType1"
                                                      CanUserReorder="True"/>
                         <controls:DataGridTextColumn Header="Action Speed"
                                                      Binding="{Binding ActionSpeed, Converter={StaticResource EnumToStringConverter}}"
-                                                     Tag="AbilityActionSpeed"
+                                                     Tag="AbilityActionSpeed1"
                                                      CanUserReorder="True"/>
                     </controls:DataGrid.Columns>
                 </controls:DataGrid>
@@ -134,6 +136,9 @@
                         BorderThickness="5"/>
                 <Expander
                     HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    VerticalContentAlignment="Stretch"
                     Margin="5">
                     <Expander.Header>
                         <TextBlock Text="Add an existing Spell"
@@ -141,30 +146,101 @@
                                    FontSize="16"/>
                     </Expander.Header>
                     <Expander.Content>
-                        <usercontrols:SpellGrid
-                         FilterSpellLevelSource="{Binding AbilityFilterValues.SpellLevels}"
-                         FilterMinimumSpellLevel="{Binding AbilityFilterValues.MinimumSpellLevelFilter, Mode=TwoWay}"
-                         FilterMaximumSpellLevel="{Binding AbilityFilterValues.MaximumSpellLevelFilter, Mode=TwoWay}"
-                         FilterSpellSchoolSource="{Binding AbilityFilterValues.MagicSchools}"
-                         FilterSpellSchoolSelected="{Binding AbilityFilterValues.SpellSchoolFilterSelected, Mode=TwoWay}"
-                         FilterConcentrationSource="{Binding AbilityFilterValues.ConcentrationStates}"
-                         FilterConcentrationSelected="{Binding AbilityFilterValues.ConcentrationFilterSelected, Mode=TwoWay}"
-                         FilterActionSpeedSelected="{Binding AbilityFilterValues.ActionSpeedFilterSelected, Mode=TwoWay}"
-                         FilterActionSpeedSource="{Binding AbilityFilterValues.ActionSpeeds}"
-                         FilterResolutionSource="{Binding AbilityFilterValues.ResolutionTypes}"
-                         FilterResolutionSelected="{Binding AbilityFilterValues.ResolutionTypeFilterSelected, Mode=TwoWay}"
-                         FilterDamageTypeSource="{Binding AbilityFilterValues.DamageTypes}"
-                         FilterDamageTypeSelected="{Binding AbilityFilterValues.DamageTypeFilterSelected, Mode=TwoWay}"
-                         Suggestions="{Binding AbilityFilterValues.SearchSuggestions, Mode=OneWay}"
-                         FilterCommand="{Binding AbilityFilterCommand}"
-                         SearchTextChangeCommand="{Binding SearchTextChangeCommand}"
-                         GridDataSource="{Binding Spells}"
-                         ClearFiltersCommand="{Binding ClearFiltersCommand}"
-                         SortCommand="{Binding DataGridSortCommand}"
-                         EditSpellCommand="{Binding EditAbilityCommand}"
-                         SelectSpellCommand="{Binding AddSelectedSpellCommand}"
-                         AddSpellCommand="{Binding AddAbilityCommand}" />
+                        <usercontrols:PaginatedDataGridWithFilters TitleText="Manage Abilities"
+                                                   GridFilteredValues="{Binding AbilityFilterValues, Mode=OneWay}"
+                                                   AddNewItemCommand="{Binding AddAbilityCommand}"
+                                                   Grid.Row="1"
+                                                   >
+                            <usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+                                <userFilters:AbilityFilterControl AbilityFilter="{Binding AbilityFilterValues, Mode=OneWay}"/>
+                            </usercontrols:PaginatedDataGridWithFilters.FiltersControl>
+                            <usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+                                <!--For Data Context mystery reasons this is currently necessary. TODO: resolve-->
+                                <controls:DataGrid 
+                                    ItemsSource="{Binding AbilityFilterValues.Data, Mode=OneWay}"
+                                    IsReadOnly="True"
+                                    SelectionMode="Single"
+                                    x:Name="SpellDG"
+                                    GridLinesVisibility="Horizontal"
+                                    RowDetailsTemplate="{StaticResource RowDetailsTemplate}"
+                                    AlternatingRowBackground="{StaticResource CardBackgroundFillColorSecondary}"
+                                    AutoGenerateColumns="False">
+                                    <Interactivity:Interaction.Behaviors>
+                                        <Core:EventTriggerBehavior EventName="DoubleTapped">
+                                            <Core:InvokeCommandAction Command="{StaticResource SelectSpell}" CommandParameter="{x:Bind SpellDG.SelectedItem, Mode=OneWay}" />
+                                        </Core:EventTriggerBehavior>
+                                    </Interactivity:Interaction.Behaviors>
+                                    <controls:DataGrid.Columns>
+                                        <controls:DataGridTextColumn Header="Name"
+                             Tag="AbilityName"
+                             Binding="{Binding Name}"
+                             CanUserSort="True" />
+                                        <controls:DataGridTextColumn Header="Spell Level"
+                             Tag="AbilityLevel"
+                             Binding="{Binding SpellLevel, Converter={StaticResource EnumToStringConverter}}"
+                             CanUserSort="True" />
+                                        <controls:DataGridTextColumn Header="Spell School"
+                             Tag="AbilitySchool"
+                             Binding="{Binding MagicSchool, Converter={StaticResource EnumToStringConverter}}"
+                             CanUserSort="True" />
+                                        <controls:DataGridTextColumn Header="Resolution Type"
+                             Tag="AbilityResolutionType"
+                             Binding="{Binding Resolution, Converter={StaticResource EnumToStringConverter}}"
+                             CanUserSort="True" />
+                                        <controls:DataGridTextColumn Header="Save Type"
+                             Tag="AbilityResolutionStat"
+                             Binding="{Binding SaveType, Converter={StaticResource EnumToStringConverter}}"
+                             CanUserSort="True" />
+                                        <controls:DataGridTextColumn Header="Damage Type"
+                             Tag="AbilityDamageType"
+                             Binding="{Binding DamageTypes, Converter={StaticResource EnumToStringConverter}}"
+                             CanUserSort="True" />
+                                        <controls:DataGridTextColumn Header="Action Speed"
+                             Tag="AbilityActionSpeed"
+                             Binding="{Binding ActionSpeed, Converter={StaticResource EnumToStringConverter}}"
+                             CanUserSort="True" />
+                                        <controls:DataGridTextColumn Header="Concentration"
+                             Tag="AbilityConcentration"
+                             Binding="{Binding Concentration}"
+                             CanUserSort="True" />
+                                    </controls:DataGrid.Columns>
+                                </controls:DataGrid>
+                            </usercontrols:PaginatedDataGridWithFilters.DataGridControl>
+                        </usercontrols:PaginatedDataGridWithFilters>
                     </Expander.Content>
+                    <!--<Expander.Content>
+                        <usercontrols:SpellGrid
+                        FilterSpellLevelSource="{Binding AbilityFilterValues.SpellLevels}"
+                        FilterMinimumSpellLevel="{Binding AbilityFilterValues.MinimumSpellLevelFilter, Mode=TwoWay}"
+                        FilterMaximumSpellLevel="{Binding AbilityFilterValues.MaximumSpellLevelFilter, Mode=TwoWay}"
+                        FilterSpellSchoolSource="{Binding AbilityFilterValues.MagicSchools}"
+                        FilterSpellSchoolSelected="{Binding AbilityFilterValues.SpellSchoolFilterSelected, Mode=TwoWay}"
+                        FilterConcentrationSource="{Binding AbilityFilterValues.ConcentrationStates}"
+                        FilterConcentrationSelected="{Binding AbilityFilterValues.ConcentrationFilterSelected, Mode=TwoWay}"
+                        FilterActionSpeedSelected="{Binding AbilityFilterValues.ActionSpeedFilterSelected, Mode=TwoWay}"
+                        FilterActionSpeedSource="{Binding AbilityFilterValues.ActionSpeeds}"
+                        FilterResolutionSource="{Binding AbilityFilterValues.ResolutionTypes}"
+                        FilterResolutionSelected="{Binding AbilityFilterValues.ResolutionTypeFilterSelected, Mode=TwoWay}"
+                        FilterDamageTypeSource="{Binding AbilityFilterValues.DamageTypes}"
+                        FilterDamageTypeSelected="{Binding AbilityFilterValues.DamageTypeFilterSelected, Mode=TwoWay}"
+                        FilterCommand="{Binding AbilityFilterCommand}"
+                        SearchTextChangeCommand="{Binding SearchTextChangeCommand}"
+                        GridDataSource="{Binding Spells, Mode=OneWay}"
+                        ClearFiltersCommand="{Binding ClearFiltersCommand}"
+                        SortCommand="{Binding DataGridSortCommand}"
+                        EditSpellCommand="{Binding EditAbilityCommand}"
+                        SelectSpellCommand="{Binding AddSelectedSpellCommand}"
+                        AddSpellCommand="{Binding AddAbilityCommand}"
+                        NextAsyncCommand="{Binding NextAsyncCommand}"
+                        LastAsyncCommand="{Binding LastAsyncCommand}"
+                        PreviousAsyncCommand="{Binding PreviousAsyncCommand}"
+                        FirstAsyncCommand="{Binding FirstAsyncCommand}"
+                        PageCount="{Binding PageCount, Mode=OneWay}"
+                        PageNumber="{Binding PageNumber, Mode=OneWay}"
+                        SearchString="{Binding AbilityFilterValues.SearchString, Mode=TwoWay}"
+                        Suggestions="{Binding Names, Mode=OneWay}"
+                        SuggestionChosenCommand="{Binding SuggestionChosenCommand}"/>
+                    </Expander.Content>-->
                 </Expander>
             </StackPanel>
         </ScrollViewer>

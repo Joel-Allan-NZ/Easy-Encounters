@@ -86,11 +86,6 @@ namespace EasyEncounters.Persistence.Migrations
                     b.Property<int>("DamageTypes")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("EffectDescription")
                         .HasColumnType("TEXT");
 
@@ -141,10 +136,39 @@ namespace EasyEncounters.Persistence.Migrations
                     b.HasIndex("ActiveEncounterCreatureId");
 
                     b.ToTable("Abilities");
+                });
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Ability");
+            modelBuilder.Entity("EasyEncounters.Core.Models.ActiveEncounter", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.UseTphMappingStrategy();
+                    b.Property<Guid?>("ActiveTurnId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Log")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("PartyId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActiveTurnId");
+
+                    b.HasIndex("PartyId");
+
+                    b.ToTable("ActiveEncounters");
                 });
 
             modelBuilder.Entity("EasyEncounters.Core.Models.ActiveEncounterCreature", b =>
@@ -191,6 +215,9 @@ namespace EasyEncounters.Persistence.Migrations
 
                     b.Property<int>("ConstitutionSave")
                         .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("CreatureID")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("CreatureSubtype")
                         .HasColumnType("TEXT");
@@ -290,6 +317,9 @@ namespace EasyEncounters.Persistence.Migrations
 
                     b.Property<string>("Notes")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("ProficiencyBonus")
                         .HasColumnType("INTEGER");
@@ -528,13 +558,11 @@ namespace EasyEncounters.Persistence.Migrations
                     b.Property<Guid?>("CampaignId")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("CreatureCount")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("IsCampaignOnlyEncounter")
@@ -544,15 +572,39 @@ namespace EasyEncounters.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Plan")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CampaignId");
 
                     b.ToTable("Encounters");
+                });
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Encounter");
+            modelBuilder.Entity("EasyEncounters.Core.Models.EncounterCreatures", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.UseTphMappingStrategy();
+                    b.Property<int>("Count")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid?>("CreatureId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("EncounterId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatureId");
+
+                    b.HasIndex("EncounterId");
+
+                    b.ToTable("EncounterCreatures");
                 });
 
             modelBuilder.Entity("EasyEncounters.Core.Models.Party", b =>
@@ -581,37 +633,6 @@ namespace EasyEncounters.Persistence.Migrations
                     b.HasIndex("CampaignId");
 
                     b.ToTable("Parties");
-                });
-
-            modelBuilder.Entity("EasyEncounters.Core.Models.ActiveAbility", b =>
-                {
-                    b.HasBaseType("EasyEncounters.Core.Models.Ability");
-
-                    b.Property<Guid?>("ActiveEncounterCreatureId1")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ResolutionValue")
-                        .HasColumnType("INTEGER");
-
-                    b.HasIndex("ActiveEncounterCreatureId1");
-
-                    b.HasDiscriminator().HasValue("ActiveAbility");
-                });
-
-            modelBuilder.Entity("EasyEncounters.Core.Models.ActiveEncounter", b =>
-                {
-                    b.HasBaseType("EasyEncounters.Core.Models.Encounter");
-
-                    b.Property<Guid?>("ActiveTurnId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Log")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasIndex("ActiveTurnId");
-
-                    b.HasDiscriminator().HasValue("ActiveEncounter");
                 });
 
             modelBuilder.Entity("AbilityCreature", b =>
@@ -666,6 +687,23 @@ namespace EasyEncounters.Persistence.Migrations
                         .HasForeignKey("ActiveEncounterCreatureId");
                 });
 
+            modelBuilder.Entity("EasyEncounters.Core.Models.ActiveEncounter", b =>
+                {
+                    b.HasOne("EasyEncounters.Core.Models.ActiveEncounterCreature", "ActiveTurn")
+                        .WithMany()
+                        .HasForeignKey("ActiveTurnId");
+
+                    b.HasOne("EasyEncounters.Core.Models.Party", "Party")
+                        .WithMany()
+                        .HasForeignKey("PartyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ActiveTurn");
+
+                    b.Navigation("Party");
+                });
+
             modelBuilder.Entity("EasyEncounters.Core.Models.ActiveEncounterCreature", b =>
                 {
                     b.HasOne("EasyEncounters.Core.Models.ActiveEncounter", null)
@@ -686,6 +724,19 @@ namespace EasyEncounters.Persistence.Migrations
                     b.Navigation("Campaign");
                 });
 
+            modelBuilder.Entity("EasyEncounters.Core.Models.EncounterCreatures", b =>
+                {
+                    b.HasOne("EasyEncounters.Core.Models.Creature", "Creature")
+                        .WithMany()
+                        .HasForeignKey("CreatureId");
+
+                    b.HasOne("EasyEncounters.Core.Models.Encounter", null)
+                        .WithMany("CreaturesByCount")
+                        .HasForeignKey("EncounterId");
+
+                    b.Navigation("Creature");
+                });
+
             modelBuilder.Entity("EasyEncounters.Core.Models.Party", b =>
                 {
                     b.HasOne("EasyEncounters.Core.Models.Campaign", "Campaign")
@@ -695,34 +746,21 @@ namespace EasyEncounters.Persistence.Migrations
                     b.Navigation("Campaign");
                 });
 
-            modelBuilder.Entity("EasyEncounters.Core.Models.ActiveAbility", b =>
-                {
-                    b.HasOne("EasyEncounters.Core.Models.ActiveEncounterCreature", null)
-                        .WithMany("ActiveAbilities")
-                        .HasForeignKey("ActiveEncounterCreatureId1");
-                });
-
-            modelBuilder.Entity("EasyEncounters.Core.Models.ActiveEncounter", b =>
-                {
-                    b.HasOne("EasyEncounters.Core.Models.ActiveEncounterCreature", "ActiveTurn")
-                        .WithMany()
-                        .HasForeignKey("ActiveTurnId");
-
-                    b.Navigation("ActiveTurn");
-                });
-
-            modelBuilder.Entity("EasyEncounters.Core.Models.ActiveEncounterCreature", b =>
-                {
-                    b.Navigation("Abilities");
-
-                    b.Navigation("ActiveAbilities");
-                });
-
             modelBuilder.Entity("EasyEncounters.Core.Models.ActiveEncounter", b =>
                 {
                     b.Navigation("ActiveCreatures");
 
                     b.Navigation("CreatureTurns");
+                });
+
+            modelBuilder.Entity("EasyEncounters.Core.Models.ActiveEncounterCreature", b =>
+                {
+                    b.Navigation("Abilities");
+                });
+
+            modelBuilder.Entity("EasyEncounters.Core.Models.Encounter", b =>
+                {
+                    b.Navigation("CreaturesByCount");
                 });
 #pragma warning restore 612, 618
         }

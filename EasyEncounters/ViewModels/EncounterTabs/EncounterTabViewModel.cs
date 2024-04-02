@@ -9,6 +9,7 @@ using EasyEncounters.Core.Models;
 using EasyEncounters.Messages;
 using EasyEncounters.Models;
 using EasyEncounters.ViewModels.EncounterTabs;
+using Microsoft.EntityFrameworkCore;
 
 namespace EasyEncounters.ViewModels;
 
@@ -77,40 +78,62 @@ public partial class EncounterTabViewModel : ObservableRecipient, INavigationAwa
         WeakReferenceMessenger.Default.UnregisterAll(this);
     }
 
-    public async void OnNavigatedTo(object activeEncounter)
+    public async void OnNavigatedTo(object active)
     {
-        if (activeEncounter != null && activeEncounter is ActiveEncounter)
+        if (active!= null && active is ActiveEncounter activeEncounter)
         {
-            _activeEncounter = (ActiveEncounter)activeEncounter;
-            WeakReferenceMessenger.Default.Send(new LogMessageLogged(new List<string>() { "Encounter Begins!" }));
-        }
-        else
-        {
-            //_activeEncounter = await _dataService.GetActiveEncounterAsync();
-        }
-        Creatures.Clear();
+            _activeEncounter = activeEncounter;
 
-        foreach (var creature in _activeEncounter.ActiveCreatures)
-            Creatures.Add(new ObservableActiveEncounterCreature(creature));
-
-        //foreach (var combatLogString in _activeEncounter.Log.Reverse<string>())
-        //    CombatLog.Add(combatLogString);
+            Creatures.Clear();
+            
+            if (activeEncounter.CreatureTurns.Count > 0)
+            {
+                activeEncounter.CreatureTurns=activeEncounter.CreatureTurns.OrderBy(x => x.Order).ToList();
+                foreach (var creature in activeEncounter.CreatureTurns)
+                {
+                    Creatures.Add(new ObservableActiveEncounterCreature(creature));
+                }
+                if(activeEncounter.Log.Count > 0)
+                {
+                    foreach(var logEntry in activeEncounter.Log)
+                    {
+                        WeakReferenceMessenger.Default.Send(new LogMessageLogged(new List<string>(){logEntry}));
+                    }
+                }
+                InitiativeRolled = true;
+                
+                
+            }
+            else
+            {
+                foreach(var creature in activeEncounter.ActiveCreatures)
+                {
+                    Creatures.Add(new ObservableActiveEncounterCreature(creature));
+                }
+                WeakReferenceMessenger.Default.Send(new LogMessageLogged(new List<string>() { "Encounter Begins!" }));
+            }
+        }
     }
 
     [RelayCommand]
-    private void AddCreatures(ICollection<ObservableKVP<ObservableCreature, int>> creaturesToAdd)
+    private async Task AddCreatures(ICollection<ObservableKVP<ObservableCreature, int>> creaturesToAdd)
     {
         if (_activeEncounter == null)
             return;
 
         foreach (var kvp in creaturesToAdd)
         {
+            var fromData = await _dataService.Creatures().Include(x => x.Abilities).FirstOrDefaultAsync(x => x.Id == kvp.Key.Creature.Id);
+
             for (var i = 0; i < kvp.Value; i++)
             {
-                _activeEncounterService.AddCreatureToInProgressEncounter(_activeEncounter, kvp.Key.Creature);
+
+                await _activeEncounterService.AddCreatureToInProgressEncounterAsync(_activeEncounter, fromData);
                 Creatures.Add(new ObservableActiveEncounterCreature(_activeEncounter.ActiveCreatures.Last()));
             }
         }
+
+        ReportReorder();
     }
 
     [RelayCommand]

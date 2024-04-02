@@ -9,8 +9,6 @@ public class SpellSlotViewModel
         {
             SpellSlots[i + 1] = spellSlots[i];
         }
-
-
     }
 
     public int EighthLevel

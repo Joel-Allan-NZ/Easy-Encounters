@@ -1,5 +1,6 @@
 ﻿using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
+using EasyEncounters.Core.Models.Enums;
 
 namespace EasyEncounters.Core.Services;
 
@@ -23,6 +24,21 @@ public class PartyXPService : IPartyXPService
         }
         result[4] = result[3] * 1.5;
         party.PartyXPThresholds = result;
+    }
+
+    public double GetMinimumXPThreshold(Party party, EncounterDifficulty difficulty)
+    {
+        if (difficulty == EncounterDifficulty.None || difficulty == EncounterDifficulty.Trivial) //lowest recorded XPthreshold is the cap for trivial. Minimum is always 0
+            return 0;
+
+        return party.PartyXPThresholds[(int)difficulty - 2];
+    }
+
+    public double GetMaximumXPThreshold(Party party, EncounterDifficulty difficulty)
+    {
+        if (difficulty == EncounterDifficulty.None)
+            return 0;
+        return party.PartyXPThresholds[(int)difficulty - 1];
     }
 
     /// <summary>

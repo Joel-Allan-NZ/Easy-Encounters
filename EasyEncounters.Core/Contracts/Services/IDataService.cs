@@ -33,4 +33,15 @@ public interface IDataService
     Task<IEnumerable<Encounter>> GetCampaignEncountersAsync(Campaign campaign, bool includeGeneralEncounters);
 
     Task SaveAddAsync<T>(IEnumerable<T> entities) where T : IPersistable;
+
+    IQueryable<Campaign> Campaigns();
+    IQueryable<Encounter> Encounters();
+    IQueryable<Ability> Abilities();
+    IQueryable<Party> Parties();
+    IQueryable<Creature> Creatures();
+    IQueryable<ActiveEncounter> ActiveEncounters();
+
+    Task CommitChanges();
+
+
 }

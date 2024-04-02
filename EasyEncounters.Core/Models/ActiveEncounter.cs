@@ -2,7 +2,7 @@
 
 namespace EasyEncounters.Core.Models;
 
-public class ActiveEncounter : Encounter
+public class ActiveEncounter : Persistable
 {
     //going to build this with the assumption that only one encounter will ever actually be active. May be a bad idea if you're running multiple campaigns
     //and something unforeseen causes the session to end midcombat... but not worth coding around that edgecase.
@@ -10,17 +10,34 @@ public class ActiveEncounter : Encounter
     public ActiveEncounter()
     {
         //just to end annoying warnings the lazy way:
+        Name = "";
+        Description = "";
         ActiveCreatures = new List<ActiveEncounterCreature>();
         Log = new List<string>();
         CreatureTurns = new List<ActiveEncounterCreature>();
     }
 
-    public ActiveEncounter(Encounter encounter, IEnumerable<ActiveEncounterCreature> creatures)
+    public Party Party
+    {
+        get; set;
+    }
+
+    /// <summary>
+    /// The name of the encounter, for differentiation/preparing encounter groups ahead of time.
+    /// </summary>
+    public string Name
+    {
+        get; set;
+    }
+
+    public ActiveEncounter(Encounter encounter, IEnumerable<ActiveEncounterCreature> creatures, Party party)
     {
         this.ActiveCreatures = new List<ActiveEncounterCreature>();
         this.Name = encounter.Name;
         this.CreatureTurns = new List<ActiveEncounterCreature>();
+        this.Description = encounter.Description;
         Log = new List<string>();
+        Id = Guid.NewGuid();
 
         Dictionary<string, int> nameCollisions = new();
 
@@ -28,6 +45,7 @@ public class ActiveEncounter : Encounter
         {
             AddCreature(creature, nameCollisions);
         }
+        Party = party;
     }
 
     /// <summary>
@@ -71,5 +89,13 @@ public class ActiveEncounter : Encounter
             collisions[activeCreature.Name] = 1;
 
         ActiveCreatures.Add(activeCreature);
+    }
+
+    /// <summary>
+    /// A short description for additional differentiation.
+    /// </summary>
+    public string Description
+    {
+        get; set;
     }
 }

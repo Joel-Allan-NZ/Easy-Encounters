@@ -8,8 +8,11 @@ using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
 using EasyEncounters.Messages;
+using EasyEncounters.Models;
 using EasyEncounters.Persistence.SQLLite;
 using EasyEncounters.Services.Filter;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.UI.Xaml.Controls;
 
 namespace EasyEncounters.ViewModels;
 
@@ -18,46 +21,18 @@ public partial class PartyCRUDViewModel : ObservableRecipient, INavigationAware
     private readonly IDataService _dataService;
     private readonly IFilteringService _filteringService;
     private readonly INavigationService _navigationService;
-    private IList<Party>? _partyCache;
 
     [ObservableProperty]
     private PartyFilter _partyFilterValues;
 
-    public PartyCRUDViewModel(IDataService dataService, INavigationService navigationService, IFilteringService filteringService, CopyDB db)
+    public PartyCRUDViewModel(IDataService dataService, INavigationService navigationService, IFilteringService filteringService)
     {
         _dataService = dataService;
         _navigationService = navigationService;
         _filteringService = filteringService;
 
         _partyFilterValues = (PartyFilter)_filteringService.GetFilterValues<Party>();
-
-        //db.CopyAll();
-        
-        //db.CopyCampaigns();
-        //db.CopyParties();
-        //db.CopyCreatures();
-        //db.CopyEncounters();
-        //db.CopyAbilities();
-        
-
-        //WeakReferenceMessenger.Default.Register<PartyCopyRequestMessage>(this, (r, m) =>
-        //{
-        //    _ = CopyParty(m.Parameter.Party);
-        //});
-        //WeakReferenceMessenger.Default.Register<PartyDeleteRequestMessage>(this, (r, m) =>
-        //{
-        //    _ = DeleteParty(m.Parameter.Party);
-        //});
-        //WeakReferenceMessenger.Default.Register<PartyEditRequestMessage>(this, (r, m) =>
-        //{
-        //    EditParty(m.Parameter.Party);
-        //});
     }
-
-    public ObservableCollection<Party> Parties
-    {
-        get; private set;
-    } = new();
 
     public void OnNavigatedFrom()
     {
@@ -66,20 +41,13 @@ public partial class PartyCRUDViewModel : ObservableRecipient, INavigationAware
 
     public async void OnNavigatedTo(object parameter)
     {
-        Parties.Clear();
-        foreach (var party in await _dataService.GetAllPartiesAsync())
-        {
-            Parties.Add(party);
-        }
-
-        _partyCache = new List<Party>(Parties);
+        await PartyFilterValues.ResetAsync();
     }
 
     [RelayCommand]
-    private async Task AddNewParty()
+    private async Task AddParty()
     {
         var party = new Party();
-        Parties.Add(party);
         await _dataService.SaveAddAsync(party);
     }
 
@@ -91,9 +59,8 @@ public partial class PartyCRUDViewModel : ObservableRecipient, INavigationAware
             var copied = await _dataService.CopyAsync(parameter as Party);
             if (copied != null)
             {
-
-                Parties.Add(copied);
-                _partyCache?.Add(copied);
+                await _dataService.SaveAddAsync(copied);
+                await PartyFilterValues.RefreshAsync();
             }
         }
     }
@@ -104,8 +71,8 @@ public partial class PartyCRUDViewModel : ObservableRecipient, INavigationAware
         if (parameter != null && parameter is Party)
         {
             var toDelete = (Party)parameter;
-            Parties.Remove(toDelete);
-            await _dataService.DeleteAsync(toDelete);
+            await _dataService.DeleteAsync(toDelete); 
+            await PartyFilterValues.RefreshAsync();
         }
     }
 
@@ -116,46 +83,6 @@ public partial class PartyCRUDViewModel : ObservableRecipient, INavigationAware
         {
             _navigationService.NavigateTo(typeof(PartyEditViewModel).FullName!, parameter);
         }
-        //else if (parameter != null && parameter is PartyViewModel)
-        //{
-        //    _navigationService.NavigateTo(typeof(PartyEditViewModel).FullName!, ((PartyViewModel)parameter).Party);
-        //}
-    }
-
-    [RelayCommand]
-    private void PartyFilter(string text)
-    {
-        if (_partyCache == null)
-            return;
-
-        var filtered = _filteringService.Filter(_partyCache, PartyFilterValues, text);
-        Parties.Clear();
-        foreach (var party in filtered)
-        {
-            Parties.Add(party);
-        }    
-    }
-
-    [RelayCommand]
-    private void DataGridSort(DataGridColumnEventArgs e)
-    {
-        PartyFilterValues.SortCollection(Parties, e);
-    }
-
-    [RelayCommand]
-    private void SearchTextChange(string text)
-    {
-        if (_partyCache == null)
-            return;
-
-        var filtered = _filteringService.Filter(_partyCache, PartyFilterValues, text);
-        if (String.IsNullOrEmpty(text))
-        {
-            Parties.Clear();
-            foreach (var party in filtered)
-            {
-                Parties.Add(party);
-            }
-        }
+      
     }
 }

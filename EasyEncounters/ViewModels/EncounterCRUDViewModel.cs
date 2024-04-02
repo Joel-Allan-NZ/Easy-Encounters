@@ -1,17 +1,20 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics.Metrics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using CommunityToolkit.WinUI.UI;
 using CommunityToolkit.WinUI.UI.Controls;
 using EasyEncounters.Contracts.Services;
 using EasyEncounters.Contracts.ViewModels;
 using EasyEncounters.Core.Contracts.Services;
 using EasyEncounters.Core.Models;
-using EasyEncounters.Messages;
+using EasyEncounters.Core.Services;
 using EasyEncounters.Models;
 using EasyEncounters.Services.Filter;
-using Microsoft.UI.Dispatching;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.CustomAttributes;
+
 
 namespace EasyEncounters.ViewModels;
 
@@ -20,13 +23,12 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
     private readonly IDataService _dataService;
     private readonly INavigationService _navigationService;
     private readonly IFilteringService _filteringService;
-    private IList<ObservableEncounter>? _encounterCache;
 
     [ObservableProperty]
     private List<Campaign> _campaigns;
 
     [ObservableProperty]
-    private ObservableEncounterFilter _encounterFilterValues;
+    private EncounterFilter _encounterFilterValues;
 
     public EncounterCRUDViewModel(INavigationService navigationService, IDataService dataService, IFilteringService filteringService)
     {
@@ -34,15 +36,12 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
         _navigationService = navigationService;
         _filteringService = filteringService;
 
-        _encounterFilterValues = (ObservableEncounterFilter)_filteringService.GetFilterValues<ObservableEncounter>();
+        _encounterFilterValues = (EncounterFilter)_filteringService.GetFilterValues<Encounter>();
 
         _campaigns = new();
     }
 
-    public ObservableCollection<ObservableEncounter> Encounters
-    {
-        get; private set;
-    } = new();
+
 
     public void OnNavigatedFrom()
     {
@@ -51,13 +50,7 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
 
     public async void OnNavigatedTo(object parameter)
     {
-        Encounters.Clear();
-        foreach (var encounter in await _dataService.GetAllEncountersAsync())
-        {
-            Encounters.Add(new ObservableEncounter(encounter));
-        }
-
-        _encounterCache = new List<ObservableEncounter>(Encounters);
+        await EncounterFilterValues.ResetAsync();
 
         Campaigns = new(await _dataService.GetAllCampaignsAsync());
     }
@@ -65,12 +58,11 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
     [RelayCommand]
     private async Task AddEncounter()
     {
-        ObservableEncounter observable = new(new());
-        Encounters.Add(observable);
-        _encounterCache?.Add(observable);
-        await _dataService.SaveAddAsync(observable.Encounter);
+        //ObservableEncounter observable = new(new());
+        var enc = new Encounter("New Encounter");
+        await _dataService.SaveAddAsync(enc);
 
-        EditEncounter(observable);
+        EditEncounter(new ObservableEncounter(enc));
     }
 
     [RelayCommand]
@@ -78,14 +70,9 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
     {
         if (parameter != null && parameter is ObservableEncounter encounter)
         {
-            var copied = await _dataService.CopyAsync(encounter.Encounter);
+            await _dataService.CopyAsync(encounter.Encounter);
+            await EncounterFilterValues.RefreshAsync();
 
-            if (copied != null)
-            {
-                ObservableEncounter observableEncounter = new(copied);
-                Encounters.Add(observableEncounter);
-                _encounterCache?.Add(observableEncounter);
-            }
         }
     }
 
@@ -94,10 +81,12 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
     {
         if (parameter != null && parameter is ObservableEncounter encounter)
         {
-            var encounterToRemove = Encounters.First(x => x.Encounter == encounter.Encounter);
-            Encounters.Remove(encounterToRemove);
-            _encounterCache?.Remove(encounterToRemove);
-            await _dataService.DeleteAsync(encounter.Encounter);
+            var match = await _dataService.Encounters().FirstOrDefaultAsync(x => x.Id == encounter.Encounter.Id);
+            if (match != null)
+            {
+                await _dataService.DeleteAsync(match);
+                await EncounterFilterValues.RefreshAsync();
+            }
         }
     }
 
@@ -106,52 +95,8 @@ public partial class EncounterCRUDViewModel : ObservableRecipient, INavigationAw
     {
         if (parameter != null && parameter is ObservableEncounter model)
         {
-            _navigationService.NavigateTo(typeof(EncounterEditNavigationViewModel).FullName!, model);
+            var toEdit = _dataService.Encounters().Where(x => x.Id == model.Encounter.Id).Include(x => x.Creatures).Include(x => x.CreaturesByCount).ToList().First();
+            _navigationService.NavigateTo(typeof(EncounterEditNavigationViewModel).FullName!, new ObservableEncounter(toEdit));
         }
     }
-
-    [RelayCommand]
-    private void DataGridSort(DataGridColumnEventArgs e)
-    {
-        EncounterFilterValues.SortCollection(Encounters, e);
-    }
-
-    [RelayCommand]
-    private void SearchTextChange(string text)
-    {
-        if (_encounterCache == null)
-            return;
-
-        var filtered = _filteringService.Filter(_encounterCache, EncounterFilterValues, text);
-        if (String.IsNullOrEmpty(text))
-        {
-            Encounters.Clear();
-            foreach (var Encounter in filtered)
-            {
-                Encounters.Add(Encounter);
-            }
-        }
-    }
-
-    [RelayCommand]
-    private void EncounterFilter(string text)
-    {
-        if (_encounterCache == null)
-            return;
-
-        var filtered = _filteringService.Filter(_encounterCache, EncounterFilterValues, text);
-        Encounters.Clear();
-        foreach (var encounter in filtered)
-        {
-            Encounters.Add(encounter);
-        }
-    }
-
-    [RelayCommand]
-    private void ClearFilters()
-    {
-        EncounterFilterValues.ResetFilter();
-        EncounterFilter("");
-    }
-
 }

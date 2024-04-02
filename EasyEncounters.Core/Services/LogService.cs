@@ -81,12 +81,19 @@ public class LogService : ILogService
 
     public string LogTurnEnd()
     {
+        if(_encounterLog == null)
+        {
+            _encounterLog = new EncounterLog();
+            return "Logs not found. Starting new log!";
+        }
         var endingTurn = _encounterLog.Turns.Last();
         if (endingTurn.TurnEnd == null)
             endingTurn.TurnEnd = DateTime.Now;
         //encounterLog.Turns.Last().TurnEnd = DateTime.Now;
 
         return $"[{endingTurn.TurnEnd?.ToString("HH:mm:ss") ?? DateTime.Now.ToString("HH:mm:ss")}]: {endingTurn.ActiveTurnCreature.EncounterName} ends its turn.";
+
+
     }
 
     public string LogTurnStart(ActiveEncounterCreature creature)

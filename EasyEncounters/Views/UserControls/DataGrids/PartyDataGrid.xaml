@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="EasyEncounters.Views.UserControls.DataGrids.PartyDataGrid"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EasyEncounters.Views.UserControls.DataGrids"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:controls="using:CommunityToolkit.WinUI.UI.Controls"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity">
+    <UserControl.Resources>
+        <SolidColorBrush x:Key="DataGridCellFocusVisualPrimaryBrush" Color="Transparent" />
+        <SolidColorBrush x:Key="DataGridCellFocusVisualSecondaryBrush" Color="Transparent" />
+        <DataTemplate x:Key="RowDetailsTemplate">
+            <ListView ItemsSource="{Binding Members}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Name}"
+                               FontSize="12"
+                               VerticalAlignment="Center"
+                               Margin="0,0,10,0" />
+                            <TextBlock Text="{Binding LevelOrCR}"
+                               FontSize="10"
+                               VerticalAlignment="Center"
+                               Margin="0,0,10,0" />
+                            <TextBlock Text="{Binding CreatureSubtype}"
+                               FontSize="10"
+                               VerticalAlignment="Center"
+                               Margin="0,0,0,0" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <controls:DataGrid x:Name="PartyDG"
+                           IsReadOnly="True"
+                           SelectionMode="Single"
+                           GridLinesVisibility="Horizontal"
+                           Grid.Row="1"
+                           RowDetailsTemplate="{StaticResource RowDetailsTemplate}"
+                           Margin="0"
+                           ItemsSource="{x:Bind DataGridSource, Mode=TwoWay}"
+                           Sorting="PartyDG_Sorting"
+                           AlternatingRowBackground="{StaticResource CardBackgroundFillColorSecondary}"
+                           AutoGenerateColumns="False">
+        <Interactivity:Interaction.Behaviors>
+            <Core:EventTriggerBehavior EventName="Sorting">
+                <Core:InvokeCommandAction Command="{x:Bind SortCommand}" />
+            </Core:EventTriggerBehavior>
+            <Core:EventTriggerBehavior EventName="DoubleTapped">
+                <Core:InvokeCommandAction Command="{x:Bind SelectPartyCommand}" CommandParameter="{x:Bind PartyDG.SelectedItem, Mode=OneWay}" />
+            </Core:EventTriggerBehavior>
+        </Interactivity:Interaction.Behaviors>
+        <controls:DataGrid.RowStyle>
+            <Style TargetType="controls:DataGridRow">
+                <Setter Property="controls:DataGridRow.ContextFlyout">
+                    <Setter.Value>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Text="Edit" Command="{x:Bind EditPartyCommand}" CommandParameter="{Binding}" />
+                            <MenuFlyoutItem Text="Copy" Command="{x:Bind CopyPartyCommand}" CommandParameter="{Binding}" />
+                            <MenuFlyoutItem Text="Delete" Command="{x:Bind DeletePartyCommand}" CommandParameter="{Binding}" />
+                        </MenuFlyout>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </controls:DataGrid.RowStyle>
+        <controls:DataGrid.Columns>
+            <controls:DataGridTextColumn Header="Party Name"
+                                                 Tag="PartyName"
+                                                 Binding="{Binding Name}"
+                                                 CanUserSort="True" />
+            <controls:DataGridTextColumn Header="Headcount"
+                                             Tag="PartyMemberCount"
+                                             Binding="{Binding Members.Count}"
+                                             CanUserSort="True" />
+            <controls:DataGridTextColumn Header="Campaign"
+                                             Tag="PartyCampaign"
+                                             Binding="{Binding Campaign}"
+                                             CanUserSort="True" />
+        </controls:DataGrid.Columns>
+    </controls:DataGrid>
+</UserControl>

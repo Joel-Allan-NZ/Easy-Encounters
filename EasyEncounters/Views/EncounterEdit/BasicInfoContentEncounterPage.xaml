@@ -41,6 +41,7 @@
                     AcceptsReturn="True"
                     Text="{Binding  Encounter.Encounter.Description, Mode=TwoWay}" />
             <TextBox Header="Encounter Plan"
+                     Text="{Binding Encounter.Encounter.Plan, Mode=TwoWay}"
                      Style="{StaticResource TextBoxHeader}"
                      PlaceholderText="Enter any encounter-running notes here"
                      Margin="5"

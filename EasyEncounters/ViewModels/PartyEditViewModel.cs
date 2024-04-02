@@ -19,7 +19,6 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
     private readonly IDataService _dataService;
     private readonly IFilteringService _filteringService;
     private readonly INavigationService _navigationService;
-    private IList<ObservableCreature> _creatureCache;
 
     [ObservableProperty]
     private Party? _party;
@@ -36,21 +35,10 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
         _dataService = dataService;
         _navigationService = navigationService;
         _filteringService = filteringService;
-
-        _creatureCache = new List<ObservableCreature>();
-        _creatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<ObservableCreature>();
-        //WeakReferenceMessenger.Default.Register<CreatureDeleteRequestMessage>(this, (r, m) =>
-        //{
-        //    RemoveCreature(m.Parameter.Creature);
-        //});
+        _creatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<Creature>();
     }
 
     public ObservableCollection<Campaign> Campaigns
-    {
-        get; private set;
-    } = new();
-
-    public ObservableCollection<ObservableCreature> Creatures
     {
         get; private set;
     } = new();
@@ -77,13 +65,7 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
                 PartyMembers.Add(new ObservableCreature(partyMember));
             }
 
-            Creatures.Clear();
-            //todo: will have to  handle campaigns and creatures differently in future when there are a large number; can't possibly load all of each.
-            foreach (var creature in await _dataService.GetAllCreaturesAsync())
-            {
-                Creatures.Add(new ObservableCreature((Creature)creature));
-            }
-            _creatureCache = new List<ObservableCreature>(Creatures);
+            await CreatureFilterValues.ResetAsync();
 
             Campaigns.Clear();
             foreach (var campaign in await _dataService.GetAllCampaignsAsync())
@@ -135,39 +117,5 @@ public partial class PartyEditViewModel : ObservableRecipient, INavigationAware
             PartyMembers.Remove(PartyMembers.First(x => x.Creature == creature));
             Party?.Members.Remove(creature);
         }
-    }
-
-    [RelayCommand]
-    private void ClearCreatureFilter()
-    {
-        CreatureFilterValues.ResetFilter();
-        CreatureFilter("");
-    }
-
-    [RelayCommand]
-    private void CreatureFilter(string text)
-    {
-        var filtered = _filteringService.Filter(_creatureCache, CreatureFilterValues, text);
-        Creatures.Clear();
-        foreach (var creature in filtered)
-            Creatures.Add(creature);
-    }
-
-    [RelayCommand]
-    private void SearchTextChange(string text)
-    {
-        var filtered = _filteringService.Filter(_creatureCache, CreatureFilterValues, text);
-        if (String.IsNullOrEmpty(text))
-        {
-            Creatures.Clear();
-            foreach (var creature in filtered)
-                Creatures.Add(creature);
-        }
-    }
-
-    [RelayCommand]
-    private void DataGridSort(DataGridColumnEventArgs e)
-    {
-        CreatureFilterValues.SortCollection(Creatures, e);
     }
 }

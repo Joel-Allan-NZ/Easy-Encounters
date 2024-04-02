@@ -19,6 +19,8 @@ using EasyEncounters.Core.Models.Enums;
 using EasyEncounters.Models;
 using EasyEncounters.Services.Filter;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore;
+using Windows.Media.Audio;
 
 namespace EasyEncounters.ViewModels;
 
@@ -32,7 +34,6 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
 
     private readonly INavigationService _navigationService;
 
-    private IList<ObservableCreature> _creatureCache;
 
     [ObservableProperty]
     private double _encounterCreatureCount;
@@ -61,14 +62,8 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
         _encounterService = encounterService;
 
         _filteringService = filteringService;
-        _creatureCache = new List<ObservableCreature>();
-        _creatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<ObservableCreature>();
+        _creatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<Creature>();
     }
-
-    public ObservableCollection<ObservableCreature> Creatures
-    {
-        get; private set;
-    } = new();
 
     public ObservableCollection<ObservableKVP<ObservableCreature, int>> EncounterCreaturesByCount
     {
@@ -109,26 +104,31 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
 
     public async void OnNavigatedTo(object parameter)
     {
-        if (parameter != null && parameter is ObservableEncounter)
+        if (parameter != null && parameter is ObservableEncounter observable)
         {
-            Encounter = (ObservableEncounter)parameter;
+            var enc = await _dataService.Encounters().Where(x => x.Id == observable.Encounter.Id).Include(x => x.Creatures).Include(x => x.CreaturesByCount).FirstAsync();
+            Encounter = new ObservableEncounter(enc);
 
             EncounterCreaturesByCount.Clear();          
-            foreach (var creature in Encounter.Encounter.Creatures)
+            foreach(var encounterCreature in Encounter.Encounter.CreaturesByCount)
             {
-                var match = EncounterCreaturesByCount.FirstOrDefault(x => x.Key.Creature.Equals(creature));
-
-                if (match != null)
-                {
-
-                    match.Value++;
-                }
-                else
-                {
-                    
-                    EncounterCreaturesByCount.Add(new(new ObservableCreature(creature), 1));
-                }
+                EncounterCreaturesByCount.Add(new(new(encounterCreature.Creature), encounterCreature.Count));
             }
+            //foreach (var creature in Encounter.Encounter.Creatures)
+            //{
+            //    var match = EncounterCreaturesByCount.FirstOrDefault(x => x.Key.Creature.Equals(creature));
+
+            //    if (match != null)
+            //    {
+
+            //        match.Value++;
+            //    }
+            //    else
+            //    {
+                    
+            //        EncounterCreaturesByCount.Add(new(new ObservableCreature(creature), 1));
+            //    }
+            //}
             foreach(var kvp in EncounterCreaturesByCount)
             {
                 kvp.PropertyChanged += OnKVPChanged;
@@ -141,23 +141,18 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
             Encounter = new ObservableEncounter(new()); //create a new encounter if you aren't editing an existing one.
         }
 
-        Creatures.Clear();
-        foreach (var creature in await _dataService.GetAllCreaturesAsync())
-            Creatures.Add(new ObservableCreature((Creature)creature));
-
-        _creatureCache = new List<ObservableCreature>(Creatures);
-
-        foreach (var party in await _dataService.GetAllPartiesAsync())
+        foreach (var party in await _dataService.GetAllPartiesAsync()) //todo: move this to filter too. Currently okay, but problematic with large numbers of parties
+        {
             Parties.Add(party);
+        }
 
         ExpectedDifficulty = EncounterDifficulty.None;
-        CreatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<ObservableCreature>();
-        CreatureFilterValues.ResetFilter();
-        //Creatures.CollectionChanged += PartyOrCreaturesChanged;
+        CreatureFilterValues = (CreatureFilter)_filteringService.GetFilterValues<Creature>();
+        await CreatureFilterValues.ResetAsync();
 
-        var campaigns = await _dataService.GetAllCampaignsAsync();
+        var campaigns = await _dataService.GetAllCampaignsAsync(); //todo: move this to filter too. Currently okay, but problematic with large numbers of campaigns
 
-        foreach(var campaign in campaigns)
+        foreach (var campaign in campaigns)
         {
             Campaigns.Add(campaign);
         }
@@ -181,7 +176,7 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
             else
                 match.Value++;
 
-            _encounterService.AddCreature(Encounter.Encounter, creature.Creature); //todo: switch this to dictionary?
+            //_encounterService.AddCreature(Encounter.Encounter, creature.Creature); //todo: switch this to dictionary?
         }
     }
 
@@ -191,32 +186,47 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
         if (Encounter != null)
         //update encounter creature counts to match the kvp version
         {
-            Encounter.Encounter.Creatures.Clear();
-            foreach (var kvp in EncounterCreaturesByCount)
+            //Encounter.Encounter.CreaturesByCount.Clear();
+            foreach(var kvp in EncounterCreaturesByCount)
             {
-                for (var i = 0; i < kvp.Value; i++)
-                    Encounter.Encounter.Creatures.Add(kvp.Key.Creature);
+                var match = Encounter.Encounter.CreaturesByCount.FirstOrDefault(x => x.Creature.Id == kvp.Key.Creature.Id);
+                if(match == null)
+                {
+                    var creatureMatch = await _dataService.Creatures().FirstOrDefaultAsync(x => x.Id == kvp.Key.Creature.Id);
+                    var encounterPair = new EncounterCreatures(creatureMatch, kvp.Value);
+                    await _dataService.SaveAddAsync(encounterPair);
+                    Encounter.Encounter.CreaturesByCount.Add(encounterPair);
+                }
+                else if (match.Count != kvp.Value)
+                {
+                    match.Count = kvp.Value;
+                }
             }
+            var toRemove = new List<EncounterCreatures>();
+            foreach(var kvp in Encounter.Encounter.CreaturesByCount)
+            {
+                var match = EncounterCreaturesByCount.FirstOrDefault(x => x.Key.Creature.Id == kvp.Creature.Id);
+                if(match == null)
+                {
+                    toRemove.Add(kvp);
+                }
+            }
+            foreach(var remove in toRemove)
+            {
+                Encounter.Encounter.CreaturesByCount.Remove(remove);
+            }
+            //Encounter.Encounter.Creatures.Clear();
+            //foreach (var kvp in EncounterCreaturesByCount)
+            //{
+            //    for (var i = 0; i < kvp.Value; i++)
+            //        Encounter.Encounter.Creatures.Add(kvp.Key.Creature);
+            //}
+            Encounter.Encounter.CreatureCount = Encounter.Encounter.CreaturesByCount.Sum(x => x.Count);
 
             await _dataService.SaveAddAsync(Encounter.Encounter);
             if (_navigationService.CanGoBack)
                 _navigationService.GoBack();
         }
-    }
-
-    [RelayCommand]
-    private void CreatureFilter(string text)
-    {
-        var filtered = _filteringService.Filter(_creatureCache, CreatureFilterValues, text);
-        Creatures.Clear();
-        foreach (var creature in filtered)
-            Creatures.Add(creature);
-    }
-
-    [RelayCommand]
-    private void DataGridSort(DataGridColumnEventArgs e)
-    {
-        CreatureFilterValues.SortCollection(Creatures, e);
     }
 
     partial void OnSelectedPartyChanged(Party? value)
@@ -246,21 +256,9 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
         }
     }
 
-    [RelayCommand]
-    private void SearchTextChange(string text)
-    {
-        var filtered = _filteringService.Filter(_creatureCache, CreatureFilterValues, text);
-        if (String.IsNullOrEmpty(text))
-        {
-            Creatures.Clear();
-            foreach (var creature in filtered)
-                Creatures.Add(creature);
-        }
-    }
-
     private void SetDifficulty()
     {
-        if (SelectedParty == null || SelectedParty.Members.Count == 0 || Creatures.Count == 0)
+        if (SelectedParty == null || SelectedParty.Members.Count == 0 || EncounterCreaturesByCount.Count == 0)
             ExpectedDifficulty = EncounterDifficulty.None;
         else
         {
@@ -270,37 +268,25 @@ public partial class EncounterEditNavigationViewModel : ObservableRecipient, INa
     }
 
     [RelayCommand]
-    private void ClearCreatureFilter()
-    {
-        CreatureFilterValues.ResetFilter();
-        CreatureFilter("");
-    }
-
-    [RelayCommand]
     private async Task CopyCreature(object parameter)
     {
         if (parameter != null && parameter is Creature)
         {
             var copied = await _dataService.CopyAsync(parameter as Creature);
-            if (copied != null)
-            {
-                var creature = new ObservableCreature(copied);
-                Creatures.Add(creature);
-                _creatureCache?.Add(creature);
-            }
         }
     }
+
 
     [RelayCommand]
     private async Task DeleteCreature(object parameter)
     {
-        if (parameter != null && parameter is Creature)
+        if (parameter != null && parameter is Creature creature)
         {
-            var creature = (Creature)parameter;
-            var creatureVM = Creatures.First(x => x.Creature == creature);
-            Creatures.Remove(creatureVM);
-            _creatureCache?.Remove(creatureVM);
-            await _dataService.DeleteAsync(creature);
+            var match = await _dataService.Encounters().FirstOrDefaultAsync(x => x.Id == creature.Id);
+            if (match != null)
+            {
+                await _dataService.DeleteAsync(match);
+            }
         }
     }
 
