@@ -20,8 +20,6 @@ public class Creature : CreatureBase
         InitiativeBonus = other.InitiativeBonus;
         InitiativeAdvantage = other.InitiativeAdvantage;
         Name = other.Name;
-        InitiativeAdvantage = other.InitiativeAdvantage;
-        InitiativeBonus = other.InitiativeBonus;
         DMControl = other.DMControl;
         Description = other.Description;
         LevelOrCR = other.LevelOrCR;
